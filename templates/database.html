@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% include "header.html" %}
+{% block body %}
+   <div class ='row'>
+
+    {% block content %}
+    {% if 'query_edit' in request.url %}
+    <div style='margin-left: 100px; width: 45%;'>
+    <div class="alert alert-info" role="alert">
+     <strong>Your turn!</strong> Edit your selected data line here ...
+    </div>
+
+    {% for eresult in eresults %}
+    <form action = "edit" method = "POST">
+        <p>Nombre: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' value='{{eresult["first_name"]}}'/></p>
+        <p>Apellidos: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' value='{{eresult["last_name"]}}'/></p>
+        <p>DNI o NIE: <input class="form-control" type = "text" name = "dni" style='width: 100%;' value='{{eresult["dni"]}}'/></p>
+        <p>Escuela: <input class="form-control" type = "text" name = "school" style='width: 100%;' value='{{eresult["school"]}}'/></p>
+        <p>Grado: <input class="form-control" type ="text" name = "degree" style='width: 100%;' value='{{eresult["degree"]}}'/></p>
+        <p>Curso actual: <input class="form-control" type ="text" name = "year" style='width: 100%;' value='{{eresult["year"]}}'/></p>
+        <p>Email: <input class="form-control" type ="text" name = "email" style='width: 100%;' value='{{eresult["email"]}}'/></p>
+        <p>Nick de Telegram: <input class="form-control" type ="text" name = "telegram" style='width: 100%;' value='{{eresult["telegram"]}}'/></p>
+     {% endfor %}
+
+     <br>
+
+     <p><input class="btn-primary" type = "submit" value = "Update Data" /></p>
+    </form>
+    </div>
+
+    {% else %}
+    <div style='margin-left: 100px; width: 45%;'>
+    <div class="alert alert-info" role="alert">
+    <strong>Your turn!</strong> Insert your new data line with this form ...
+    </div>
+    
+    <form action = "insert" method = "POST">
+     <p>Nombre: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' /></p>
+     <p>Apellidos: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' /></p>
+     <p>DNI o NIE: <input class="form-control" type = "text" name = "dni" style='width: 100%;' /></p>
+     <p>Escuela: <input class="form-control" type = "text" name = "school" style='width: 100%;' /></p>
+     <p>Grado: <input class="form-control" type ="text" name = "degree" style='width: 100%;' /></p>
+     <p>Curso actual: <input class="form-control" type ="text" name = "year" style='width: 100%;' /></p>
+     <p>Email: <input class="form-control" type ="text" name = "email" style='width: 100%;' /></p>
+     <p>Nick de Telegram: <input class="form-control" type ="text" name = "telegram" style='width: 100%;' /></p>
+     <br>
+
+     <p><input class="btn-primary" type = "submit" value = "Insert Data" /></p>
+    </form>
+    </div>
+
+
+    {% endif %}
+    {% endblock content %}
+
+    <div style='margin-left: 20px; width: 45%;'>
+    <div class="alert alert-warning" role="alert">
+     <strong>Awesome!</strong> Here is your mySQL code ...
+    </div>
+    {{msg}}
+    </div>
+
+    </div> <!-- ends row div -->
+
+  <br><br>
+
+    <div class="alert alert-success" role="alert" style='width: 90%; margin-left: 100px;'>
+    <strong>Check it out!</strong> Here is your data table below ...
+    </div>
+
+  <table class = 'table table-hover' style = 'margin-left: 100px; margin-right: 100px; width: 90%;'>
+     <thead>
+        <tr>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>DNI o NIE</th>
+        <th>Escuela</th>
+        <th>Grado</th>
+        <th>Curso</th>
+        <th>Email</th>
+        <th>Telegram</th>
+        <th>EDIT</th>
+        <th>DELETE</th>
+        </tr>
+     </thead>
+
+     {% for result in results %}
+        <tr>
+           <td>{{result["first_name"]}}</td>
+           <td>{{result["last_name"]}}</td>
+           <td>{{result["dni"]}}</td>
+           <td>{{result['school']}}</td>
+           <td>{{result['degree']}}</td>
+           <td>{{result['year']}}</td>
+           <td>{{result['email']}}</td>
+           <td>{{result['telegram']}}</td>
+           <td align="center"><a href = "{{ url_for('sql_editlink', efname=result['first_name'], elname=result['last_name']) }}"><i class="fas fa-edit"></a></td>
+           <td align="center"><a href = "{{ url_for('sql_datadelete', fname=result['first_name'], lname=result['last_name']) }}"><i class="fas fa-trash-alt"></a></td>
+        </tr>
+     {% endfor %}
+  </table>
+
+{% include "footer.html" %}
+{% endblock %}
