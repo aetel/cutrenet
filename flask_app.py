@@ -1,9 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
-import sys
+from passlib.hash import sha256_crypt
 import os
-
-sys.path.insert(1, "PATH TO LOCAL PYTHON PACKAGES")  #OPTIONAL: Only if need to access Python packages installed on a local (non-global) directory
-sys.path.insert(2, "PATH TO FLASK DIRECTORY")      #OPTIONAL: Only if you need to add the directory of your flask app
 
 app = Flask(__name__)
 
@@ -20,17 +17,23 @@ def home():
 @app.route('/login', methods=['POST'])
 def do_admin_login():
     if not session.get('logged_in'):
-        from functions.sqlquery import sql_query, sql_query2
+        from functions.sqlquery import sql_query, sql_query2, sql_query_passwd
         error = None
-        POST_USERNAME = str(request.form['username'])
+        POST_USERNAME = str(request.form['email'])
         POST_PASSWORD = str(request.form['password'])
         
-        query = sql_query2(''' SELECT * FROM data_table where first_name = ? and last_name = ?''', (POST_USERNAME,POST_PASSWORD))
-        if query:
-            session['logged_in'] = True
-        else:
-            error = 'Invalid credentials'
-            flash(u'Invalid password provided', 'error')
+        #query = sql_query2(''' SELECT * FROM data_table where email = ? and last_name = ?''', (POST_USERNAME,POST_PASSWORD))
+        query = sql_query_passwd("SELECT password FROM data_table WHERE email = ?", (POST_USERNAME,))
+        for hash in query:
+            print('PASSWORD HASH: '+ hash)
+            print('SENT HASH: '+ POST_PASSWORD)
+            print('Compare: '+str(sha256_crypt.verify(POST_PASSWORD, hash)))
+            if sha256_crypt.verify(POST_PASSWORD, hash):
+            #if query:
+                session['logged_in'] = True
+            else:
+                error = 'Invalid credentials'
+                flash(u'Credenciales no validos', 'error')
         return redirect('/', code=302)
     else:
         return redirect('/', code=302)
@@ -63,10 +66,11 @@ def sql_newdatainsert():
         degree = request.form['degree']
         year = request.form['year']
         telegram = request.form['telegram']
-        sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram) VALUES (?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram) )
+        password = None
+        sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram,password) VALUES (?,?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram,password) )
+        flash(u'Registrado correctamente', 'success')
     results = sql_query(''' SELECT * FROM data_table''')
     msg = 'INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year) VALUES ('+first_name+','+last_name+','+email+','+dni+','+school+','+degree+','+year+','+telegram+')'
-    flash(u'Registrado correctamente', 'success')
     return render_template('register.html', results=results, msg=msg)
 
 @app.route('/insert',methods = ['POST', 'GET']) #this is when user submits an insert
@@ -81,29 +85,29 @@ def sql_datainsert():
         degree = request.form['degree']
         year = request.form['year']
         telegram = request.form['telegram']
-        sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram) VALUES (?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram) )
+        password = sha256_crypt.encrypt(str(request.form['password']))
+        sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram,password) VALUES (?,?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram,password) )
     results = sql_query(''' SELECT * FROM data_table''')
-    msg = 'INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year) VALUES ('+first_name+','+last_name+','+email+','+dni+','+school+','+degree+','+year+','+telegram+')'
+    msg = 'INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,password) VALUES ('+first_name+','+last_name+','+email+','+dni+','+school+','+degree+','+year+','+telegram+','+password+')'
     return render_template('database.html', results=results, msg=msg)
 
 @app.route('/delete',methods = ['POST', 'GET']) #this is when user clicks delete link
 def sql_datadelete():
     from functions.sqlquery import sql_delete, sql_query
     if request.method == 'GET':
-        lname = request.args.get('lname')
-        fname = request.args.get('fname')
-        sql_delete(''' DELETE FROM data_table where first_name = ? and last_name = ?''', (fname,lname) )
+        dni = request.args.get('dni')
+        sql_delete(''' DELETE FROM data_table where dni = ?''', (dni,) )
+        flash(u'Borrado satisfactoriamente', 'success')
     results = sql_query(''' SELECT * FROM data_table''')
-    msg = 'DELETE FROM data_table WHERE first_name = ' + fname + ' and last_name = ' + lname
+    msg = 'DELETE FROM data_table WHERE dni = ' + dni
     return render_template('database.html', results=results, msg=msg)
 
 @app.route('/query_edit',methods = ['POST', 'GET']) #this is when user clicks edit link
 def sql_editlink():
     from functions.sqlquery import sql_query, sql_query2
     if request.method == 'GET':
-        elname = request.args.get('elname')
-        efname = request.args.get('efname')
-        eresults = sql_query2(''' SELECT * FROM data_table where first_name = ? and last_name = ?''', (efname,elname))
+        edni = request.args.get('edni')
+        eresults = sql_query2(''' SELECT * FROM data_table where dni = ? ''', (edni,))
     results = sql_query(''' SELECT * FROM data_table''')
     return render_template('database.html', eresults=eresults, results=results)
 
@@ -111,8 +115,7 @@ def sql_editlink():
 def sql_dataedit():
     from functions.sqlquery import sql_edit_insert, sql_query
     if request.method == 'POST':
-        old_last_name = request.form['old_last_name']
-        old_first_name = request.form['old_first_name']
+        old_dni = request.form['old_dni']
         last_name = request.form['last_name']
         first_name = request.form['first_name']
         email = request.form['email']
@@ -121,11 +124,13 @@ def sql_dataedit():
         degree = request.form['degree']
         year = request.form['year']
         telegram = request.form['telegram']
-        sql_edit_insert(''' UPDATE data_table set first_name=?,last_name=?,email=?,dni=?,school=?,degree=?,year=?,telegram=? WHERE first_name=? and last_name=? ''', (first_name,last_name,email,dni,school,degree,year,telegram,old_first_name,old_last_name) )
+        password = sha256_crypt.encrypt(str(request.form['password']))
+        sql_edit_insert(''' UPDATE data_table set first_name=?,last_name=?,email=?,dni=?,school=?,degree=?,year=?,telegram=?,password=? WHERE dni=? ''', (first_name,last_name,email,dni,school,degree,year,telegram,password,old_dni) )
+        flash(u'Editado satisfactoriamente', 'success')
     results = sql_query(''' SELECT * FROM data_table''')
-    msg = 'UPDATE data_table set first_name = ' + first_name + ', last_name = ' + last_name + ', email = ' + email + ', dni = ' + dni + ', school = ' + school + ', degree = ' + degree + ', year = ' + year + ', telegram = ' + telegram + ' WHERE first_name = ' + old_first_name + ' and last_name = ' + old_last_name
+    msg = 'UPDATE data_table set first_name = ' + first_name + ', last_name = ' + last_name + ', email = ' + email + ', dni = ' + dni + ', school = ' + school + ', degree = ' + degree + ', year = ' + year + ', telegram = ' + telegram + ', password = ' + password + ' WHERE dni = ' + old_dni
     return render_template('database.html', results=results, msg=msg)
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=True,host='127.0.0.1', port=4001)
+    app.run(debug=True,host='127.0.0.1', port=4000)

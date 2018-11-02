@@ -4,12 +4,14 @@ This is a simple Python CRUD application to manage AETEL members.
 # STILL IN DEVELOPMENT
 
 ## Use:
-Launch the main python script, if a database exists it will use that, if not it will create one.
+Launch setup.py, if a database exists it will use that, if not it will create one.
+When database is fresh it creates a user admin@example.com/admin.
+Then launch the main python script.
 Go to /register?new_member to register a new member.
-Currently login uses name and surname as username and password.
 
 ## To-Do:
-* Use actual passwords
+*  ~~Use actual passwords~~ Now it uses hashed passwords
+* Validate form data
 * Design permission system
 * Single member edit page
 * aetelbot integration
