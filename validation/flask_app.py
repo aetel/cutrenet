@@ -3,6 +3,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
 from passlib.hash import argon2
 import os
+import sqlite3
 
 app = Flask(__name__)
 
@@ -65,11 +66,25 @@ def sql_newdatainsert():
         year = request.form['year']
         telegram = request.form['telegram']
         password = None
-        sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram,password) VALUES (?,?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram,password) )
-        flash(u'Registrado correctamente', 'success')
-    results = sql_query(''' SELECT * FROM data_table''')
-    msg = 'INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year) VALUES ('+first_name+','+last_name+','+email+','+dni+','+school+','+degree+','+year+','+telegram+')'
-    return render_template('register.html', results=results, msg=msg)
+        try:
+            sql_edit_insert(''' INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year,telegram,password) VALUES (?,?,?,?,?,?,?,?,?) ''', (first_name,last_name,email,dni,school,degree,year,telegram,password) )
+            flash(u'Registrado correctamente', 'success')
+            results = sql_query(''' SELECT * FROM data_table''')
+            msg = 'INSERT INTO data_table (first_name,last_name,email,dni,school,degree,year) VALUES ('+first_name+','+last_name+','+email+','+dni+','+school+','+degree+','+year+','+telegram+')'
+            return render_template('register.html', results=results, msg=msg)
+        except sqlite3.Error as er:
+            if 'dni' in er.message:
+                flash(u'DNI ya registrado', 'error')
+                return render_template('register.html', p_last_name=last_name, p_first_name=first_name, p_email=email, p_school=school, p_degree=degree, p_year=year, p_telegram=telegram)
+            elif 'email' in er.message:
+                flash(u'Email ya registrado', 'error')
+                return render_template('register.html', p_last_name=last_name, p_first_name=first_name, p_dni=dni, p_school=school, p_degree=degree, p_year=year, p_telegram=telegram)
+            else:
+                print('SOMETHING ELSE')
+                flash(u'Database Error')
+                #log this
+                return render_template('register.html', p_last_name=last_name, p_first_name=first_name, p_email=email, p_dni=dni, p_school=school, p_degree=degree, p_year=year, p_telegram=telegram)
+            
 
 @app.route('/insert',methods = ['POST', 'GET']) #this is when user submits an insert
 def sql_datainsert():
