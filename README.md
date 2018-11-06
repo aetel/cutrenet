@@ -10,7 +10,7 @@ Then launch the main python script.
 Go to /register?new_member to register a new member.
 
 ## To-Do:
-*  ~~Use actual passwords~~ Now it uses hashed passwords with argon2
+* ~~Use actual passwords~~ Now it uses hashed passwords with argon2
 * Validate form data
 * Design permission system
 * Single member edit page
@@ -24,7 +24,9 @@ Go to /register?new_member to register a new member.
 ## Other To-Do's:
 * Email group function
 * Space & tool reservation
+* Workshops & formation management
 * aetelbot management page
+* MQTT command zapper
 
 
 ### Application Notes:
