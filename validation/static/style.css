@@ -65,12 +65,25 @@ border-radius: 5px
 }
 
 .login-field {
-  padding: 10px 10px;
+  background-color: #ECF0F1;
+  border: 2px solid #ECF0F1;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 10px 10px 10px;
   width: 100%;
+  transition: border .5s;
+}
+
+.login-field:focus {
+  background-color: #ECF0F1;
+  border: 2px solid #00A79D;
+  box-shadow: none;
 }
 
 .app-title {
 text-align: center;
+font-family: Montserrat;
 color: #777;
 }
  

@@ -9,13 +9,16 @@
     <strong>¡Hazte miembro de AETEL!</strong> Rellena el formulario con tus datos...
     <br>
     <br>
-    <form action = "registerdo?new_member" method = "POST" class="needs-validation" novalidate>
+    <form action = "register?new_member" method = "POST" class="needs-validation" novalidate>
       <div class="form-row">
         <div class="col-md-4 mb-3">
           <label for="validationCustom01">Nombre</label>
           <input type="text" class="form-control" id="validationCustom01" placeholder="First name" name="first_name" value="{{p_first_name}}" required>
           <div class="valid-feedback">
             Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please provide a valid name.
           </div>
         </div>
         <div class="col-md-4 mb-3">
@@ -24,6 +27,9 @@
           <div class="valid-feedback">
             Looks good!
           </div>
+          <div class="invalid-feedback">
+            Please provide a valid surname.
+          </div>
         </div>
         <div class="col-md-4 mb-3">
           <label for="validationCustomUsername">Telegram</label>
@@ -31,50 +37,52 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="inputGroupPrepend">@</span>
             </div>
-            <input type="text" class="form-control" id="validationCustomUsername" placeholder="Telegram" name="telegram" value="{{p_telegram}}" aria-describedby="inputGroupPrepend" required>
-            <div class="invalid-feedback">
-              Please provide a valid Telegram username.
-            </div>
+            <input type="text" class="form-control" id="validationCustomUsername" placeholder="Telegram" name="telegram" value="{{p_telegram}}" aria-describedby="inputGroupPrepend">
           </div>
         </div>
       </div>
       <div class="form-row">
         <div class="col-md-6 mb-3">
           <label for="validationCustom03">DNI o NIE</label>
-          <input type="text" class="form-control" id="validationCustom03" placeholder="City" name="dni" value="{{p_dni}}" pattern="[0-9A-Z][0-9]{7}[A-Z]" required>
+          <input type="text" class="form-control" id="validationCustom03" placeholder="DNI o NIE" name="dni" value="{{p_dni}}" pattern="[0-9A-Z][0-9]{7}[A-Z]" required>
           <div class="invalid-feedback">
             Please provide a valid DNI o NIE en mayúsculas y sin guiones.
           </div>
         </div>
         <div class="col-md-3 mb-3">
           <label for="validationCustom04">Escuela</label>
-          <input type="text" class="form-control" id="validationCustom04" placeholder="Escuela" name="school" value="{{p_school}}" required>
+          <select class="custom-select" id="school-dropdown" name="school" onchange="planes()" required></select>
           <div class="invalid-feedback">
-            Please provide a valid school.
+            Please select a valid school.
           </div>
         </div>
         <div class="col-md-3 mb-3">
           <label for="validationCustom05">Grado</label>
-          <input type="text" class="form-control" id="validationCustom05" placeholder="Grado" name="degree" value="{{p_degree}}" required>
+          <select class="custom-select" id="degree-dropdown" name="degree" required></select>
           <div class="invalid-feedback">
-            Please provide a valid degree.
+            Please select a valid degree.
           </div>
         </div>
       </div>
         <div class="col-md-3 mb-3">
           <label for="validationCustom06">Email</label>
           <input type="email" class="form-control" id="validationCustom06" placeholder="Email" name="email" value="{{p_email}}" required>
+          <small id="emailHelp" class="form-text text-muted">Uno que uses, si puede ser. Nunca lo compartiremos con nadie.</small>
           <div class="invalid-feedback">
             Please provide a valid email.
           </div>
         </div>
 
         <div class="col-md-3 mb-3">
-          <label for="validationCustom07">Año</label>
-          <input type="text" class="form-control" id="validationCustom07" placeholder="Year" name="year" value="{{p_year}}" required>
-          <div class="invalid-feedback">
-            Please provide a valid year.
-          </div>
+          <label for="validationCustom07">Curso</label>
+          <select class="custom-select" id="validationCustom07" placeholder="Year" name="year" value="{{p_year}}" required>
+            <option value="">Quinto</option>
+            <option value="1"{% if p_year=='1' %} selected {% endif %}>Primero</option>
+            <option value="2"{% if p_year=='2' %} selected {% endif %}>Segundo</option>
+            <option value="3"{% if p_year=='3' %} selected {% endif %}>Tercero</option>
+            <option value="4"{% if p_year=='4' %} selected {% endif %}>Cuarto</option>
+          </select>
+          <div class="invalid-feedback">Please select a valid year.</div>
         </div>
       <div class="form-group">
         <div class="form-check">
@@ -110,6 +118,92 @@
         });
       }, false);
     })();
+    
+    (function centros() {
+
+      let dropdown = document.getElementById('school-dropdown');
+      dropdown.length = 0;
+
+      let defaultOption = document.createElement('option');
+      defaultOption.text = '-- ESCUELA TECNICA SUPERIOR DE INGENIERIA Y SISTEMAS DE TELECOMUNICACION --';
+      defaultOption.value = '59';
+
+      dropdown.add(defaultOption);
+      dropdown.selectedIndex = 0;
+
+      const url = '/static/json/centros.json';
+
+      const request = new XMLHttpRequest();
+      request.open('GET', url, true);
+
+      request.onload = function() {
+        if (request.status === 200) {
+          const data = JSON.parse(request.responseText).datos
+          let option;
+          for (let i = 0; i < data.length; i++) {
+            option = document.createElement('option');
+            option.text = data[i].nombre;
+            option.value = data[i].codigo;
+            dropdown.add(option);
+          }
+         } else {
+          // Reached the server, but it returned an error
+        }   
+      }
+
+      request.onerror = function() {
+        console.error('An error occurred fetching the JSON from ' + url);
+      };
+
+      request.send();
+
+    })();
+
+    function planes() {
+
+      let dropdown = document.getElementById('degree-dropdown');
+      dropdown.length = 0;
+
+      //let defaultOption = document.createElement('option');
+      //defaultOption.text = '-- GRADO EN INGENIERIA ELECTRONICA DE COMUNICACIONES --';
+      //defaultOption.value = '59EC';
+
+      //dropdown.add(defaultOption);
+      dropdown.selectedIndex = 0;
+
+      const url = '/static/json/planes.json';
+
+      const request = new XMLHttpRequest();
+      request.open('GET', url, true);
+
+      request.onload = function() {
+        if (request.status === 200) {
+          //var centro = "59"
+          var centro = document.getElementById("school-dropdown").value;
+          const data = JSON.parse(request.responseText).datos[centro]
+          let option;
+          for (let i = 0; i < data.length; i++) {
+            option = document.createElement('option');
+            //if (i = 0){
+            //  option.selected = "selected";
+            //}
+            option.text = data[i].nombre;
+            option.value = data[i].codigo;
+            dropdown.add(option);
+          }
+         } else {
+          // Reached the server, but it returned an error
+        }   
+      }
+
+      request.onerror = function() {
+        console.error('An error occurred fetching the JSON from ' + url);
+      };
+
+      request.send();
+
+    }
+    planes();
     </script>
 
     {% else %}

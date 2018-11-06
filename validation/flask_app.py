@@ -17,43 +17,35 @@ def home():
         msg = 'SELECT * FROM data_table'
         return render_template('database.html', results=results, msg=msg)
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def do_admin_login():
-    if not session.get('logged_in'):
-        from functions.sqlquery import sql_query, sql_query2, sql_query_passwd
-        error = None
-        POST_USERNAME = str(request.form['email'])
-        POST_PASSWORD = str(request.form['password'])
-        
-        query = sql_query_passwd("SELECT password FROM data_table WHERE email = ?", (POST_USERNAME,))
-        for pw_hash in query:
-            if argon2.verify(POST_PASSWORD, pw_hash):
-                session['logged_in'] = True
-                session['user'] = POST_USERNAME
-            else:
-                error = 'Invalid credentials'
-                flash(u'Credenciales no validos', 'error')
-        return redirect('/', code=302)
+    if request.method == 'POST':
+        if not session.get('logged_in'):
+            from functions.sqlquery import sql_query, sql_query2, sql_query_passwd
+            error = None
+            POST_USERNAME = str(request.form['email'])
+            POST_PASSWORD = str(request.form['password'])
+            
+            query = sql_query_passwd("SELECT password FROM data_table WHERE email = ?", (POST_USERNAME,))
+            for pw_hash in query:
+                if argon2.verify(POST_PASSWORD, pw_hash):
+                    session['logged_in'] = True
+                    session['user'] = POST_USERNAME
+                else:
+                    error = 'Invalid credentials'
+                    flash(u'Credenciales no validos', 'error')
+            return redirect('/', code=302)
+        else:
+            return redirect('/', code=302)
     else:
-        return redirect('/', code=302)
-
-@app.route('/login')
-def login():
-    if not session.get('logged_in'):
         return render_template('login.html')
-    else:
-        return redirect('/', code=302)
  
 @app.route('/logout')
 def logout():
     session['logged_in'] = False
     return home()
 
-@app.route('/register') #this is when user submits an insert
-def register():
-    return render_template('register.html')
-
-@app.route('/registerdo',methods = ['POST', 'GET']) #this is when user submits an insert
+@app.route('/register',methods = ['POST', 'GET']) #this is when user submits an insert
 def sql_newdatainsert():
     from functions.sqlquery import sql_edit_insert, sql_query
     if request.method == 'POST':
@@ -84,7 +76,9 @@ def sql_newdatainsert():
                 flash(u'Database Error')
                 #log this
                 return render_template('register.html', p_last_name=last_name, p_first_name=first_name, p_email=email, p_dni=dni, p_school=school, p_degree=degree, p_year=year, p_telegram=telegram)
-            
+    else:
+        return render_template('register.html')
+       
 
 @app.route('/insert',methods = ['POST', 'GET']) #this is when user submits an insert
 def sql_datainsert():

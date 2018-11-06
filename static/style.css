@@ -35,6 +35,7 @@ box-sizing: border-box;
   line-height: normal;
   text-decoration: none;
 }
+
 a:hover, a:visited, a:focus {
   text-decoration: none;
 }
@@ -70,6 +71,7 @@ border-radius: 5px
 }
 
 .app-title {
+font-family: Montserrat;
 text-align: center;
 color: #777;
 }
