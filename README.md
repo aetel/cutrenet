@@ -12,10 +12,10 @@ Go to /register?new_member to register a new member.
 ## To-Do:
 * ~~Use actual passwords~~ Now it uses hashed passwords with argon2
 * Validate form data
-* Design permission system
+* Design permission system (general admin, group admin, machine permissions)
 * Single member edit page
 * aetelbot integration
-* Groups as tables
+* Groups for projects, training, current year members
 * List groups
 * Create new groups
 * Add people to groups
@@ -23,6 +23,7 @@ Go to /register?new_member to register a new member.
 
 ## Other To-Do's:
 * Email group function
+* AETEL meeting minutes generation & management
 * Space & tool reservation
 * Workshops & formation management
 * aetelbot management page
