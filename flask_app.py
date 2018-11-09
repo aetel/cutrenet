@@ -27,16 +27,20 @@ def do_admin_login():
             error = None
             POST_USERNAME = str(request.form['email'])
             POST_PASSWORD = str(request.form['password'])
-
+            print("Username: "+POST_USERNAME+"\n Password: "+POST_PASSWORD)
             query = sql_query_passwd(
                 "SELECT password FROM data_table WHERE email = ?", (POST_USERNAME,))
-            for pw_hash in query:
-                if argon2.verify(POST_PASSWORD, pw_hash):
-                    session['logged_in'] = True
-                    session['user'] = POST_USERNAME
-                else:
-                    error = 'Invalid credentials'
-                    flash(u'Credenciales no validos', 'error')
+            if query is not None:
+                for pw_hash in query:
+                    if argon2.verify(POST_PASSWORD, pw_hash):
+                        session['logged_in'] = True
+                        session['user'] = POST_USERNAME
+                    else:
+                        error = 'Invalid password'
+                        flash(u'Contraseña incorrecta', 'error')
+            else:
+                error = 'Invalid username'
+                flash(u'El email proporcionado no coincide con el de ningún usuario', 'error')
             return redirect('/', code=302)
         else:
             return redirect('/', code=302)
