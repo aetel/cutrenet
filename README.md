@@ -11,7 +11,7 @@ Go to /register?new_member to register a new member.
 
 ## To-Do:
 * ~~Use actual passwords~~ Now it uses hashed passwords with argon2
-* Validate form data
+* ~~Validate form data~~ Now validates with HTML5 and some JavaScript
 * Design permission system (general admin, group admin, machine permissions)
 * Single member edit page
 * aetelbot integration

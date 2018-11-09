@@ -1,125 +1,80 @@
 {% extends "layout.html" %}
-{% include "header_no_login.html" %}
+{% include "header.html" %}
 {% block body %}
 
 {% block content %}
 {% if 'new_member' in request.url %}
-<div class="alert alert-info" role="alert">
-  <strong>¡Hazte miembro de AETEL!</strong> Rellena el formulario con tus datos...
-  <br>
-  <br>
-  <form action="register?new_member" method="POST" class="needs-validation" novalidate>
-    <div class="form-row">
-      <div class="col-md-4 mb-3">
-        <label for="validationCustom01">Nombre</label>
-        <input type="text" class="form-control" id="validationCustom01" placeholder="First name" name="first_name" value="{{p_first_name}}" required>
-        <div class="valid-feedback">
-          Looks good!
+<div class="card">
+  <div class="card-header">
+    <strong>¡Hazte miembro de AETEL!</strong> Rellena el formulario con tus datos...
+  </div>
+  <div class="card-body">
+    <form action="register?new_member" method="POST" class="form-horizontal">
+      <div class="form-group">
+        <div class="col-md-4 mb-3">
+          <label for="validationCustom01">Nombre</label>
+          <input type="text" class="form-control form-input" id="validationCustom01" placeholder="First name" name="first_name" value="{{p_first_name}}" required>
         </div>
-        <div class="invalid-feedback">
-          Please provide a valid name.
+        <div class="col-md-4 mb-3">
+          <label for="validationCustom02">Apellidos</label>
+          <input type="text" class="form-control form-input" id="validationCustom02" placeholder="Last name" name="last_name" value="{{p_last_name}}" required>
         </div>
-      </div>
-      <div class="col-md-4 mb-3">
-        <label for="validationCustom02">Apellidos</label>
-        <input type="text" class="form-control" id="validationCustom02" placeholder="Last name" name="last_name" value="{{p_last_name}}" required>
-        <div class="valid-feedback">
-          Looks good!
-        </div>
-        <div class="invalid-feedback">
-          Please provide a valid surname.
-        </div>
-      </div>
-      <div class="col-md-4 mb-3">
-        <label for="validationCustomUsername">Telegram</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroupPrepend">@</span>
+        <div class="col-md-4 mb-3">
+          <label for="validationCustomUsername">Telegram</label>
+          <div class="input-group">
+            <div class="input-group-addon">
+              <span class="input-group-text" id="inputGroupAddon">@</span>
+            </div>
+            <input type="text" class="form-control form-input" id="validationCustomUsername" placeholder="Telegram" name="telegram" value="{{p_telegram}}" aria-describedby="inputGroupPrepend">
+            <small id="emailHelp" class="form-text text-muted">No es obligatorio, pero es necesario para poder usar <a href="http://t.me/aetelbot">@aetelbot</a>.</small>
           </div>
-          <input type="text" class="form-control" id="validationCustomUsername" placeholder="Telegram" name="telegram" value="{{p_telegram}}" aria-describedby="inputGroupPrepend">
-          <small id="emailHelp" class="form-text text-muted">No es obligatorio, pero es necesario para poder usar <a href="http://t.me/aetelbot">@aetelbot</a>.</small>
         </div>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="col-md-1 mb-3">
-        <label for="validationCustom07">Curso</label>
-        <select class="custom-select" id="validationCustom07" placeholder="Year" name="year" value="{{p_year}}" required>
-          <option value="">Quinto</option>
-          <option value="1" {% if p_year=='1' %} selected {% endif %}>Primero</option>
-          <option value="2" {% if p_year=='2' %} selected {% endif %}>Segundo</option>
-          <option value="3" {% if p_year=='3' %} selected {% endif %}>Tercero</option>
-          <option value="4" {% if p_year=='4' %} selected {% endif %}>Cuarto</option>
-        </select>
-        <div class="invalid-feedback">Please select a valid year.</div>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="validationCustom04">Escuela</label>
-        <select class="custom-select" id="school-dropdown" name="school" onchange="planes()" required></select>
-        <div class="invalid-feedback">
-          Please select a valid school.
+      <div class="form-row">
+        <div class="col-md-1 mb-3">
+          <label for="validationCustom07">Curso</label>
+          <select class="form-select" id="validationCustom07" placeholder="Year" name="year" value="{{p_year}}" required>
+            <option value="">Quinto</option>
+            <option value="1" {% if p_year=='1' %} selected {% endif %}>Primero</option>
+            <option value="2" {% if p_year=='2' %} selected {% endif %}>Segundo</option>
+            <option value="3" {% if p_year=='3' %} selected {% endif %}>Tercero</option>
+            <option value="4" {% if p_year=='4' %} selected {% endif %}>Cuarto</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom04">Escuela</label>
+          <select class="form-select" id="school-dropdown" name="school" onchange="planes()" required></select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom05">Grado</label>
+          <select class="form-select" id="degree-dropdown" name="degree" required></select>
         </div>
       </div>
-      <div class="col-md-6 mb-3">
-        <label for="validationCustom05">Grado</label>
-        <select class="custom-select" id="degree-dropdown" name="degree" required></select>
-        <div class="invalid-feedback">
-          Please select a valid degree.
+      <div class="form-row">
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom06">Email</label>
+          <input type="email" class="form-control form-input" id="validationCustom06" placeholder="Email" name="email" value="{{p_email}}" required>
+          <small id="emailHelp" class="form-text text-muted">Uno que uses, si puede ser. Nunca lo compartiremos con nadie.</small>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationCustom03">DNI o NIE</label>
+          <input type="text" class="form-control form-input" id="validationCustom03" placeholder="DNI o NIE" name="dni" value="{{p_dni}}" pattern="[0-9A-Z][0-9]{7}[A-Z]" required>
         </div>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="col-md-6 mb-3">
-        <label for="validationCustom06">Email</label>
-        <input type="email" class="form-control" id="validationCustom06" placeholder="Email" name="email" value="{{p_email}}" required>
-        <small id="emailHelp" class="form-text text-muted">Uno que uses, si puede ser. Nunca lo compartiremos con nadie.</small>
-        <div class="invalid-feedback">
-          Please provide a valid email.
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+          <label class="form-check-label" for="invalidCheck">
+            Agree to terms and conditions
+          </label>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <label for="validationCustom03">DNI o NIE</label>
-        <input type="text" class="form-control" id="validationCustom03" placeholder="DNI o NIE" name="dni" value="{{p_dni}}" pattern="[0-9A-Z][0-9]{7}[A-Z]" required>
-        <div class="invalid-feedback">
-          Please provide a valid DNI o NIE en mayúsculas y sin guiones.
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-        <label class="form-check-label" for="invalidCheck">
-          Agree to terms and conditions
-        </label>
-        <div class="invalid-feedback">
-          You must agree before submitting.
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-large btn-block" type="submit">Register</button>
-  </form>
+      <button class="btn btn-large btn-block" type="submit">Register</button>
+    </form>
+  </div>
 </div>
 
 <script>
-  // Example starter JavaScript for disabling form submissions if there are invalid fields
-  (function() {
-    'use strict';
-    window.addEventListener('load', function() {
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      var forms = document.getElementsByClassName('needs-validation');
-      // Loop over them and prevent submission
-      var validation = Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
-    }, false);
-  })();
-
   (function centros() {
 
     let dropdown = document.getElementById('school-dropdown');
@@ -208,7 +163,7 @@
 </script>
 
 {% else %}
-<div class="alert alert-danger" role="alert">
+<div class="toast toast-warning">
   <strong>¡Eh!</strong> ¿Estás seguro de que estás en el lugar adecuado?
 </div>
 {% endif %}
