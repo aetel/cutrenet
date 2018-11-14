@@ -30,15 +30,43 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 # Create a user to test with
 @app.before_first_request
 def create_user():
-    init_db()
+    pass
+    #init_db()
     #user_datastore.create_user(email='admin@example.com', password='admin')
-    db_session.commit()
+    #db_session.commit()
 
 # Views
 @app.route('/')
 @login_required
-def home():
-    return render_template('database.html')
+def member_database():
+    results = db_session.query(User).all()
+    print(results)
+    return render_template('database.html', results=results)
+
+# this is when user clicks edit link
+@app.route('/query_edit', methods=['POST', 'GET'])
+@login_required
+def sql_editlink():
+    if request.method == 'GET':
+        edni = request.args.get('edni')
+        eresults = sql_query(
+            ''' SELECT * FROM data_table where dni = ? ''', (edni,))
+    results = sql_query(''' SELECT * FROM data_table''')
+    return render_template('database.html', eresults=eresults, results=results)
+
+# this is when user clicks delete link
+@app.route('/delete', methods=['POST', 'GET'])
+@login_required
+def sql_datadelete():
+    from functions.sqlquery import sql_delete, sql_query
+    if request.method == 'GET':
+        dni = request.args.get('dni')
+        sql_delete(''' DELETE FROM data_table where dni = ?''', (dni,))
+        flash(u'Borrado satisfactoriamente', 'success')
+    results = sql_query(''' SELECT * FROM data_table''')
+    msg = 'DELETE FROM data_table WHERE dni = ' + dni
+    return render_template('database.html', results=results, msg=msg)
+
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
