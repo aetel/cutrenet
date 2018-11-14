@@ -1,0 +1,35 @@
+{% macro render_field_with_errors(field) %}
+  <p>
+    {{ field.label }} {{ field(**kwargs)|safe }}
+    {% if field.errors %}
+      <ul>
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  </p>
+{% endmacro %}
+
+{% macro render_field(field) %}
+  <p>{{ field(**kwargs)|safe }}</p>
+{% endmacro %}
+
+{% macro render_field_with_errors_spectre(field) %}
+    {% if field.errors %}
+      <div class="form-group has-error">
+        {{ field(**kwargs)|safe }}
+        {% for error in field.errors %}
+            <p class="form-input-hint">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="form-group">
+        {{ field(**kwargs)|safe }}
+      </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_field_checkbox(field) %}
+  {{ field(**kwargs)|safe }}
+{% endmacro %}

@@ -1,0 +1,27 @@
+{% extends "security/base.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
+
+{% block content %}
+{% include "security/_messages.html" %}
+<body style="background-color:#242424;">
+<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+ 	<div class="login">
+	  <div class="login-title">
+	  	<h1>AETEL cutrenet 1.0</h1>
+	  </div>
+	  <div class="login-form">
+	  	{{ login_user_form.hidden_tag() }}
+	  	{{ render_field_with_errors_spectre(login_user_form.email, placeholder="email", class_="login-field form-control form-input") }}
+		{{ render_field_with_errors_spectre(login_user_form.password, placeholder="contraseña", class_="login-field form-control form-input") }}
+		<div class="form-group">
+		  <label class="form-switch">
+		  	{{ render_field_checkbox(login_user_form.remember) }}
+		     <i class="form-icon"></i> Remember me
+		  </label>
+		</div>
+		{{ render_field(login_user_form.submit, class_="btn btn-primary btn-large btn-block") }}
+	  </div>
+	</div>
+</form>
+{% include "security/_menu.html" %}
+{% endblock %}
