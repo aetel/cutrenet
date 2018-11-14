@@ -50,6 +50,14 @@ def sql_query2(query, var):
     # conn.close()
     return rows
 
+def sql_query_fone(query, var):
+    #conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute(query, var)
+    rows = cur.fetchone()
+    # conn.close()
+    return rows
+
 
 # This prints the lines in the database page
 conn = sqlite3.connect(database)

@@ -13,6 +13,7 @@ app.config['SECRET_KEY'] = os.urandom(16)
 app.config['SECURITY_PASSWORD_SALT'] = '/2aX16zPnnIgfMwkOjGX4S'
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = False
+app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 # Mail config. Place after 'Create app'
 # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -31,9 +32,9 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 @app.before_first_request
 def create_user():
     pass
-    #init_db()
-    #user_datastore.create_user(email='admin@example.com', password='admin')
-    #db_session.commit()
+    # init_db()
+    # user_datastore.create_user(email='admin@example.com', password='admin')
+    # db_session.commit()
 
 # Views
 @app.route('/')
@@ -44,28 +45,49 @@ def member_database():
     return render_template('database.html', results=results)
 
 # this is when user clicks edit link
-@app.route('/query_edit', methods=['POST', 'GET'])
+@app.route('/edit', methods=['GET'])
 @login_required
-def sql_editlink():
+def edit_member():
+    eresult = None
     if request.method == 'GET':
         edni = request.args.get('edni')
-        eresults = sql_query(
-            ''' SELECT * FROM data_table where dni = ? ''', (edni,))
-    results = sql_query(''' SELECT * FROM data_table''')
-    return render_template('database.html', eresults=eresults, results=results)
+        eresult = db_session.query(User).filter_by(dni=edni).first()
+    results = results = db_session.query(User).all()
+    return render_template('database.html', eresult=eresult, results=results)
+
+@app.route('/edit', methods=['POST'])
+@login_required
+def sql_dataedit():
+    #eresult["first_name"] eresult["last_name"]
+    if request.method == 'POST':
+        old_dni = request.form['old_dni']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        email = request.form['email']
+        dni = request.form['dni']
+        school = request.form['school']
+        degree = request.form['degree']
+        year = request.form['year']
+        telegram = request.form['telegram']
+        password = request.form['password']
+        user_datastore.create_user(email=email, password=password, dni=dni, first_name=first_name, last_name=last_name, school=school, degree=degree, year=year, telegram=telegram)
+        db_session.commit()
+        flash(u'Editado satisfactoriamente', 'success')
+    results = results = db_session.query(User).all()
+    return redirect('/', code=302)
 
 # this is when user clicks delete link
 @app.route('/delete', methods=['POST', 'GET'])
 @login_required
-def sql_datadelete():
-    from functions.sqlquery import sql_delete, sql_query
+def delete_member():
     if request.method == 'GET':
         dni = request.args.get('dni')
-        sql_delete(''' DELETE FROM data_table where dni = ?''', (dni,))
+        user = db_session.query(User).filter_by(dni=dni).first()
+        user_datastore.delete_user(user)
+        db_session.commit()
         flash(u'Borrado satisfactoriamente', 'success')
-    results = sql_query(''' SELECT * FROM data_table''')
-    msg = 'DELETE FROM data_table WHERE dni = ' + dni
-    return render_template('database.html', results=results, msg=msg)
+    results = results = db_session.query(User).all()
+    return render_template('database.html', results=results)
 
 
 @app.route('/logout', methods=['POST', 'GET'])
