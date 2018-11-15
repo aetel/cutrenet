@@ -31,14 +31,14 @@ def create_user():
 # Views
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('index.html', title='cutrenet')
 
 @app.route('/members')
 @login_required
 def member_database():
     results = db_session.query(User).all()
     db_session.commit()
-    return render_template('database.html', results=results)
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
 # this is when user clicks edit link
 @app.route('/members/edit', methods=['GET'])
@@ -50,9 +50,9 @@ def edit_member():
         eresult = db_session.query(User).filter_by(dni=edni).first()
     results = db_session.query(User).all()
     db_session.commit()
-    return render_template('database.html', eresult=eresult, results=results)
+    return render_template('database.html', eresult=eresult, results=results, title='cutrenet', subtitle='miembros')
 
-@app.route('/members/edit', methods=['POST'])
+@app.route('/members/edit', methods=['POST'], )
 @login_required
 def sql_dataedit():
     if request.method == 'POST':
@@ -71,7 +71,7 @@ def sql_dataedit():
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return redirect('/members', code=302)
+    return redirect('/members', code=302, title='cutrenet', subtitle='miembros')
 
 # this is when Treasurer clicks activate link
 @app.route('/members/confirm', methods=['POST', 'GET'])
@@ -84,7 +84,7 @@ def confirm_member():
         flash(u'Confirmado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return render_template('database.html', results=results)
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
 # this is when user clicks delete link
 @app.route('/members/delete', methods=['POST', 'GET'])
@@ -96,14 +96,14 @@ def delete_member():
         flash(u'Borrado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return render_template('database.html', results=results)
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     logout_user()
     flash(u'Deslogueado satisfactoriamente', 'normal')
-    return redirect('login', code=302)
+    return redirect('login', code=302, title='cutrenet')
 
 if __name__ == '__main__':
     app.run()

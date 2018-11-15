@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
-{% block body %}
-<h1>Overview</h1>
-<p>Do you want to <a href="{{ url_for('login') }}">log in?</a>
-  {% endblock %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
+
+{% block content %}
+{% include "messages.html" %}
+Hello
+<a href="/members">Miembros</a>
+{% include "footer.html" %}
+{% endblock %}

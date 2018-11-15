@@ -30,6 +30,47 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_field_label_with_errors_spectre(field) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+    <div class="form-group">
+  {% endif %}
+    <div class="col-3 col-sm-12">
+      <label class="form-label">{{ field.label.text }}</label>
+    </div>
+    <div class="col-9 col-sm-12">
+      {{ field(**kwargs)|safe }}
+      {% for error in field.errors %}
+          <p class="form-input-hint">{{ error }}</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro render_field_label_social_with_errors_spectre(field) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+    <div class="form-group">
+  {% endif %}
+    <div class="col-3 col-sm-12">
+      <label class="form-label">{{ field.label.text }}</label>
+    </div>
+    <div class="col-9 col-sm-12">
+      <div class="input-group">
+        <div class="input-group-addon">
+          <span class="input-group-text" id="inputGroupAddon">@</span>
+        </div>
+        {{ field(**kwargs)|safe }}
+      </div>
+      {% for error in field.errors %}
+          <p class="form-input-hint">{{ error }}</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
 {% macro render_field_checkbox(field) %}
   {{ field(**kwargs)|safe }}
 {% endmacro %}

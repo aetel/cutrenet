@@ -3,7 +3,7 @@
 
 {% block content %}
 {% include "messages.html" %}
-<title>cutrenet | login</title>
+<title>{% block title %} cutrenet | login {% endblock title %}</title>
 <body style="background-color:#242424;">
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
  	<div class="login">
