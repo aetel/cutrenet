@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+
+{% block content %}
+{% include "messages.html" %}
+<title>{% block title %} cutrenet | registro {% endblock title %}</title>
+<h1>{{ _('Registrate') }}</h1>
+<div class="card">
+  <div class="card-header">
+    <strong>¡Hazte miembro de AETEL!</strong> Rellena el formulario con tus datos...
+  </div>
+  <div class="card-body">
+    <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form" class="form-horizontal">
+      {{ register_user_form.hidden_tag() }}
+      {{ render_field_label_with_errors_spectre(register_user_form.first_name, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.last_name, class_="form-input") }}
+      {{ render_field_label_social_with_errors_spectre(register_user_form.telegram, class_="form-input") }}
+      <div class="form-group">
+        <div class="col-3 col-sm-12"></div>
+        <div class="col-9 col-sm-12">
+          <p class="form-input-hint">No es obligatorio, pero es necesario para usar <a href="http://t.me/aetelbot">@aetelbot</a>.</p>
+        </div>
+      </div>
+      {{ render_field_label_with_errors_spectre(register_user_form.year, class_="form-select") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.school, class_="form-select") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.degree, class_="form-select") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.dni, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.email, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.password, class_="form-input") }}
+      {% if register_user_form.password_confirm %}
+        {{ render_field_label_with_errors_spectre(register_user_form.password_confirm, class_="form-input") }}
+      {% endif %}
+      {{ render_field(register_user_form.submit, class_="btn btn-large btn-block") }}
+    </form>
+  </div>
+</div>
+{% endblock %}

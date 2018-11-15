@@ -1,36 +1,173 @@
 {% extends "layout.html" %}
-{% include "header_no_login.html" %}
+{% include "header.html" %}
 {% block body %}
 
-    {% block content %}
-    {% if 'new_member' in request.url %}
-    <div style='margin-left: 100px; width: 45%;'>
-    <div class="alert alert-info" role="alert">
+{% block content %}
+{% if 'new_member' in request.url %}
+<div class="card">
+  <div class="card-header">
     <strong>¡Hazte miembro de AETEL!</strong> Rellena el formulario con tus datos...
-    </div>
-    
-    <form action = "registerdo?new_member" method = "POST">
-     <p>Nombre: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' /></p>
-     <p>Apellidos: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' /></p>
-     <p>DNI o NIE: <input class="form-control" type = "text" name = "dni" style='width: 100%;' /></p>
-     <p>Escuela: <input class="form-control" type = "text" name = "school" style='width: 100%;' /></p>
-     <p>Grado: <input class="form-control" type ="text" name = "degree" style='width: 100%;' /></p>
-     <p>Curso actual: <input class="form-control" type ="text" name = "year" style='width: 100%;' /></p>
-     <p>Email: <input class="form-control" type ="text" name = "email" style='width: 100%;' /></p>
-     <p>Nick de Telegram: <input class="form-control" type ="text" name = "telegram" style='width: 100%;' /></p>
-     <input type ="hidden" name = "password" value='' />
-     <br>
-
-     <p><input class="btn btn-primary btn-large btn-block" type = "submit" value = "Register" /></p>
+  </div>
+  <div class="card-body">
+    <form action="register?new_member" method="POST" class="form-horizontal">
+      <div class="form-group">
+        <div class="col-md-4 mb-3">
+          <label for="validationCustom01">Nombre</label>
+          <input type="text" class="form-control form-input" id="validationCustom01" placeholder="First name" name="first_name" value="{{p_first_name}}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationCustom02">Apellidos</label>
+          <input type="text" class="form-control form-input" id="validationCustom02" placeholder="Last name" name="last_name" value="{{p_last_name}}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationCustomUsername">Telegram</label>
+          <div class="input-group">
+            <div class="input-group-addon">
+              <span class="input-group-text" id="inputGroupAddon">@</span>
+            </div>
+            <input type="text" class="form-control form-input" id="validationCustomUsername" placeholder="Telegram" name="telegram" value="{{p_telegram}}" aria-describedby="inputGroupPrepend">
+            <small id="emailHelp" class="form-text text-muted">No es obligatorio, pero es necesario para poder usar <a href="http://t.me/aetelbot">@aetelbot</a>.</small>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-1 mb-3">
+          <label for="validationCustom07">Curso</label>
+          <select class="form-select" id="validationCustom07" placeholder="Year" name="year" value="{{p_year}}" required>
+            <option value="">Quinto</option>
+            <option value="1" {% if p_year=='1' %} selected {% endif %}>Primero</option>
+            <option value="2" {% if p_year=='2' %} selected {% endif %}>Segundo</option>
+            <option value="3" {% if p_year=='3' %} selected {% endif %}>Tercero</option>
+            <option value="4" {% if p_year=='4' %} selected {% endif %}>Cuarto</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom04">Escuela</label>
+          <select class="form-select" id="school-dropdown" name="school" onchange="planes()" required></select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom05">Grado</label>
+          <select class="form-select" id="degree-dropdown" name="degree" required></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom06">Email</label>
+          <input type="email" class="form-control form-input" id="validationCustom06" placeholder="Email" name="email" value="{{p_email}}" required>
+          <small id="emailHelp" class="form-text text-muted">Uno que uses, si puede ser. Nunca lo compartiremos con nadie.</small>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationCustom03">DNI o NIE</label>
+          <input type="text" class="form-control form-input" id="validationCustom03" placeholder="DNI o NIE" name="dni" value="{{p_dni}}" pattern="[0-9A-Z][0-9]{7}[A-Z]" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+          <label class="form-check-label" for="invalidCheck">
+            Agree to terms and conditions
+          </label>
+        </div>
+      </div>
+      <button class="btn btn-large btn-block" type="submit">Register</button>
     </form>
-    </div>
+  </div>
+</div>
 
-    {% else %}
-    <div class="alert alert-danger" role="alert">
-    <strong>¡Eh!</strong> ¿Estás seguro de que estás en el lugar adecuado?
-    </div>
-    {% endif %}
-    {% endblock content %}
+<script>
+  (function centros() {
+
+    let dropdown = document.getElementById('school-dropdown');
+    dropdown.length = 0;
+
+    let defaultOption = document.createElement('option');
+    defaultOption.text = '-- ESCUELA TECNICA SUPERIOR DE INGENIERIA Y SISTEMAS DE TELECOMUNICACION --';
+    defaultOption.value = '59';
+
+    dropdown.add(defaultOption);
+    dropdown.selectedIndex = 0;
+
+    const url = '/static/json/centros.json';
+
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    request.onload = function() {
+      if (request.status === 200) {
+        const data = JSON.parse(request.responseText).datos
+        let option;
+        for (let i = 0; i < data.length; i++) {
+          option = document.createElement('option');
+          option.text = data[i].nombre;
+          option.value = data[i].codigo;
+          dropdown.add(option);
+        }
+      } else {
+        // Reached the server, but it returned an error
+      }
+    }
+
+    request.onerror = function() {
+      console.error('An error occurred fetching the JSON from ' + url);
+    };
+
+    request.send();
+
+  })();
+
+  function planes() {
+
+    let dropdown = document.getElementById('degree-dropdown');
+    dropdown.length = 0;
+
+    //let defaultOption = document.createElement('option');
+    //defaultOption.text = '-- GRADO EN INGENIERIA ELECTRONICA DE COMUNICACIONES --';
+    //defaultOption.value = '59EC';
+
+    //dropdown.add(defaultOption);
+    dropdown.selectedIndex = 0;
+
+    const url = '/static/json/planes.json';
+
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    request.onload = function() {
+      if (request.status === 200) {
+        //var centro = "59"
+        var centro = document.getElementById("school-dropdown").value;
+        const data = JSON.parse(request.responseText).datos[centro]
+        let option;
+        for (let i = 0; i < data.length; i++) {
+          option = document.createElement('option');
+          //if (i = 0){
+          //  option.selected = "selected";
+          //}
+          option.text = data[i].nombre;
+          option.value = data[i].codigo;
+          dropdown.add(option);
+        }
+      } else {
+        // Reached the server, but it returned an error
+      }
+    }
+
+    request.onerror = function() {
+      console.error('An error occurred fetching the JSON from ' + url);
+    };
+
+    request.send();
+
+  }
+  planes();
+</script>
+
+{% else %}
+<div class="toast toast-warning">
+  <strong>¡Eh!</strong> ¿Estás seguro de que estás en el lugar adecuado?
+</div>
+{% endif %}
+{% endblock content %}
 
 {% include "footer.html" %}
 {% endblock %}

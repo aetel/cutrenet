@@ -57,9 +57,21 @@
   margin-bottom: 0px;
 }
 
+.login-btn {
+  float: right;
+  padding: 0px 32px;
+  color: #fff;
+  margin-bottom: 0px;
+}
+
 a:hover, a:visited, a:focus {
   text-decoration: none;
 }
+
+a:visited {
+  color: #00A79D;
+}
+
 .icon {
   color: #00A79D;
 }
@@ -74,20 +86,9 @@ body {
   max-width: 430px;
 }
 
-.login-page {
-  background-color: #00A79D;
-  width: 100%;
-  height: 100%;
-  margin-left: -50px;
-  margin-right: -50px;
-}
-
 .login {
   margin: 20px auto;
   width: 300px;
-}
-
-.login-screen {
   background-color: #FFF;
   padding: 20px;
   border-radius: 5px
@@ -110,7 +111,7 @@ body {
   box-shadow: none;
 }
 
-.app-title {
+.login-title {
   text-align: center;
   font-family: Montserrat;
   color: #777;
@@ -133,12 +134,11 @@ body {
   padding: 10px 0;
   width: 250px;
   transition: border .5s;
-}
-
-input:focus {
-  border: 2px solid #00A79D;
-  box-shadow: none;
 }*/
+
+.form-input:focus {
+  border-color: #00A79D;
+}
 
 .btn {
   font-family: Montserrat;
@@ -150,6 +150,10 @@ input:focus {
   background-color: #eee;
   border-color: #eee;
   color: #00A79D;
+}
+.btn:focus, .btn:hover {
+  background: #f1f1fc;
+  border-color: #00A79D;
 }
 .btn.btn-primary {
   background-color: #00A79D;
@@ -167,6 +171,11 @@ input:focus {
 .show>.btn.btn-primary.dropdown-toggle {
   background-color: #005c5f;
   border-color: #005c5f;
+}
+
+.form-checkbox input:checked+.form-icon, .form-radio input:checked+.form-icon, .form-switch input:checked+.form-icon {
+background: #00A79D;
+border-color: #00A79D;
 }
 
 .toast {
@@ -191,7 +200,10 @@ input:focus {
 }
 
 .table-scroll {
-  display: block;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.table.table-scroll {
+  display: table;
 }
