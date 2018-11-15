@@ -3,7 +3,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, Response
 from flask_security import Security, login_required, \
      SQLAlchemySessionUserDatastore
-from database import db_session
+from database import db_session, init_db
 from models import User, Role
 from forms import ExtendedRegisterForm
 import os
@@ -27,6 +27,14 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 @app.before_first_request
 def create_user():
     pass
+    # init_db()
+    # user_datastore.create_user(email='admin@example.com',
+    #                      password='admin', dni=00000001A,
+    #                      year=99, degree='AA', school='00',
+    #                      first_name='Michael Ignatius',
+    #                      last_name='Thomas Malloc',
+    #                      telegram="aetelbot")
+    # db_session.commit()
 
 # Views
 @app.route('/')

@@ -140,6 +140,10 @@ body {
   border-color: #00A79D;
 }
 
+.form-select:focus {
+  border-color: #00A79D;
+}
+
 .btn {
   font-family: Montserrat;
   text-align: center;
@@ -152,7 +156,7 @@ body {
   color: #00A79D;
 }
 .btn:focus, .btn:hover {
-  background: #f1f1fc;
+  background: #eee;
   border-color: #00A79D;
 }
 .btn.btn-primary {

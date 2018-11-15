@@ -22,7 +22,7 @@
         </div>
       </div>
       {{ render_field_label_with_errors_spectre(register_user_form.year, class_="form-select") }}
-      {{ render_field_label_with_errors_spectre(register_user_form.school, class_="form-select") }}
+      {{ render_field_label_with_errors_spectre(register_user_form.school, onchange="planes()", class_="form-select") }}
       {{ render_field_label_with_errors_spectre(register_user_form.degree, class_="form-select") }}
       {{ render_field_label_with_errors_spectre(register_user_form.dni, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(register_user_form.email, class_="form-input") }}
@@ -34,4 +34,34 @@
     </form>
   </div>
 </div>
+<script>
+  function planes() {
+    let dropdown = document.getElementById('select_degree');
+    dropdown.length = 0;
+    dropdown.selectedIndex = 0;
+    const url = '/static/json/planes.json';
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.onload = function() {
+      if (request.status === 200) {
+        var centro = document.getElementById("select_school").value;
+        const data = JSON.parse(request.responseText).datos[centro]
+        let option;
+        for (let i = 0; i < data.length; i++) {
+          option = document.createElement('option');
+          option.text = data[i].nombre;
+          option.value = data[i].codigo;
+          dropdown.add(option);
+        }
+      } else {
+        // Reached the server, but it returned an error
+      }
+    }
+    request.onerror = function() {
+      console.error('An error occurred fetching the JSON from ' + url);
+    };
+    request.send();
+  }
+  planes();
+</script>
 {% endblock %}
