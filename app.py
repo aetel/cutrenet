@@ -71,7 +71,7 @@ def sql_dataedit():
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return redirect('/members', code=302, title='cutrenet', subtitle='miembros')
+    return redirect('/members', code=302)
 
 # this is when Treasurer clicks activate link
 @app.route('/members/confirm', methods=['POST', 'GET'])

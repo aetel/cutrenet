@@ -1,15 +1,3 @@
-{%- with messages = get_flashed_messages(with_categories=true) -%}
-{% if messages %}
-<div class="container">
-  {% for category, message in messages %}
-  <div class="toast toast-error" role="alert">
-    {{ message }}
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
-{%- endwith %}
-
 {% with successes = get_flashed_messages(category_filter=["success"]) %}
 {% if successes %}
 <div class="container">
