@@ -2,8 +2,6 @@
 {% include "header.html" %}
 {% block body %}
 
-<div class='row'>
-
   {% block content %}
   {% if 'edit' in request.url %}
   <div style='margin-left: 50px; width: 45%;'>
@@ -31,12 +29,9 @@
     </div>
 
   </div>
+  <br><br>
   {% endif %}
   {% endblock content %}
-
-</div> <!-- ends row div -->
-
-<br><br>
 
 <div class="card">
   <h5 class="card-header">Miembros</h5>
@@ -68,11 +63,13 @@
         <td>{{result['year']}}</td>
         <td>{{result['email']}}</td>
         <td>{{result['telegram']}}</td>
-        {% if result['confirmed_at'] is not none %}
-        <td align="center"><a><i class="icon icon-check text-success"></i></a></td>
-        {% else %}
-        <td align="center"><a><i class="icon icon-cross text-error"></i></a></td>
-        {% endif %}
+        <td align="center"><a href="{{ url_for('confirm_member', dni=result['dni']) }}">
+          {% if result['active'] == 0 %}
+            <i class="icon icon-cross text-error"></i>
+          {% else %}
+            <i class="icon icon-check text-success"></i>
+          {% endif %}
+        </a></td>
         <td align="center"><a href="{{ url_for('edit_member', edni=result['dni']) }}"><i class="icon icon-edit"></a></td>
         <td align="center"><a href="{{ url_for('delete_member', dni=result['dni']) }}"><i class="icon icon-delete"></a></td>
       </tr>
