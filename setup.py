@@ -26,5 +26,9 @@ user_datastore = SQLAlchemySessionUserDatastore(db_session,
 init_db()
 user_datastore.create_role(name='admin')
 user_datastore.create_user(username='admin', email='admin@example.com',
-                         password='admin', roles=['admin'])
+                         password='admin', roles=['admin'],
+                         year=99, degree='AA', school='00',
+                         first_name='Michael Ignatius',
+                         last_name='Thomas Malloc',
+                         telegram="aetelbot")
 db_session.commit()
