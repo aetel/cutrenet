@@ -17,6 +17,7 @@ app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = False
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+#app.config['SECURITY_RECOVERABLE'] = True #makes password recoverable via /reset
 
 # Setup Flask-Security
 user_datastore = SQLAlchemySessionUserDatastore(db_session,
@@ -51,7 +52,7 @@ def member_database():
 # this is when user clicks edit link
 @app.route('/members/edit', methods=['GET'])
 @login_required
-def edit_member():
+def select_edit_member():
     eresult = None
     if request.method == 'GET':
         edni = request.args.get('edni')
@@ -62,7 +63,7 @@ def edit_member():
 
 @app.route('/members/edit', methods=['POST'], )
 @login_required
-def sql_dataedit():
+def edit_member():
     if request.method == 'POST':
         old_dni = request.form['old_dni']
 
@@ -75,7 +76,6 @@ def sql_dataedit():
         user.degree = request.form['degree']
         user.year = request.form['year']
         user.telegram = request.form['telegram']
-        user.password = request.form['password']
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
@@ -106,12 +106,16 @@ def delete_member():
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
-
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     logout_user()
     flash(u'Deslogueado satisfactoriamente', 'normal')
     return redirect('login', code=302, title='cutrenet')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html', title='cutrenet', subtitle='404'), 404
 
 if __name__ == '__main__':
     app.run()

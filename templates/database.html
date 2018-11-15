@@ -8,7 +8,7 @@
     <div class="card">
       <h5 class="card-header">Editando a {{eresult["first_name"]}} {{eresult["last_name"]}} </h5>
       <div class="card-body">
-        <form action="edit" method="POST">
+        <form action="{{ url_for('edit_member') }}" method="POST">
           <p>Nombre: <input class="form-control" type="text" name="first_name" style='width: 100%;' value='{{eresult["first_name"]}}' /></p>
           <p>Apellidos: <input class="form-control" type="text" name="last_name" style='width: 100%;' value='{{eresult["last_name"]}}' /></p>
           <p>DNI o NIE: <input class="form-control" type="text" name="dni" style='width: 100%;' value='{{eresult["dni"]}}' /></p>
@@ -16,10 +16,8 @@
           <p>Grado: <input class="form-control" type="text" name="degree" style='width: 100%;' value='{{eresult["degree"]}}' /></p>
           <p>Curso actual: <input class="form-control" type="text" name="year" style='width: 100%;' value='{{eresult["year"]}}' /></p>
           <p>Email: <input class="form-control" type="text" name="email" style='width: 100%;' value='{{eresult["email"]}}' /></p>
-          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{eresult["telegram"]}}' /></p>
-          <p>Contraseña: <input class="form-control" type="password" name="password" style='width: 100%;' value='' /></p>
+          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{eresult["telegram"]}}'/></p>
           <input type="hidden" name="old_dni" value='{{eresult["dni"]}}' />
-
 
           <br>
 
