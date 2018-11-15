@@ -199,6 +199,14 @@ border-color: #00A79D;
   margin: 1px;
 }
 
+.card {
+  border-radius: 5px;
+}
+.card-header {
+  background-color: #dadee4;
+  padding-bottom: .8rem !important;
+}
+
 .table-scroll {
   overflow-x: auto;
   white-space: nowrap;

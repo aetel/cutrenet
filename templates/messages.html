@@ -1,35 +1,31 @@
-{% with successes = get_flashed_messages(category_filter=["success"]) %}
-{% if successes %}
-<div class="container">
-  {%- for message in successes %}
-  <div class="toast toast-success" role="alert">
-    <strong>¡Éxito!</strong> {{ message }}
-  </div>
-  {% endfor -%}
-</div>
+{%- with messages = get_flashed_messages(with_categories=true) -%}
+{% if messages %}
+  {% for category, message in messages %}
+    {% if category == 'normal' %}
+    <div class="container">
+      <div class="toast toast-primary" role="alert">
+        <strong>¡Ey!</strong> {{ message }}
+      </div>
+    </div>
+    {% elif category == 'error' %}
+    <div class="container">
+      <div class="toast toast-error" role="alert">
+        <strong>¡Error!</strong> {{ message }}
+      </div>
+    </div>
+    {% elif category == 'success' %}
+    <div class="container">
+      <div class="toast toast-success" role="alert">
+        <strong>¡Éxito!</strong> {{ message }}
+      </div>
+    </div>
+    {% else %}
+    <div class="container">
+      <div class="toast toast-warning" role="alert">
+        <strong>¡Ey!</strong> {{ message }}
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
 {% endif %}
-{% endwith %}
-
-{% with errors = get_flashed_messages(category_filter=["error"]) %}
-{% if errors %}
-<div class="container">
-  {%- for message in errors %}
-  <div class="toast toast-error" role="alert">
-    <strong>¡Error!</strong> {{ message }}
-  </div>
-  {% endfor -%}
-</div>
-{% endif %}
-{% endwith %}
-
-{% with normals = get_flashed_messages(category_filter=["normal"]) %}
-{% if normals %}
-<div class="container">
-  {%- for message in normals %}
-  <div class="toast toast-primary" role="alert">
-    <strong>¡Ey!</strong> {{ message }}
-  </div>
-  {% endfor -%}
-</div>
-{% endif %}
-{% endwith %}
+{%- endwith %}

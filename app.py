@@ -92,7 +92,7 @@ def confirm_member():
 def delete_member():
     if request.method == 'GET':
         dni = request.args.get('dni')
-        db_session.query.filter(User.id == 123).delete()
+        db_session.query(User).filter_by(dni=dni).delete()
         flash(u'Borrado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
