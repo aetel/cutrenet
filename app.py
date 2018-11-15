@@ -28,14 +28,6 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 @app.before_first_request
 def create_user():
     pass
-    # init_db()
-    # user_datastore.create_user(email='admin@example.com',
-    #                      password='admin', dni=00000001A,
-    #                      year=99, degree='AA', school='00',
-    #                      first_name='Michael Ignatius',
-    #                      last_name='Thomas Malloc',
-    #                      telegram="aetelbot")
-    # db_session.commit()
 
 # Views
 @app.route('/')

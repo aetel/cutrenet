@@ -1,34 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from models import User, Role
+from database import db_session, init_db
 from flask_security import SQLAlchemySessionUserDatastore
+import os
 
-engine = create_engine('sqlite:///aetel.db', \
-                       convert_unicode=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-Base = declarative_base()
-Base.query = db_session.query_property()
+def setup_db():
+    if not os.path.exists('./aetel.db'):
+        print('Creating database...')
+        user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+        init_db()
 
-def init_db():
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
-    import models
-    Base.metadata.create_all(bind=engine)
+        print('Creating admin role...')
+        admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
+        db_session.commit()
 
-user_datastore = SQLAlchemySessionUserDatastore(db_session,
-                                                User, Role)
-init_db()
-user_datastore.create_role(name='admin')
-user_datastore.create_user(username='admin', email='admin@example.com',
-                         password='admin', roles=['admin'],
-                         year=99, degree='AA', school='00',
-                         first_name='Michael Ignatius',
-                         last_name='Thomas Malloc',
-                         telegram="aetelbot")
-db_session.commit()
+        print('Adding admin to database...')
+        user_datastore.create_user(email='admin@example.com',
+                             password='admin', dni='00000001A',
+                             year=99, degree='AA', school='00',
+                             first_name='Michael Ignatius',
+                             last_name='Thomas Malloc',
+                             telegram="aetelbot", roles=[admin_role])
+        db_session.commit()
+
+        print('Database created.')
+    else:
+        print('Database already exists.')
+
+
+setup_db()
