@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
-{% include "header.html" %}
-{% block body %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
 
-  {% block content %}
-  {% if 'edit' in request.url %}
+{% block content %}
+{% include "messages.html" %}
+{% if 'edit' in request.url %}
   <div style='margin-left: 50px; width: 45%;'>
     <div class="card">
       <h5 class="card-header">Editando a {{eresult["first_name"]}} {{eresult["last_name"]}} </h5>
@@ -30,8 +30,7 @@
 
   </div>
   <br><br>
-  {% endif %}
-  {% endblock content %}
+{% endif %}
 
 <div class="card">
   <h5 class="card-header">Miembros</h5>
@@ -77,6 +76,5 @@
     </table>
   </div>
 </div>
-
 {% include "footer.html" %}
 {% endblock %}

@@ -57,6 +57,13 @@
   margin-bottom: 0px;
 }
 
+.login-btn {
+  float: right;
+  padding: 0px 32px;
+  color: #fff;
+  margin-bottom: 0px;
+}
+
 a:hover, a:visited, a:focus {
   text-decoration: none;
 }
@@ -140,6 +147,10 @@ input:focus {
   border-color: #eee;
   color: #00A79D;
 }
+.btn:focus, .btn:hover {
+  background: #f1f1fc;
+  border-color: #00A79D;
+}
 .btn.btn-primary {
   background-color: #00A79D;
   border-color: #00A79D;
@@ -185,7 +196,10 @@ border-color: #00A79D;
 }
 
 .table-scroll {
-  display: block;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.table.table-scroll {
+  display: table;
 }

@@ -1,8 +1,8 @@
-{% extends "security/base.html" %}
+{% extends "layout.html" %}
 {% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
 
 {% block content %}
-{% include "security/_messages.html" %}
+{% include "messages.html" %}
 <title>cutrenet | login</title>
 <body style="background-color:#242424;">
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">

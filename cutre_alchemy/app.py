@@ -1,7 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from flask import Flask, flash, redirect, render_template, request, session, abort, Response
 from flask_security import Security, login_required, \
      SQLAlchemySessionUserDatastore
-from database import db_session, init_db
+from database import db_session
 from models import User, Role
 from forms import ExtendedRegisterForm
 import os
@@ -15,13 +17,6 @@ app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = False
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
-# Mail config. Place after 'Create app'
-# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-# app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USE_SSL'] = True
-# app.config['MAIL_USERNAME'] = 'shit.to.test@gmail.com'
-# app.config['MAIL_PASSWORD'] = ''
-# mail = Mail(app)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemySessionUserDatastore(db_session,
@@ -32,14 +27,11 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 @app.before_first_request
 def create_user():
     pass
-    # init_db()
-    # user_datastore.create_user(email='admin@example.com', password='admin')
-    # db_session.commit()
 
 # Views
 @app.route('/')
 def home():
-    return 'Hello'
+    return render_template('home.html')
 
 @app.route('/members')
 @login_required
@@ -63,21 +55,7 @@ def edit_member():
 @app.route('/members/edit', methods=['POST'])
 @login_required
 def sql_dataedit():
-    #eresult["first_name"] eresult["last_name"]
     if request.method == 'POST':
-        # old_dni = request.form['old_dni']
-        # last_name = request.form['last_name']
-        # first_name = request.form['first_name']
-        # email = request.form['email']
-        # dni = request.form['dni']
-        # school = request.form['school']
-        # degree = request.form['degree']
-        # year = request.form['year']
-        # telegram = request.form['telegram']
-        # password = request.form['password']
-        # user_datastore.create_user(email=email, password=password, dni=dni, first_name=first_name, last_name=last_name, school=school, degree=degree, year=year, telegram=telegram)
-        # values = email=email, password=password, dni=dni, first_name=first_name, last_name=last_name, school=school, degree=degree, year=year, telegram=telegram]
-        #db_session.user.update().where(users.c.id==5).values(email=email, password=password, dni=dni, first_name=first_name, last_name=last_name, school=school, degree=degree, year=year, telegram=telegram)
         old_dni = request.form['old_dni']
 
         user = db_session.query(User).filter_by(dni=old_dni).first()
@@ -90,7 +68,6 @@ def sql_dataedit():
         user.year = request.form['year']
         user.telegram = request.form['telegram']
         user.password = request.form['password']
-        #update_user(old_dni,email=email, password=password, dni=dni, first_name=first_name, last_name=last_name, school=school, degree=degree, year=year, telegram=telegram)
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
