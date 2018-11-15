@@ -3,29 +3,27 @@
 {% if session['logged_in'] %}
 <p>You're logged in already!</p>
 {% else %}
- 
+
 <body style="background-color:#242424;">
-<form action="/login" method="POST">
-	<div class="login">
-		<div class="login-screen">
-			<div class="app-title">
-				<h1>AETEL cutrenet 1.0</h1>
-			</div>
- 
-			<div class="login-form">
-				<div class="form-group"></div>
-				<input type="text" class="login-field" value="" placeholder="email" name="email">
-				<label class="login-field-icon fui-user" for="login-name"></label>
-
-				<input type="password" class="login-field text-left" value="" placeholder="contraseña" name="password">
-				<label class="login-field-icon fui-lock" for="login-pass"></label>
-
-                <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block" >
-			    <br>
-			</div>
-		</div>
-	</div>
-</form>
- 
-{% endif %}
-{% endblock %}
+  <form action="login" method="POST">
+    <div class="login">
+      <div class="login-screen">
+        <div class="app-title">
+          <h1>AETEL cutrenet 1.0</h1>
+        </div>
+        <div class="login-form">
+          <div class="form-group">
+            <input type="email" class="login-field form-control form-input" placeholder="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" class="login-field form-control form-input" placeholder="contraseña" name="password" required>
+          </div>
+          <button class="btn btn-primary btn-large btn-block" type="submit">Log in</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <script>
+  </script>
+  {% endif %}
+  {% endblock %}

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% include "header_no_login.html" %}
+{% block body %}
+
+    {% block content %}
+    {% if 'new_member' in request.url %}
+    <div style='margin-left: 100px; width: 45%;'>
+    <div class="alert alert-info" role="alert">
+    <strong>Your turn!</strong> Insert your new data line with this form ...
+    </div>
+    
+    <form action = "registerdo?new_member" method = "POST">
+     <p>First Name: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' /></p>
+     <p>Last Name: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' /></p>
+     <p>Address: <input class="form-control" type = "text" name = "address" style='width: 100%;' /></p>
+     <p>City: <input class="form-control" type = "text" name = "city" style='width: 100%;' /></p>
+     <p>State: <input class="form-control" type ="text" name = "state" style='width: 100%;' /></p>
+     <p>Zip: <input class="form-control" type ="text" name = "zip" style='width: 100%;' /></p>
+     <br>
+
+     <p><input class="btn-primary" type = "submit" value = "Register" /></p>
+    </form>
+    </div>
+
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+    <strong>Hey!</strong> Are you sure you are in the right page?
+    </div>
+    {% endif %}
+    {% endblock content %}
+
+{% include "footer.html" %}
+{% endblock %}

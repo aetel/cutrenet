@@ -1,13 +1,12 @@
 {% block header %}
-<div class="header">
-      <a href="/"><h1>AETEL | cutrenet 1.0</h1></a>
-
-      <div class="logout">
-        <form action="../logout">
-        	<input class="btn btn-large btn-block btn-danger logout" type = "submit" value = "Logout" />
-        </form>
-      </div>
-
-      <!--<b id="welcome">Logged as: <i><?php echo $login_session; ?></i></b>-->
-</div>
+<header class="navbar">
+  <section class="navbar-section">
+    <a href="/" class="navbar-brand">AETEL | cutrenet 1.0</a>
+  </section>
+  <section class="navbar-section">
+    <form class="logout" action="../logout">
+      <input class="btn btn-error logout" type="submit" value="Logout" />
+    </form>
+  </section>
+</header>
 {% endblock %}

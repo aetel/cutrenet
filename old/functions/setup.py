@@ -4,6 +4,7 @@ import os
 import sqlite3
 from passlib.hash import argon2
 
+
 def create_table(conn, create_table_sql):
     """ create a table from the create_table_sql statement
     :param conn: Connection object
@@ -16,16 +17,19 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+
 def create_admin():
     email = 'admin@example.com'
     dni = '00000001A'
     password = argon2.hash(str('admin'))
     cur = conn.cursor()
     try:
-        cur.execute("INSERT OR IGNORE INTO "+data_table+" (email,dni,password) VALUES (?,?,?) ", (email,dni,password) )
+        cur.execute("INSERT OR IGNORE INTO " + data_table +
+                    " (email,dni,password) VALUES (?,?,?) ", (email, dni, password))
     except sqlite3.IntegrityError:
         print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
     conn.commit()
+
 
 database = 'aetel_members.db'
 data_table = 'data_table'
