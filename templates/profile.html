@@ -94,10 +94,10 @@
             <strong>Miembro de AETEL:</strong>
           </div>
           <div class="col-9 col-sm-12">
-            {% if result['active'] == 0 %}
-              <i class="icon icon-cross text-error"></i>
-            {% else %}
+            {% if result.has_role('member') %}
               <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
             {% endif %}
           </div>
 

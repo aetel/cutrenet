@@ -15,7 +15,7 @@ Go to /register to register a new member.
 * ~~Design permission system (general admin, group admin, machine permissions)~~ Flask Security provides role management
 * Settings file
 * Logging
-* Single member edit page
+* ~~Single member edit page~~ Now members can edit their profiles and admin can edit everyone
 * Admin to give member's permissions and roles / admin can see which members are not yet confirmed, their inscription date and confirm or delete them
 * aetelbot integration
 

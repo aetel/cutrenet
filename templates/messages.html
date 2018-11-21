@@ -3,19 +3,19 @@
   {% for category, message in messages %}
     {% if category == 'normal' %}
       <div class="toast toast-primary" role="alert">
-        <strong>¡Ey!</strong> {{ message }}
+        <strong>{{ message }}</strong>
       </div>
     {% elif category == 'error' %}
       <div class="toast toast-error" role="alert">
-        <strong>¡Error!</strong> {{ message }}
+        <strong>{{ message }}</strong>
       </div>
     {% elif category == 'success' %}
       <div class="toast toast-success" role="alert">
-        <strong>¡Éxito!</strong> {{ message }}
+        <strong>{{ message }}</strong>
       </div>
     {% else %}
       <div class="toast toast-warning" role="alert">
-        <strong>¡Ey!</strong> {{ message }}
+        <strong>{{ message }}</strong>
       </div>
     {% endif %}
   {% endfor %}
