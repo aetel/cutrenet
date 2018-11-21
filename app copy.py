@@ -52,17 +52,10 @@ def select_edit_member_profile():
             eresult = db_session.query(User).filter_by(dni=edni).first()
         results = db_session.query(User).all()
         db_session.commit()
-        form = ExtendedRegisterForm()
-        del form.password                   # Quitamos el campo de la contraseña del formulario
-        del form.password_confirm
-        if current_user.has_role('admin'):
-            return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-        else:
-            return render_template('profile.html', form = form, result=eresult, results=results, title='cutrenet', subtitle='miembros')
+        return render_template('profile.html', result=eresult, results=results, title='cutrenet', subtitle='miembros')
     else:
         flash(u'No tienes permisos para editar ese miembro', 'error')
         return render_template('403.html', title='cutrenet', subtitle='403'), 403
-
 
 # this is when user sends edit form
 @app.route('/profile/edit', methods=['POST'])

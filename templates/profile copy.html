@@ -1,33 +1,32 @@
 {% extends "layout.html" %}
-{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
 
 {% block content %}
 {% include "messages.html" %}
 {% if 'edit' in request.url %}
-  <div class="card">
+  <div style='margin-left: 50px; width: 45%;'>
+    <div class="card">
       <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
-  <div class="card-body">
-    <form action="{{ url_for('edit_member') }}" method="POST" name="form" class="form-horizontal">
-      {{ form.hidden_tag() }}
-      <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
-      {{ render_field_label_with_errors_spectre(form.first_name, class_="form-input", value=result["first_name"]) }}
-      {{ render_field_label_with_errors_spectre(form.last_name, class_="form-input", value=result["last_name"]) }}
-      {{ render_field_label_social_with_errors_spectre(form.telegram, class_="form-input", value=result["telegram"]) }}
-      <div class="form-group">
-        <div class="col-3 col-sm-12"></div>
-        <div class="col-9 col-sm-12">
-          <p class="form-input-hint">No es obligatorio, pero es necesario para usar <a href="http://t.me/aetelbot">@aetelbot</a>.</p>
-        </div>
+      <div class="card-body">
+        <form action="{{ url_for('edit_member') }}" method="POST">
+          <p>Nombre: <input class="form-control" type="text" name="first_name" style='width: 100%;' value='{{result["first_name"]}}' /></p>
+          <p>Apellidos: <input class="form-control" type="text" name="last_name" style='width: 100%;' value='{{result["last_name"]}}' /></p>
+          <p>DNI o NIE: <input class="form-control" type="text" name="dni" style='width: 100%;' value='{{result["dni"]}}' /></p>
+          <p>Escuela: <input class="form-control" type="text" name="school" style='width: 100%;' value='{{result["school"]}}' /></p>
+          <p>Grado: <input class="form-control" type="text" name="degree" style='width: 100%;' value='{{result["degree"]}}' /></p>
+          <p>Curso actual: <input class="form-control" type="text" name="year" style='width: 100%;' value='{{result["year"]}}' /></p>
+          <p>Email: <input class="form-control" type="text" name="email" style='width: 100%;' value='{{result["email"]}}' /></p>
+          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{result["telegram"]}}'/></p>
+          <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
+
+          <br>
+
+          <p><input class="btn btn-primary btn-large btn-block" type="submit" value="Update Data" /></p>
+        </form>
       </div>
-      {{ render_field_label_with_errors_spectre(form.year, class_="form-select", value=result["year"]) }}
-      {{ render_field_label_with_errors_spectre(form.school, onchange="planes()", class_="form-select", value=result["school"]) }}
-      {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
-      {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
-      {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
-      {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block") }}
-    </form>
+    </div>
+
   </div>
-</div>
 {% else %}
   <div class="card">
     <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
