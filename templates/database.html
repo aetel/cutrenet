@@ -39,11 +39,26 @@
           {% endif %}
         </a></td>
         <td align="center"><a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
-        <td align="center"><a href="{{ url_for('delete_member', dni=result['dni']) }}"><i class="icon icon-delete"></i></a></td>
+        <td align="center"><a href="{{ url_for('delete_member', dni=result['dni']) }}" class="delete" data-confirm="¿Estás seguro de querer borrar este miembro?"><i class="icon icon-delete"></i></a></td>
       </tr>
       {% endfor %}
     </table>
   </div>
 </div>
+<script type="text/javascript">
+  var deleteLinks = document.querySelectorAll('.delete');
+
+  for (var i = 0; i < deleteLinks.length; i++) {
+    deleteLinks[i].addEventListener('click', function(event) {
+      event.preventDefault();
+
+      var choice = confirm(this.getAttribute('data-confirm'));
+
+      if (choice) {
+        window.location.href = this.getAttribute('href');
+      }
+    });
+  }
+</script>
 {% include "footer.html" %}
 {% endblock %}

@@ -46,9 +46,24 @@
             {% endif %}
           </p>
         No estás contento?
-        <a class="btn btn-error" href="{{ url_for('delete_profile', dni=result['dni']) }}">Borrar perfil</a>
+        <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a>
     </div>
   </div>
+  <script type="text/javascript">
+    var deleteLinks = document.querySelectorAll('.delete');
+
+    for (var i = 0; i < deleteLinks.length; i++) {
+      deleteLinks[i].addEventListener('click', function(event) {
+        event.preventDefault();
+
+        var choice = confirm(this.getAttribute('data-confirm'));
+
+        if (choice) {
+          window.location.href = this.getAttribute('href');
+        }
+      });
+    }
+  </script>
 {% endif %}
 {% include "footer.html" %}
 {% endblock %}
