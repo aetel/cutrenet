@@ -95,19 +95,10 @@ def delete_profile():
         flash(u'Borrado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return redirect('/', code=302)
-
-# this is when user clicks delete link
-@app.route('/members/delete', methods=['POST', 'GET'])
-@login_required
-def delete_member():
-    if request.method == 'GET':
-        dni = request.args.get('dni')
-        db_session.query(User).filter_by(dni=dni).delete()
-        flash(u'Borrado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+    if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no a su perfil
+        return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+    else:
+        return redirect('/', code=302)
 
 @app.route('/members')
 @login_required
