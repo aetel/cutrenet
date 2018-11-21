@@ -142,10 +142,10 @@ def give_admin():
         admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
         if user.has_role(admin_role):
             user_datastore.remove_role_from_user(user, admin_role)
-            flash(u'Desconfirmado satisfactoriamente', 'alert')
+            flash(u'Rol de ADMINISTRADOR retirado satisfactoriamente', 'alert')
         else:
             user_datastore.add_role_to_user(user, admin_role)
-            flash(u'Confirmado satisfactoriamente', 'success')
+            flash(u'Rol de ADMINISTRADOR asignado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
