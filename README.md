@@ -13,13 +13,11 @@ Go to /register to register a new member.
 * ~~Use actual passwords~~ Now it uses hashed passwords with bcrypt
 * ~~Validate form data~~ Now validates with WTForms
 * ~~Design permission system (general admin, group admin, machine permissions)~~ Flask Security provides role management
+* Settings file
+* Logging
 * Single member edit page
+* Admin to give member's permissions and roles
 * aetelbot integration
-* Groups for projects, training, current year members
-* List groups
-* Create new groups
-* Add people to groups
-
 
 ## Other To-Do's:
 * Email group function
@@ -29,6 +27,10 @@ Go to /register to register a new member.
 * aetelbot management page
 * MQTT command zapper
 
+* Groups for projects, training, current year members
+* List groups
+* Create new groups
+* Add people to groups
 
 ### Application Notes:
 Implemented with Python, Flask, SQLite and Spectre.
