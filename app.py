@@ -46,9 +46,9 @@ def member_profile():
 @login_required
 def select_edit_member_profile():
     eresult = None
+    edni = request.args.get('edni')
     if current_user.has_role('admin') or current_user.dni==edni:
         if request.method == 'GET':
-            edni = request.args.get('edni')
             eresult = db_session.query(User).filter_by(dni=edni).first()
         results = db_session.query(User).all()
         db_session.commit()
