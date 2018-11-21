@@ -55,10 +55,7 @@ def select_edit_member_profile():
         form = ExtendedRegisterForm()
         del form.password                   # Quitamos el campo de la contraseña del formulario
         del form.password_confirm
-        if current_user.has_role('admin'):
-            return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-        else:
-            return render_template('profile.html', form = form, result=eresult, results=results, title='cutrenet', subtitle='miembros')
+        return render_template('profile.html', form = form, result=eresult, results=results, title='cutrenet', subtitle='miembros')
     else:
         flash(u'No tienes permisos para editar ese miembro', 'error')
         return render_template('403.html', title='cutrenet', subtitle='403'), 403
@@ -83,7 +80,10 @@ def edit_member():
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return redirect('/profile', code=302)
+    if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no a su perfil
+        return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+    else:
+        return redirect('/profile', code=302)
 
 # this is when user clicks delete link
 @app.route('/profile/delete', methods=['POST', 'GET'])
