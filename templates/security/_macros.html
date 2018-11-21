@@ -37,7 +37,7 @@
     <div class="form-group">
   {% endif %}
     <div class="col-3 col-sm-12">
-      <label class="form-label">{{ field.label.text }}</label>
+      <strong><label class="form-label">{{ field.label.text }}</label></strong>
     </div>
     <div class="col-9 col-sm-12">
       {{ field(**kwargs)|safe }}
@@ -55,7 +55,7 @@
     <div class="form-group">
   {% endif %}
     <div class="col-3 col-sm-12">
-      <label class="form-label">{{ field.label.text }}</label>
+      <strong><label class="form-label">{{ field.label.text }}</label></strong>
     </div>
     <div class="col-9 col-sm-12">
       <div class="input-group">

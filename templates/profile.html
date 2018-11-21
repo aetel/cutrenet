@@ -32,22 +32,85 @@
   <div class="card">
     <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
     <div class="card-body">
-        <p>Nombre: {{result["first_name"]}}</p>
-        <p>Apellidos: {{result["last_name"]}}</p>
-        <p>DNI o NIE: {{result["dni"]}}</p>
-        <p>Escuela: {{result["school"]}}</p>
-        <p>Grado: {{result["degree"]}}</p>
-        <p>Curso actual: {{result["year"]}}</p>
-        <p>Email: {{result["email"]}}</p>
-        <p>Nick de Telegram: {{result["telegram"]}}</p>
-        <p>Miembro de AETEL: {% if result['active'] == 0 %}
+      <div class="container">
+        <div class="columns">
+          <div class="col-3 col-sm-12">
+            <strong>Nombre:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["first_name"]}}
+          </div>
+
+          <div class="col-3 col-sm-12">
+            <strong>Apellidos:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["last_name"]}}
+          </div>
+
+          <div class="col-3 col-sm-12">
+            <strong>DNI o NIE:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["dni"]}}
+          </div>
+          
+          <div class="col-3 col-sm-12">
+            <strong>Escuela:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["school"]}}
+          </div>
+          
+          <div class="col-3 col-sm-12">
+            <strong>Grado:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["degree"]}}
+          </div>
+          
+          <div class="col-3 col-sm-12">
+            <strong>Curso actual:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["year"]}}
+          </div>
+
+          <div class="col-3 col-sm-12">
+            <strong>Email:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["email"]}}
+          </div>
+          
+          <div class="col-3 col-sm-12">
+            <strong>Telegram:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+             {{result["telegram"]}}
+          </div>
+          
+          <div class="col-3 col-sm-12">
+            <strong>Miembro de AETEL:</strong>
+          </div>
+          <div class="col-9 col-sm-12">
+            {% if result['active'] == 0 %}
               <i class="icon icon-cross text-error"></i>
             {% else %}
               <i class="icon icon-check text-success"></i>
             {% endif %}
-          </p>
-        No estás contento?
-        <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a>
+          </div>
+
+          <div class="col-3 col-sm-12">
+            <br>
+            ¿No estás contento?
+          </div>
+          <div class="col-9 col-sm-12">
+            <br>
+            <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <script type="text/javascript">
