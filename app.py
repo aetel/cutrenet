@@ -110,7 +110,7 @@ def member_database():
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
-# this is when Treasurer clicks activate link
+# this is when Treasurer clicks confirm link
 @app.route('/members/confirm', methods=['POST', 'GET'])
 @login_required
 @roles_required('admin')
@@ -119,12 +119,32 @@ def confirm_member():
         dni = request.args.get('dni')
         user = db_session.query(User).filter_by(dni=dni).first()
         #user.active = not user.active
-        member_role = user_datastore.find_or_create_role(name='member', description='Administrator')
+        member_role = user_datastore.find_or_create_role(name='member', description='Miembro de AETEL')
         if user.has_role(member_role):
             user_datastore.remove_role_from_user(user, member_role)
             flash(u'Desconfirmado satisfactoriamente', 'alert')
         else:
             user_datastore.add_role_to_user(user, member_role)
+            flash(u'Confirmado satisfactoriamente', 'success')
+    results = db_session.query(User).all()
+    db_session.commit()
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+
+# this is when Treasurer clicks activate link
+@app.route('/members/admin', methods=['POST', 'GET'])
+@login_required
+@roles_required('admin')
+def give_admin():
+    if request.method == 'GET':
+        dni = request.args.get('dni')
+        user = db_session.query(User).filter_by(dni=dni).first()
+        #user.active = not user.active
+        admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
+        if user.has_role(admin_role):
+            user_datastore.remove_role_from_user(user, admin_role)
+            flash(u'Desconfirmado satisfactoriamente', 'alert')
+        else:
+            user_datastore.add_role_to_user(user, admin_role)
             flash(u'Confirmado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
