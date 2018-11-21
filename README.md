@@ -16,7 +16,7 @@ Go to /register to register a new member.
 * Settings file
 * Logging
 * Single member edit page
-* Admin to give member's permissions and roles
+* Admin to give member's permissions and roles / admin can see which members are not yet confirmed, their inscription date and confirm or delete them
 * aetelbot integration
 
 ## Other To-Do's:

@@ -23,7 +23,7 @@ class User(Base, UserMixin):
     email = Column(String(255), unique=True)
     first_name = Column(String(255))
     last_name = Column(String(255))
-    dni = Column(String(255))
+    dni = Column(String(255), unique=True)
     password = Column(String(255))
     school = Column(String(255))
     degree = Column(String(255))

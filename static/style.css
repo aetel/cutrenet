@@ -60,6 +60,11 @@
   color: #fff;
 }
 
+.navbar-profile:hover{
+  text-decoration: underline;
+  color: #fff;
+}
+
 .logout {
   float: right;
   padding: 0px 32px;
@@ -234,3 +239,8 @@ border-color: #00A79D;
 .profile-edit{
   float: right;
 }
+
+.profile-edit:hover{
+  text-decoration: underline;
+}
+
