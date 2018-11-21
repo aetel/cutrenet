@@ -34,7 +34,7 @@ def unique_user_dni(form, field):
 class ExtendedRegisterForm(RegisterForm):
     first_name = StringField('First Name', [Required()])
     last_name = StringField('Last Name', [Required()])
-    telegram = StringField('Telegram Nick', [validators.Regexp('^[^@]+$', message="Introduzca su usuario sin @")])
+    telegram = StringField('Telegram Nick', [validators.Regexp('[a-zA-Z0-9_-]{5,}', message="Introduzca un usuario valido de Telegram sin @")])
     year = SelectField('Curso', [Required()], choices=[('1', 'Primero'), ('2', 'Segundo'), ('3', 'Tercero'), ('4', 'Cuarto')])
     school = SelectField('Escuela', choices=json_choices_centros('./static/json/centros.json'), id='select_school', default=59)
     degree = SelectField('Plan de Estudios', choices=json_choices_planes('./static/json/planes.json'), id='select_degree', default='59EC')
