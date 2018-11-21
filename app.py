@@ -3,7 +3,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, Response
 from flask_security import Security, login_required, \
      SQLAlchemySessionUserDatastore, current_user, roles_required
-from database import db_session, init_db
+from database import db_session
 from models import User, Role
 from forms import ExtendedRegisterForm
 import os
@@ -57,27 +57,8 @@ def select_edit_member_profile():
         flash(u'No tienes permisos para editar ese miembro', 'error')
         return render_template('403.html', title='cutrenet', subtitle='403'), 403
 
-@app.route('/members')
-@login_required
-@roles_required('admin')
-def member_database():
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-
-# this is when user clicks edit link
-@app.route('/members/edit', methods=['GET'])
-@login_required
-def select_edit_member():
-    eresult = None
-    if request.method == 'GET':
-        edni = request.args.get('edni')
-        eresult = db_session.query(User).filter_by(dni=edni).first()
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', eresult=eresult, results=results, title='cutrenet', subtitle='miembros')
-
-@app.route('/members/edit', methods=['POST'])
+# this is when user sends edit form
+@app.route('/profile/edit', methods=['POST'])
 @login_required
 def edit_member():
     if request.method == 'POST':
@@ -95,7 +76,39 @@ def edit_member():
         flash(u'Editado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
-    return redirect('/members', code=302)
+    return redirect('/profile', code=302)
+
+# this is when user clicks delete link
+@app.route('/profile/delete', methods=['POST', 'GET'])
+@login_required
+def delete_profile():
+    if request.method == 'GET':
+        dni = request.args.get('dni')
+        db_session.query(User).filter_by(dni=dni).delete()
+        flash(u'Borrado satisfactoriamente', 'success')
+    results = db_session.query(User).all()
+    db_session.commit()
+    return redirect('/', code=302)
+
+# this is when user clicks delete link
+@app.route('/members/delete', methods=['POST', 'GET'])
+@login_required
+def delete_member():
+    if request.method == 'GET':
+        dni = request.args.get('dni')
+        db_session.query(User).filter_by(dni=dni).delete()
+        flash(u'Borrado satisfactoriamente', 'success')
+    results = db_session.query(User).all()
+    db_session.commit()
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+
+@app.route('/members')
+@login_required
+@roles_required('admin')
+def member_database():
+    results = db_session.query(User).all()
+    db_session.commit()
+    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
 # this is when Treasurer clicks activate link
 @app.route('/members/confirm', methods=['POST', 'GET'])
@@ -106,18 +119,6 @@ def confirm_member():
         user = db_session.query(User).filter_by(dni=dni).first()
         user.active = not user.active
         flash(u'Confirmado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-
-# this is when user clicks delete link
-@app.route('/members/delete', methods=['POST', 'GET'])
-@login_required
-def delete_member():
-    if request.method == 'GET':
-        dni = request.args.get('dni')
-        db_session.query(User).filter_by(dni=dni).delete()
-        flash(u'Borrado satisfactoriamente', 'success')
     results = db_session.query(User).all()
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')

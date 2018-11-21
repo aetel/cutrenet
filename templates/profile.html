@@ -45,6 +45,8 @@
               <i class="icon icon-check text-success"></i>
             {% endif %}
           </p>
+        No estás contento?
+        <a class="btn btn-error" href="{{ url_for('delete_profile', dni=result['dni']) }}">Borrar perfil</a>
     </div>
   </div>
 {% endif %}
