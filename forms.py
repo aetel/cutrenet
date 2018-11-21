@@ -26,13 +26,10 @@ def json_choices_planes(file):
         return choices
 
 def unique_user_dni(form, field):
-    print("This is the field: "+str(field))
     result = db_session.query(User).filter_by(dni=field.data).first()
-    print("This is the result: "+str(result))
     if result is not None:
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
-        print("We are fucked!")
 
 class ExtendedRegisterForm(RegisterForm):
     first_name = StringField('First Name', [Required()])
