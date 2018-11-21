@@ -32,6 +32,7 @@
           </section>
           {% if current_user.is_authenticated %}
             <section class="navbar-section">
+              <a href="/profile" class="navbar-profile">{{current_user.first_name}}</a>
               <form class="logout" action="{{ url_for('logout') }}">
                 <input class="btn btn-error logout" type="submit" value="Logout" />
               </form>

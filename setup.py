@@ -13,6 +13,7 @@ def setup_db():
 
         print('Creating admin role...')
         admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
+        user_datastore.find_or_create_role(name='member', description='Miembro Activo')
         db_session.commit()
 
         print('Adding admin to database...')

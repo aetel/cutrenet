@@ -50,6 +50,21 @@
   color: #fff;
 }
 
+.navbar-profile{
+  float: right;
+  color: #fff;
+}
+
+.navbar-profile:visited{
+  float: right;
+  color: #fff;
+}
+
+.navbar-profile:hover{
+  text-decoration: underline;
+  color: #fff;
+}
+
 .logout {
   float: right;
   padding: 0px 32px;
@@ -206,6 +221,7 @@ border-color: #00A79D;
 .card {
   border-radius: 5px;
 }
+
 .card-header {
   background-color: #dadee4;
   padding-bottom: .8rem !important;
@@ -219,3 +235,12 @@ border-color: #00A79D;
 .table.table-scroll {
   display: table;
 }
+
+.profile-edit{
+  float: right;
+}
+
+.profile-edit:hover{
+  text-decoration: underline;
+}
+

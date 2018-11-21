@@ -2,29 +2,21 @@
 {% if messages %}
   {% for category, message in messages %}
     {% if category == 'normal' %}
-    <div class="container">
       <div class="toast toast-primary" role="alert">
         <strong>¡Ey!</strong> {{ message }}
       </div>
-    </div>
     {% elif category == 'error' %}
-    <div class="container">
       <div class="toast toast-error" role="alert">
         <strong>¡Error!</strong> {{ message }}
       </div>
-    </div>
     {% elif category == 'success' %}
-    <div class="container">
       <div class="toast toast-success" role="alert">
         <strong>¡Éxito!</strong> {{ message }}
       </div>
-    </div>
     {% else %}
-    <div class="container">
       <div class="toast toast-warning" role="alert">
         <strong>¡Ey!</strong> {{ message }}
       </div>
-    </div>
     {% endif %}
   {% endfor %}
 {% endif %}
