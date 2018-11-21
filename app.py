@@ -34,6 +34,7 @@ def create_user():
 def home():
     return render_template('index.html', title='cutrenet')
 
+# user profile page
 @app.route('/profile')
 @login_required
 def member_profile():
@@ -99,7 +100,8 @@ def delete_profile():
         return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
     else:
         return redirect('/', code=302)
-
+        
+# members list
 @app.route('/members')
 @login_required
 @roles_required('admin')
