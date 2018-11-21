@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, flash, redirect, render_template, request, session, abort, Response
 from flask_security import Security, login_required, \
-     SQLAlchemySessionUserDatastore
+     SQLAlchemySessionUserDatastore, current_user, roles_required
 from database import db_session, init_db
 from models import User, Role
 from forms import ExtendedRegisterForm
@@ -37,14 +37,29 @@ def home():
 @app.route('/profile')
 @login_required
 def member_profile():
-    # edni = request.args.get('edni')
-    # result = db_session.query(User).filter_by(dni=edni).first()
     result = db_session.query(User).filter_by(id=session["user_id"]).first()
     db_session.commit()
-    return render_template('profile.html', result=result, title='cutrenet', subtitle='miembros')
+    return render_template('profile.html', result=result, title='cutrenet', subtitle=current_user.first_name+' '+current_user.last_name)
+
+# this is when user clicks edit link
+@app.route('/profile/edit', methods=['GET'])
+@login_required
+def select_edit_member_profile():
+    eresult = None
+    if current_user.has_role('admin') or current_user.dni==edni:
+        if request.method == 'GET':
+            edni = request.args.get('edni')
+            eresult = db_session.query(User).filter_by(dni=edni).first()
+        results = db_session.query(User).all()
+        db_session.commit()
+        return render_template('profile.html', result=eresult, results=results, title='cutrenet', subtitle='miembros')
+    else:
+        flash(u'No tienes permisos para editar ese miembro', 'error')
+        return render_template('403.html', title='cutrenet', subtitle='403'), 403
 
 @app.route('/members')
 @login_required
+@roles_required('admin')
 def member_database():
     results = db_session.query(User).all()
     db_session.commit()

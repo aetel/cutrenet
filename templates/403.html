@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
+
+{% block content %}
+{% include "messages.html" %}
+<h1>404</h1>
+<p>Parece que no hay nada aquí.<p>
+<a href="{{ url_for('home') }}">Volver al inicio.</a>
+{% include "footer.html" %}
+{% endblock %}

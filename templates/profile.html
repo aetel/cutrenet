@@ -6,18 +6,18 @@
 {% if 'edit' in request.url %}
   <div style='margin-left: 50px; width: 45%;'>
     <div class="card">
-      <h5 class="card-header">Editando a {{eresult["first_name"]}} {{eresult["last_name"]}} </h5>
+      <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
       <div class="card-body">
         <form action="{{ url_for('edit_member') }}" method="POST">
-          <p>Nombre: <input class="form-control" type="text" name="first_name" style='width: 100%;' value='{{eresult["first_name"]}}' /></p>
-          <p>Apellidos: <input class="form-control" type="text" name="last_name" style='width: 100%;' value='{{eresult["last_name"]}}' /></p>
-          <p>DNI o NIE: <input class="form-control" type="text" name="dni" style='width: 100%;' value='{{eresult["dni"]}}' /></p>
-          <p>Escuela: <input class="form-control" type="text" name="school" style='width: 100%;' value='{{eresult["school"]}}' /></p>
-          <p>Grado: <input class="form-control" type="text" name="degree" style='width: 100%;' value='{{eresult["degree"]}}' /></p>
-          <p>Curso actual: <input class="form-control" type="text" name="year" style='width: 100%;' value='{{eresult["year"]}}' /></p>
-          <p>Email: <input class="form-control" type="text" name="email" style='width: 100%;' value='{{eresult["email"]}}' /></p>
-          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{eresult["telegram"]}}'/></p>
-          <input type="hidden" name="old_dni" value='{{eresult["dni"]}}' />
+          <p>Nombre: <input class="form-control" type="text" name="first_name" style='width: 100%;' value='{{result["first_name"]}}' /></p>
+          <p>Apellidos: <input class="form-control" type="text" name="last_name" style='width: 100%;' value='{{result["last_name"]}}' /></p>
+          <p>DNI o NIE: <input class="form-control" type="text" name="dni" style='width: 100%;' value='{{result["dni"]}}' /></p>
+          <p>Escuela: <input class="form-control" type="text" name="school" style='width: 100%;' value='{{result["school"]}}' /></p>
+          <p>Grado: <input class="form-control" type="text" name="degree" style='width: 100%;' value='{{result["degree"]}}' /></p>
+          <p>Curso actual: <input class="form-control" type="text" name="year" style='width: 100%;' value='{{result["year"]}}' /></p>
+          <p>Email: <input class="form-control" type="text" name="email" style='width: 100%;' value='{{result["email"]}}' /></p>
+          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{result["telegram"]}}'/></p>
+          <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
 
           <br>
 
@@ -27,21 +27,26 @@
     </div>
 
   </div>
-  <br><br>
-{% endif %}
-
-<div class="card">
-  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} </h5>
-  <div class="card-body">
-      <p>Nombre: {{result["first_name"]}}</p>
-      <p>Apellidos: {{result["last_name"]}}</p>
-      <p>DNI o NIE: {{result["dni"]}}</p>
-      <p>Escuela: {{result["school"]}}</p>
-      <p>Grado: {{result["degree"]}}</p>
-      <p>Curso actual: {{result["year"]}}</p>
-      <p>Email: {{result["email"]}}</p>
-      <p>Nick de Telegram: {{result["telegram"]}}</p>
+{% else %}
+  <div class="card">
+    <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
+    <div class="card-body">
+        <p>Nombre: {{result["first_name"]}}</p>
+        <p>Apellidos: {{result["last_name"]}}</p>
+        <p>DNI o NIE: {{result["dni"]}}</p>
+        <p>Escuela: {{result["school"]}}</p>
+        <p>Grado: {{result["degree"]}}</p>
+        <p>Curso actual: {{result["year"]}}</p>
+        <p>Email: {{result["email"]}}</p>
+        <p>Nick de Telegram: {{result["telegram"]}}</p>
+        <p>Miembro de AETEL: {% if result['active'] == 0 %}
+              <i class="icon icon-cross text-error"></i>
+            {% else %}
+              <i class="icon icon-check text-success"></i>
+            {% endif %}
+          </p>
+    </div>
   </div>
-</div>
+{% endif %}
 {% include "footer.html" %}
 {% endblock %}
