@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
+
+{% block content %}
+{% include "messages.html" %}
+{% if 'edit' in request.url %}
+  <div style='margin-left: 50px; width: 45%;'>
+    <div class="card">
+      <h5 class="card-header">Editando a {{eresult["first_name"]}} {{eresult["last_name"]}} </h5>
+      <div class="card-body">
+        <form action="{{ url_for('edit_member') }}" method="POST">
+          <p>Nombre: <input class="form-control" type="text" name="first_name" style='width: 100%;' value='{{eresult["first_name"]}}' /></p>
+          <p>Apellidos: <input class="form-control" type="text" name="last_name" style='width: 100%;' value='{{eresult["last_name"]}}' /></p>
+          <p>DNI o NIE: <input class="form-control" type="text" name="dni" style='width: 100%;' value='{{eresult["dni"]}}' /></p>
+          <p>Escuela: <input class="form-control" type="text" name="school" style='width: 100%;' value='{{eresult["school"]}}' /></p>
+          <p>Grado: <input class="form-control" type="text" name="degree" style='width: 100%;' value='{{eresult["degree"]}}' /></p>
+          <p>Curso actual: <input class="form-control" type="text" name="year" style='width: 100%;' value='{{eresult["year"]}}' /></p>
+          <p>Email: <input class="form-control" type="text" name="email" style='width: 100%;' value='{{eresult["email"]}}' /></p>
+          <p>Nick de Telegram: <input class="form-control" type="text" name="telegram" style='width: 100%;' value='{{eresult["telegram"]}}'/></p>
+          <input type="hidden" name="old_dni" value='{{eresult["dni"]}}' />
+
+          <br>
+
+          <p><input class="btn btn-primary btn-large btn-block" type="submit" value="Update Data" /></p>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <br><br>
+{% endif %}
+
+<div class="card">
+  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} </h5>
+  <div class="card-body">
+      <p>Nombre: {{result["first_name"]}}</p>
+      <p>Apellidos: {{result["last_name"]}}</p>
+      <p>DNI o NIE: {{result["dni"]}}</p>
+      <p>Escuela: {{result["school"]}}</p>
+      <p>Grado: {{result["degree"]}}</p>
+      <p>Curso actual: {{result["year"]}}</p>
+      <p>Email: {{result["email"]}}</p>
+      <p>Nick de Telegram: {{result["telegram"]}}</p>
+  </div>
+</div>
+{% include "footer.html" %}
+{% endblock %}

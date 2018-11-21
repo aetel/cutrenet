@@ -34,6 +34,15 @@ def create_user():
 def home():
     return render_template('index.html', title='cutrenet')
 
+@app.route('/profile')
+@login_required
+def member_profile():
+    # edni = request.args.get('edni')
+    # result = db_session.query(User).filter_by(dni=edni).first()
+    result = db_session.query(User).filter_by(id=session["user_id"]).first()
+    db_session.commit()
+    return render_template('profile.html', result=result, title='cutrenet', subtitle='miembros')
+
 @app.route('/members')
 @login_required
 def member_database():
@@ -53,7 +62,7 @@ def select_edit_member():
     db_session.commit()
     return render_template('database.html', eresult=eresult, results=results, title='cutrenet', subtitle='miembros')
 
-@app.route('/members/edit', methods=['POST'], )
+@app.route('/members/edit', methods=['POST'])
 @login_required
 def edit_member():
     if request.method == 'POST':
