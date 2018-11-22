@@ -119,7 +119,7 @@ def confirm_member():
         dni = request.args.get('dni')
         user = db_session.query(User).filter_by(dni=dni).first()
         #user.active = not user.active
-        member_role = user_datastore.find_or_create_role(name='member', description='Miembro de AETEL')
+        member_role = user_datastore.find_or_create_role(name='member', description='Miembro Activo')
         if user.has_role(member_role):
             user_datastore.remove_role_from_user(user, member_role)
             flash(u'Desconfirmado satisfactoriamente', 'alert')

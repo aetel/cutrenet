@@ -41,7 +41,7 @@
             {% endif %}
         </a></td>
         <td align="center"><a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
-        <td align="center"><a href="{{ url_for('delete_profile', dni=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer borrar este miembro?"><i class="icon icon-delete"></i></a></td>
+        <td align="center"><a href="{{ url_for('delete_profile', dni=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer borrar a {{result['first_name']}} {{result['last_name']}}?"><i class="icon icon-delete"></i></a></td>
       </tr>
       {% endfor %}
     </table>

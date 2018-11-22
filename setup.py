@@ -13,7 +13,7 @@ def setup_db():
 
         print('Creating admin role...')
         admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
-        user_datastore.find_or_create_role(name='member', description='Miembro Activo')
+        member_role = user_datastore.find_or_create_role(name='member', description='Miembro Activo')
         db_session.commit()
 
         print('Adding admin to database...')
@@ -22,7 +22,7 @@ def setup_db():
                              year=99, degree='AA', school='00',
                              first_name='Michael Ignatius',
                              last_name='Thomas Malloc',
-                             telegram="aetelbot", roles=[admin_role])
+                             telegram="aetelbot", roles=[admin_role,member_role])
         db_session.commit()
 
         print('Database created.')

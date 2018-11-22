@@ -33,6 +33,6 @@ Go to /register to register a new member.
 * Add people to groups
 
 ### Application Notes:
-Implemented with Python, Flask, SQLite and Spectre.
+Implemented with Python, Flask, SQLite and spectre.css
 
 ¡cutrenet vive, la lucha sigue!
