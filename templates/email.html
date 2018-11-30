@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors_spectre, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+
+{% block content %}
+{% include "messages.html" %}
+  <div class="card">
+      <h5 class="card-header">Enviar mensaje a todos los miembros</h5>
+  <div class="card-body">
+    <form action="{{ url_for('mass_mail') }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
+      {{ form.hidden_tag() }}
+      {{ render_field_with_errors_spectre(form.subject, class_="form-input", placeholder="Asunto") }}
+      {{ render_field_with_errors_spectre(form.message,rows='15', class_="form-input", placeholder="Mensaje") }}
+      {{ render_field_with_errors_spectre(form.attachment, class_="form-input", placeholder="Adjunto") }}
+      <input type=submit class="btn btn-primary btn-large btn-block" value=Enviar>
+    </form>
+  </div>
+</div>
+{% include "footer.html" %}
+{% endblock %}

@@ -14,13 +14,14 @@
 	  	{{ login_user_form.hidden_tag() }}
 	  	{{ render_field_with_errors_spectre(login_user_form.email, placeholder="email", class_="login-field form-control form-input") }}
 		{{ render_field_with_errors_spectre(login_user_form.password, placeholder="contraseña", class_="login-field form-control form-input") }}
+		<a href="/reset">¿Has olvidado tu contraseña?</a>
 		<div class="form-group">
 		  <label class="form-switch">
 		  	{{ render_field_checkbox(login_user_form.remember) }}
-		     <i class="form-icon"></i> Remember me
+		     <i class="form-icon"></i> Recuerdame
 		  </label>
 		</div>
-		{{ render_field(login_user_form.submit, class_="btn btn-primary btn-large btn-block") }}
+		{{ render_field(login_user_form.submit, class_="btn btn-primary btn-large btn-block", value="Entrar") }}
 	  </div>
 	</div>
 </form>
