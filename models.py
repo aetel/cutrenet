@@ -2,7 +2,7 @@ from database import Base
 from flask_security import UserMixin, RoleMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy import Boolean, DateTime, Column, Integer, \
+from sqlalchemy import Boolean, DateTime, Date, Column, Integer, \
                        String, ForeignKey
 
 class RolesUsers(Base):
@@ -38,3 +38,55 @@ class User(Base, UserMixin):
     confirmed_at = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
+
+class VotesUsers(Base):
+    __tablename__ = 'votes_users'
+    id = Column(Integer(), primary_key=True)
+    user_id = Column('user_id', Integer(), ForeignKey('user.id'))
+    option_id = Column('option_id', Integer(), ForeignKey('option.id'))
+
+class option(Base):
+    __tablename__ = 'option'
+    id = Column(Integer(), primary_key=True)
+    vote_id = Column('vote_id', Integer(), ForeignKey('vote.id'))
+    name = Column(String(80), unique=True)
+
+class Vote(Base):
+    __tablename__ = 'vote'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    description = Column(String(255))
+    start_date = Column(Date())
+    end_date = Column(Date())
+
+class WorkshopsUsers(Base):
+    __tablename__ = 'workshops_users'
+    id = Column(Integer(), primary_key=True)
+    workshop_id = Column('workshop_id', Integer(), ForeignKey('workshop.id'))
+    user_id = Column('user_id', Integer(), ForeignKey('user.id'))
+    paid = Column(Boolean())
+    complete = Column(Boolean())
+
+class Workshop(Base):
+    __tablename__ = 'workshop'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80))
+    description = Column(String(255))
+    instructor = Column('instructor', Integer(), ForeignKey('user.id'))
+    members_only = Column(Boolean())
+    participants = Column(Integer)
+
+class ToolsWorkshops(Base):
+    __tablename__ = 'tools_workshops'
+    id = Column(Integer(), primary_key=True)
+    tool_id = Column('tool_id', Integer(), ForeignKey('tool.id'))
+    workshop_id = Column('workshop_id', Integer(), ForeignKey('workshop.id'))
+
+class Tool(Base):
+    __tablename__ = 'tool'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80))
+    description = Column(String(255))
+    location = Column(String(100))
+    manual = Column(String(100))
+    documentation = Column(String(100))
