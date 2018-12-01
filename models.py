@@ -45,12 +45,13 @@ class VotesUsers(Base):
     user_id = Column('user_id', Integer(), ForeignKey('user.id'))
     option_id = Column('option_id', Integer(), ForeignKey('option.id'))
 
-class option(Base):
+class Option(Base):
     __tablename__ = 'option'
     id = Column(Integer(), primary_key=True)
     vote_id = Column('vote_id', Integer(), ForeignKey('vote.id'))
     name = Column(String(80), unique=True)
-
+    votes = relationship('Vote', secondary='votes_users',
+                         backref=backref('users', lazy='dynamic'))
 class Vote(Base):
     __tablename__ = 'vote'
     id = Column(Integer(), primary_key=True)
@@ -58,6 +59,8 @@ class Vote(Base):
     description = Column(String(255))
     start_date = Column(Date())
     end_date = Column(Date())
+    options = relationship('Option', secondary='option',
+                     backref=backref('votes', lazy='dynamic'))
 
 class WorkshopsUsers(Base):
     __tablename__ = 'workshops_users'
@@ -75,6 +78,8 @@ class Workshop(Base):
     instructor = Column('instructor', Integer(), ForeignKey('user.id'))
     members_only = Column(Boolean())
     participants = Column(Integer)
+    tools = relationship('Tool', secondary='tools_workshops',
+                     backref=backref('workshops', lazy='dynamic'))
 
 class ToolsWorkshops(Base):
     __tablename__ = 'tools_workshops'
