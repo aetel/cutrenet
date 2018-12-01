@@ -15,10 +15,10 @@ Go to /register to register a new member.
 * ~~Design permission system (general admin, group admin, machine permissions)~~ Flask Security provides role management
 * Settings file
 * Logging
-* ~~Single member edit page~~ Now members can edit their profiles and admin can edit everyone – Need to add password update (leave as is if blank) and current password check in form
-* Admin to give member's permissions and roles / admin can see which members are not yet confirmed, their inscription date and confirm or delete them
+* ~~Single member edit page~~ Now members can edit their profiles and admin can edit everyone – ~~Need to add password update (leave as is if blank) and current password check in form~~ Password can only be changed via email reset
+* ~~Admin to give member's permissions and roles / admin can see which members are not yet confirmed, their inscription date and confirm or delete them~~ Admin can now mark users as members to give them said role
 * aetelbot integration
-* Add note about beta software and where to report bugs
+* ~~Add note about beta software and where to report bugs~~ Done at footer
 
 ## Other To-Do's:
 * **Add main page with relevant information:** If plain user show info about workshops and calendar; if member show workshops, meeting minutes, tools, votes; if admin show everything.

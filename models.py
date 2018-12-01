@@ -35,10 +35,12 @@ class User(Base, UserMixin):
     current_login_ip = Column(String(100))
     login_count = Column(Integer)
     active = Column(Boolean())
-    confirmed_at = Column(DateTime())
+    email_confirmed_at = Column(DateTime())
+    member_since = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
-
+    tools = relationship('Tool', secondary='workshops_users',
+                         backref=backref('users', lazy='dynamic'))
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
     id = Column(Integer(), primary_key=True)
