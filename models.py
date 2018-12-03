@@ -3,7 +3,7 @@ from flask_security import UserMixin, RoleMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, DateTime, Date, Column, Integer, \
-                       String, ForeignKey
+                       Float, String, ForeignKey
 
 class RolesUsers(Base):
     __tablename__ = 'roles_users'
@@ -29,6 +29,7 @@ class User(Base, UserMixin):
     degree = Column(String(255))
     year = Column(Integer)
     telegram = Column(String(255))
+    money = Column(Float)
     last_login_at = Column(DateTime())
     current_login_at = Column(DateTime())
     last_login_ip = Column(String(100))
