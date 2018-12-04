@@ -100,3 +100,4 @@ class Tool(Base):
     location = Column(String(100))
     manual = Column(String(100))
     documentation = Column(String(100))
+    image = Column(String(80))

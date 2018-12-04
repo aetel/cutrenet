@@ -79,8 +79,13 @@
   margin-bottom: 0px;
 }
 
+a {
+  color: #00A79D;
+}
+
 a:hover, a:visited, a:focus {
   text-decoration: none;
+  color: #00A79D;
 }
 
 a:visited {

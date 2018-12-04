@@ -195,7 +195,6 @@ def confirm_member():
     if request.method == 'GET':
         dni = request.args.get('dni')
         user = db_session.query(User).filter_by(dni=dni).first()
-        # user.active = not user.active
         member_role = user_datastore.find_or_create_role(name='member', description='Miembro Activo')
         if user.has_role(member_role):
             user_datastore.remove_role_from_user(user, member_role)
@@ -215,7 +214,6 @@ def give_admin():
     if request.method == 'GET':
         dni = request.args.get('dni')
         user = db_session.query(User).filter_by(dni=dni).first()
-        # user.active = not user.active
         admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
         if user.has_role(admin_role):
             user_datastore.remove_role_from_user(user, admin_role)
@@ -239,25 +237,56 @@ def list_tools():
     db_session.commit()
     return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
 
-@app.route('/tool', methods=['GET'])
+@app.route('/tool', methods=['POST', 'GET'])
 @login_required
 def select_edit_tool_profile():
-    eresult = None
-    name = request.args.get('name')
-    ename = request.args.get('edit')
-    result = db_session.query(Tool).filter_by(name=name).first()
+    if request.method == 'GET':
+        name = request.args.get('name')
+        ename = request.args.get('edit')
+        result = db_session.query(Tool).filter_by(name=name).first()
 
-    if ename is not None and current_user.has_role('admin'):
+        if ename is not None and current_user.has_role('admin'):
+            form = ToolForm()
+            result = db_session.query(Tool).filter_by(name=ename).first()
+            form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
+            return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
+        elif ename is not None:
+            flash(u'No tienes permisos para editar esta herramienta', 'error')
+            result = db_session.query(Tool).filter_by(name=ename).first()
+            return render_template('tool.html', result=result, title='cutrenet', subtitle=ename)
+        else:
+            return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+
+    if request.method == 'POST':
+        ename = request.args.get('edit')
+        tool = db_session.query(Tool).filter_by(name=ename).first()
         form = ToolForm()
-        result = db_session.query(Tool).filter_by(name=ename).first()
-        form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
-        return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
-    elif ename is not None:
-        flash(u'No tienes permisos para editar esta herramienta', 'error')
-        result = db_session.query(Tool).filter_by(name=ename).first()
-        return render_template('tool.html', result=result, title='cutrenet', subtitle=ename)
-    else:
-        return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+        if form.validate_on_submit():
+            tool.name = request.form['name']
+            tool.description = request.form['description']
+            tool.location = request.form['location']
+            tool.manual = request.form['manual']
+            tool.documentation = request.form['documentation']
+
+            if form.image.data:
+                f = form.image.data
+                filename = secure_filename(form.name.data)+'.jpg'
+                directory = app.config['UPLOAD_FOLDER']+'/tools'
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                file_path = os.path.join(directory, filename)
+                f.save(file_path)
+                tool.image = file_path # Save the file path of the Tool image in the database
+
+            db_session.commit()
+
+            if tool.name != ename: # If the tool name has changed we remove the old file name
+                filename = secure_filename(form.name.data)+'.jpg'
+                old_file_path = os.path.join(directory, filename)
+                os.remove(old_file_path)
+
+            flash(u'Herramienta editada', 'success')
+        return render_template('tool.html', form=form, result=tool, title='cutrenet')
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():

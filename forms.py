@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
-from wtforms import SelectField, TextField, TextAreaField, FileField, ValidationError
+from wtforms import SelectField, TextAreaField, FileField, ValidationError
 from database import db_session
 from models import User
 import json
@@ -31,6 +31,14 @@ def unique_user_dni(form, field):
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
 
+def is_image(message=u'Images only!', extensions=None):
+    if not extensions:
+        extensions = ('jpg', 'jpeg', 'png', 'gif')
+    def _is_image(form, field):
+        if not field.data or field.data.content_type.split('/')[0] != 'image':
+            raise ValidationError(message)
+    return _is_image
+
 class ExtendedRegisterForm(RegisterForm):
     first_name = StringField('First Name', [Required()])
     last_name = StringField('Last Name', [Required()])
@@ -41,14 +49,15 @@ class ExtendedRegisterForm(RegisterForm):
     dni = StringField('DNI o NIE', validators=[unique_user_dni,validators.Regexp('[0-9A-Z][0-9]{7}[A-Z]', message="Introduzca un DNI o NIE valido"), Required()])
 
 class EmailForm(Form):
-    subject = TextField('Asunto', [Required()])
+    subject = StringField('Asunto', [Required()])
     message = TextAreaField('Mensaje', [Required()])
     attachment = FileField('Adjunto')
 
 class ToolForm(Form):
-    name = TextField('Nombre', [Required()])
+    name = StringField('Nombre', [Required()])
     description = TextAreaField('Descripcion', [Required()])
-    location = TextField('Lugar', [Required()])
-    manual = TextField('Manual', [Required()])
-    documentation = TextField('Documentacion', [Required()])
+    location = StringField('Lugar', [Required()])
+    manual = StringField('Manual', [Required()])
+    documentation = StringField('Documentacion', [Required()])
+    image = FileField(u'Fotografía', [is_image(u'Only images are allowed.', extensions=['gif', 'png'])])
 

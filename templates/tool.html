@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+{% from "security/_macros.html" import render_field_with_errors_spectre, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
 
 {% block content %}
 {% include "messages.html" %}
@@ -7,14 +7,14 @@
 <div class="card">
   <h5 class="card-header">Editando {{result["name"]}}</h5>
   <div class="card-body">
-    <form action="{{ url_for('edit_member') }}" method="POST" name="form" class="form-horizontal">
+    <form action="{{ url_for('select_edit_tool_profile', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
       {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
-    
       {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
       {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
       {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
+      {{ render_field_with_errors_spectre(form.image, class_="form-input") }}
       <br>
       <div class="container">
       <div class="columns">
