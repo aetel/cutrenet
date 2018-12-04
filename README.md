@@ -21,6 +21,7 @@ Go to /register to register a new member.
 * ~~Add note about beta software and where to report bugs~~ Done at footer
 
 ## Other To-Do's:
+* **Add support for past members** Give them a specia role and stuff
 * **Add main page with relevant information:** If plain user show info about workshops and calendar; if member show workshops, meeting minutes, tools, votes; if admin show everything.
 * ~~**Email group function:** Admin can send an email to all the members.~~ Admin can send email with attachments to all members.
 * **AETEL meeting minutes generation & management:** Interface to input order of the day, date, hour, place of the meeting, presiding board and each of the points in markdown format; generates a JSON file with all data. View links to all generated minutes and links to a viewing page. Download in pdf.

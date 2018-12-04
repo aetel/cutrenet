@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "messages.html" %}
+<div class="card">
+  <h5 class="card-header">Herramientas</h5>
+  <div class="table-scroll">
+    <table class='table table-hover table-scroll'>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Lugar</th>
+          <th>Manual</th>
+          <th>Documentación</th>
+          <th>EDITAR</th>
+          <th>BORRAR</th>
+        </tr>
+      </thead>
+
+      {% for result in results %}
+      <tr>
+        <td>{{result["name"]}}</td>
+        <td>{{result["location"]}}</td>
+        <td>{{result["manual"]}}</td>
+        <td>{{result["documentation"]}}</td>
+        <td align="center"><a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
+        <td align="center"><a href="{{ url_for('delete_profile', dni=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer borrar a {{result['first_name']}} {{result['last_name']}}?"><i class="icon icon-delete"></i></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script type="text/javascript">
+  var confirmLinks = document.querySelectorAll('.confirm');
+
+  for (var i = 0; i < confirmLinks.length; i++) {
+    confirmLinks[i].addEventListener('click', function(event) {
+      event.preventDefault();
+
+      var choice = confirm(this.getAttribute('data-confirm'));
+
+      if (choice) {
+        window.location.href = this.getAttribute('href');
+      }
+    });
+  }
+</script>
+{% include "footer.html" %}
+{% endblock %}

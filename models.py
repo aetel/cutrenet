@@ -40,8 +40,9 @@ class User(Base, UserMixin):
     member_since = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
-    tools = relationship('Tool', secondary='workshops_users',
+    tools = relationship('Workshop', secondary='workshops_users',
                          backref=backref('users', lazy='dynamic'))
+
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
     id = Column(Integer(), primary_key=True)
@@ -50,20 +51,20 @@ class VotesUsers(Base):
 
 class Option(Base):
     __tablename__ = 'option'
-    id = Column(Integer(), primary_key=True)
-    vote_id = Column('vote_id', Integer(), ForeignKey('vote.id'))
+    id = Column(Integer, primary_key=True)
     name = Column(String(80), unique=True)
-    votes = relationship('Vote', secondary='votes_users',
-                         backref=backref('users', lazy='dynamic'))
-class Vote(Base):
-    __tablename__ = 'vote'
-    id = Column(Integer(), primary_key=True)
+    description = Column(String(255))
+    voting_id = Column(Integer, ForeignKey("voting.id"))
+    votings = relationship("Voting", back_populates="options")
+
+class Voting(Base):
+    __tablename__ = 'voting'
+    id = Column(Integer, primary_key=True)
     name = Column(String(80), unique=True)
     description = Column(String(255))
     start_date = Column(Date())
     end_date = Column(Date())
-    options = relationship('Option', secondary='option',
-                     backref=backref('votes', lazy='dynamic'))
+    options = relationship("Option", back_populates="votings")
 
 class WorkshopsUsers(Base):
     __tablename__ = 'workshops_users'
@@ -76,9 +77,10 @@ class WorkshopsUsers(Base):
 class Workshop(Base):
     __tablename__ = 'workshop'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(80))
+    name = Column(String(80), unique=True)
     description = Column(String(255))
     instructor = Column('instructor', Integer(), ForeignKey('user.id'))
+    date = Column(Date())
     members_only = Column(Boolean())
     participants = Column(Integer)
     tools = relationship('Tool', secondary='tools_workshops',
@@ -93,7 +95,7 @@ class ToolsWorkshops(Base):
 class Tool(Base):
     __tablename__ = 'tool'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(80))
+    name = Column(String(80), unique=True)
     description = Column(String(255))
     location = Column(String(100))
     manual = Column(String(100))

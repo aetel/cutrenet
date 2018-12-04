@@ -5,7 +5,7 @@ from flask_security import Security, login_required, \
      SQLAlchemySessionUserDatastore, current_user, roles_required
 from flask_mail import Mail, Message
 from database import db_session
-from models import User, Role
+from models import User, Role, Tool, Workshop
 from forms import ExtendedRegisterForm, EmailForm
 from functions.email import email_all
 from werkzeug.utils import secure_filename
@@ -226,6 +226,22 @@ def give_admin():
     results = db_session.query(User).all()
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+
+@app.route('/workshops')
+def list_workshops():
+    #results = select([workshops]).order_by(workshops.c.date.desc())
+    results = db_session.query(Workshop).order_by(Workshop.date.desc())
+    #workshops = db_session.query(Workshop)
+    #results = workshops.order_by(Workshop.date.desc())
+    #results = db_session.query(Workshop).order_by(db_session.date.desc()).limit(3).all()
+    return render_template('workshops.html', results=results, title='cutrenet', subtitle='talleres')
+
+@app.route('/tools')
+@login_required
+def list_tools():
+    results = db_session.query(Tool).all()
+    db_session.commit()
+    return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
