@@ -6,7 +6,7 @@ from flask_security import Security, login_required, \
 from flask_mail import Mail, Message
 from database import db_session
 from models import User, Role, Tool, Workshop
-from forms import ExtendedRegisterForm, EmailForm
+from forms import ExtendedRegisterForm, EmailForm, ToolForm
 from functions.email import email_all
 from werkzeug.utils import secure_filename
 import os
@@ -112,7 +112,7 @@ def select_edit_member_profile():
         flash(u'No tienes permisos para editar ese miembro', 'error')
         return render_template('403.html', title='cutrenet', subtitle='403'), 403
 
-# imitate this for edit profile page & email
+# imitate this ↓ for edit profile page & email
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -229,11 +229,7 @@ def give_admin():
 
 @app.route('/workshops')
 def list_workshops():
-    #results = select([workshops]).order_by(workshops.c.date.desc())
     results = db_session.query(Workshop).order_by(Workshop.date.desc())
-    #workshops = db_session.query(Workshop)
-    #results = workshops.order_by(Workshop.date.desc())
-    #results = db_session.query(Workshop).order_by(db_session.date.desc()).limit(3).all()
     return render_template('workshops.html', results=results, title='cutrenet', subtitle='talleres')
 
 @app.route('/tools')
@@ -242,6 +238,26 @@ def list_tools():
     results = db_session.query(Tool).all()
     db_session.commit()
     return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
+
+@app.route('/tool', methods=['GET'])
+@login_required
+def select_edit_tool_profile():
+    eresult = None
+    name = request.args.get('name')
+    ename = request.args.get('edit')
+    result = db_session.query(Tool).filter_by(name=name).first()
+
+    if ename is not None and current_user.has_role('admin'):
+        form = ToolForm()
+        result = db_session.query(Tool).filter_by(name=ename).first()
+        form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
+        return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
+    elif ename is not None:
+        flash(u'No tienes permisos para editar esta herramienta', 'error')
+        result = db_session.query(Tool).filter_by(name=ename).first()
+        return render_template('tool.html', result=result, title='cutrenet', subtitle=ename)
+    else:
+        return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():

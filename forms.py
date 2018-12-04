@@ -44,3 +44,11 @@ class EmailForm(Form):
     subject = TextField('Asunto', [Required()])
     message = TextAreaField('Mensaje', [Required()])
     attachment = FileField('Adjunto')
+
+class ToolForm(Form):
+    name = TextField('Nombre', [Required()])
+    description = TextAreaField('Descripcion', [Required()])
+    location = TextField('Lugar', [Required()])
+    manual = TextField('Manual', [Required()])
+    documentation = TextField('Documentacion', [Required()])
+

@@ -2,7 +2,11 @@
 {% block content %}
 {% include "messages.html" %}
 <div class="card">
-  <h5 class="card-header">Herramientas</h5>
+  <h5 class="card-header">Herramientas
+    {% if current_user.has_role('admin') %}
+    <a href="{{ url_for('select_edit_tool_profile') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
+    {% endif %}
+  </h5>
   <div class="table-scroll">
     <table class='table table-hover table-scroll'>
       <thead>
@@ -11,8 +15,7 @@
           <th>Lugar</th>
           <th>Manual</th>
           <th>Documentación</th>
-          <th>EDITAR</th>
-          <th>BORRAR</th>
+          <th align="center">Página</th>
         </tr>
       </thead>
 
@@ -22,8 +25,7 @@
         <td>{{result["location"]}}</td>
         <td>{{result["manual"]}}</td>
         <td>{{result["documentation"]}}</td>
-        <td align="center"><a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
-        <td align="center"><a href="{{ url_for('delete_profile', dni=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer borrar a {{result['first_name']}} {{result['last_name']}}?"><i class="icon icon-delete"></i></a></td>
+        <td align="center"><a href="{{ url_for('select_edit_tool_profile', name=result['name']) }}"><i class="icon icon-more-vert"></i></a></td>
       </tr>
       {% endfor %}
     </table>

@@ -3,34 +3,35 @@
 
 {% block content %}
 {% include "messages.html" %}
-{% if 'edit' in request.url %}
+{% if 'edit' in request.url and current_user.has_role('admin')%}
 <div class="card">
-  <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
+  <h5 class="card-header">Editando {{result["name"]}}</h5>
   <div class="card-body">
     <form action="{{ url_for('edit_member') }}" method="POST" name="form" class="form-horizontal">
       {{ form.hidden_tag() }}
-      <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
-      {{ render_field_label_with_errors_spectre(form.first_name, class_="form-input", value=result["first_name"]) }}
-      {{ render_field_label_with_errors_spectre(form.last_name, class_="form-input", value=result["last_name"]) }}
-      {{ render_field_label_social_with_errors_spectre(form.telegram, class_="form-input", value=result["telegram"]) }}
-      <div class="form-group">
-        <div class="col-3 col-sm-12"></div>
-        <div class="col-9 col-sm-12">
-          <p class="form-input-hint">No es obligatorio, pero es necesario para usar <a href="http://t.me/aetelbot">@aetelbot</a>.</p>
-        </div>
+      {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
+    
+      {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
+      {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
+      {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
+      <br>
+      <div class="container">
+      <div class="columns">
+        <input type=submit class="btn btn-primary btn-large col-6" value=Guardar>
+        <a class="btn btn-error confirm" style="width: 49.2%; margin-left: 10px;"href="{{ url_for('select_edit_tool_profile', delete=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la herramienta {{result['name']}}?">Borrar herramienta</a><br>
       </div>
-      {{ render_field_label_with_errors_spectre(form.year, class_="form-select", value=result["year"]) }}
-      {{ render_field_label_with_errors_spectre(form.school, onchange="planes()", class_="form-select", value=result["school"]) }}
-      {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
-      {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
-      {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
-      {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block", value="Guardar") }}
+    </div>
     </form>
   </div>
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
+  <h5 class="card-header">Ficha de {{result["name"]}}
+    {% if current_user.has_role('admin') %}
+    <a href="{{ url_for('select_edit_tool_profile', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
+    {% endif %}
+  </h5>
   <div class="card-body">
     <div class="container">
       <div class="columns">
@@ -38,86 +39,46 @@
           <strong>Nombre:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["first_name"]}}
+          {{result["name"]}}
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>Apellidos:</strong>
+          <strong>Descripción:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["last_name"]}}
+          {{result["description"]}}
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>DNI o NIE:</strong>
+          <strong>Lugar:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["dni"]}}
+          {{result["location"]}}
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>Escuela:</strong>
+          <strong>Manual:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["school"]}}
+          {{result["manual"]}}
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>Grado:</strong>
+          <strong>Documentación:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["degree"]}}
-        </div>
-
-        <div class="col-3 col-sm-12">
-          <strong>Curso actual:</strong>
-        </div>
-        <div class="col-9 col-sm-12">
-          {{result["year"]}}
-        </div>
-
-        <div class="col-3 col-sm-12">
-          <strong>Email:</strong>
-        </div>
-        <div class="col-9 col-sm-12">
-          {{result["email"]}}
-        </div>
-
-        <div class="col-3 col-sm-12">
-          <strong>Telegram:</strong>
-        </div>
-        <div class="col-9 col-sm-12">
-          {{result["telegram"]}}
-        </div>
-
-        <div class="col-3 col-sm-12">
-          <strong>Miembro de AETEL:</strong>
-        </div>
-        <div class="col-9 col-sm-12">
-          {% if result.has_role('member') %}
-          <i class="icon icon-check text-success"></i>
-          {% else %}
-          <i class="icon icon-cross text-error"></i>
-          {% endif %}
-        </div>
-
-        <div class="col-3 col-sm-12">
-          <br>
-          ¿No estás contento?
-        </div>
-        <div class="col-9 col-sm-12">
-          <br>
-          <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
+          {{result["documentation"]}}
         </div>
       </div>
     </div>
   </div>
 </div>
+{% endif %}
 <script type="text/javascript">
-  var deleteLinks = document.querySelectorAll('.delete');
+  var confirmLinks = document.querySelectorAll('.confirm');
 
-  for (var i = 0; i < deleteLinks.length; i++) {
-    deleteLinks[i].addEventListener('click', function(event) {
+  for (var i = 0; i < confirmLinks.length; i++) {
+    confirmLinks[i].addEventListener('click', function(event) {
       event.preventDefault();
 
       var choice = confirm(this.getAttribute('data-confirm'));
@@ -128,6 +89,5 @@
     });
   }
 </script>
-{% endif %}
 {% include "footer.html" %}
 {% endblock %}
