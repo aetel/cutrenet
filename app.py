@@ -285,7 +285,8 @@ def edit_tool():
             tool.documentation = request.form['documentation']
 
             if form.image.data:
-                os.remove(tool.image) # Delete old image
+                if tool.image is not None:
+                    os.remove(tool.image) # Delete old image
                 f = form.image.data
                 filename = secure_filename(f.filename)
                 directory = app.config['UPLOAD_FOLDER']+'/tools'
