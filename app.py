@@ -227,7 +227,7 @@ def give_admin():
 
 @app.route('/workshops')
 def list_workshops():
-    results = db_session.query(Workshop).order_by(Workshop.date.desc())
+    results = db_session.query(Workshop).order_by(Workshop.date.asc())
     instructors = db_session.query(User)
     return render_template('workshops.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
 

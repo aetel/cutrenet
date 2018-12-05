@@ -12,6 +12,7 @@
           <th>Instructor</th>
           <th>Fecha</th>
           <th>Nº participantes</th>
+          <th>¿Habilita?</th>
           <th>Solo miembros</th>
           <th>EDITAR</th>
         </tr>
@@ -24,6 +25,12 @@
         <td>{{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}</td>
         <td>{{ result['date'] }}</td>
         <td align="center">{{ result['participants'] }}</td>
+        <td>{% if result['tool'] is not none %}
+              <a href="{{ url_for('edit_tool', name=result['tool']['name']) }}">{{ result['tool']['name'] }}</a>
+            {% else %}
+              No
+            {% endif %}
+        </td>
         <td align="center">
             {% if result.members_only %}
               <i class="icon icon-check text-success"></i>

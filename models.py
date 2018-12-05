@@ -46,7 +46,9 @@ class User(Base, UserMixin):
                          backref=backref('users', lazy='dynamic'),
                          cascade="all, delete, delete-orphan",
                          single_parent=True)
-    workshops = relationship('Workshop', backref='instructor', lazy=True)
+    workshops = relationship('Workshop', backref='instructor', lazy=True,
+                            cascade="all, delete, delete-orphan",
+                            single_parent=True)
 
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
@@ -82,26 +84,6 @@ class WorkshopsUsers(Base):
     paid = Column(Boolean())
     complete = Column(Boolean())
 
-class Workshop(Base):
-    __tablename__ = 'workshop'
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
-    description = Column(String(255))
-    instructor_id = Column('instructor', Integer(), ForeignKey('user.id'))
-    date = Column(Date())
-    members_only = Column(Boolean())
-    participants = Column(Integer)
-    tools = relationship('Tool', secondary='tools_workshops',
-                     backref=backref('workshops', lazy='dynamic'),
-                     cascade="all, delete, delete-orphan",
-                     single_parent=True)
-
-class ToolsWorkshops(Base):
-    __tablename__ = 'tools_workshops'
-    id = Column(Integer(), primary_key=True)
-    tool_id = Column('tool_id', Integer(), ForeignKey('tool.id'))
-    workshop_id = Column('workshop_id', Integer(), ForeignKey('workshop.id'))
-
 class Tool(Base):
     __tablename__ = 'tool'
     id = Column(Integer(), primary_key=True)
@@ -111,3 +93,17 @@ class Tool(Base):
     manual = Column(String(100))
     documentation = Column(String(100))
     image = Column(String(80))
+    workshops = relationship('Workshop', backref='tool', lazy=True,
+                            cascade="all, delete, delete-orphan",
+                            single_parent=True)
+
+class Workshop(Base):
+    __tablename__ = 'workshop'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    description = Column(String(255))
+    instructor_id = Column('instructor', Integer(), ForeignKey('user.id'))
+    date = Column(Date())
+    members_only = Column(Boolean())
+    participants = Column(Integer)
+    tool_id = Column('tooling', Integer(), ForeignKey('tool.id'))

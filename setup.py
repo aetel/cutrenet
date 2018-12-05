@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from models import User, Role, Tool, Workshop, ToolsWorkshops, Voting, Option
+from models import User, Role, Tool, Workshop, Voting, Option
 from database import db_session, init_db
 from flask_security import SQLAlchemySessionUserDatastore
 import os
@@ -14,7 +14,7 @@ def setup_fake_data():
     db_session.add(tool)
 
     workshop1 = Workshop(name=u'Croquetas Caseras', description=u'¿Alguna vez has querido hacer tus propias croquetas caseras?', \
-                        members_only=True, participants=99, date=(datetime.now() + timedelta(days=1)))
+                        members_only=False, participants=99, date=(datetime.now() + timedelta(days=1)))
     db_session.add(workshop1)
 
     workshop2 = Workshop(name=u'Empanadillas Caseras', description=u'¿Alguna vez has querido hacer tus propias empanadillas caseras?', \
@@ -25,11 +25,10 @@ def setup_fake_data():
 
     instructor.workshops.append(workshop1)
     instructor.workshops.append(workshop2)
-    db_session.commit()
 
-    tools_ws = ToolsWorkshops(tool_id = db_session.query(Tool).filter_by(name=u'Martillo').first().id, \
-                            workshop_id = db_session.query(Workshop).filter_by(name=u'Croquetas Caseras').first().id )
-    db_session.add(tools_ws)
+    tool.workshops.append(workshop1)
+
+    db_session.commit()
 
     nombre = u'¡Elegimos fiesta nacional!'
     voting = Voting(name=nombre, description='Fiesta fiesta fiesta', \
