@@ -102,6 +102,17 @@
         </div>
 
         <div class="col-3 col-sm-12">
+          <strong>Administrador de cutrenet:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {% if result.has_role('admin') %}
+          <i class="icon icon-check text-success"></i>
+          {% else %}
+          <i class="icon icon-cross text-error"></i>
+          {% endif %}
+        </div>
+
+        <div class="col-3 col-sm-12">
           <br>
           ¿No estás contento?
         </div>
