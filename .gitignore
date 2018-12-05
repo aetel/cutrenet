@@ -105,3 +105,6 @@ venv.bak/
 
 # project database
 aetel.db
+
+# picture storage
+static/tools
