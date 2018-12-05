@@ -2,7 +2,7 @@
 {% block content %}
 {% include "messages.html" %}
 <div class="card">
-  <h5 class="card-header">Miembros</h5>
+  <h5 class="card-header">Talleres</h5>
   <div class="table-scroll">
     <table class='table table-hover table-scroll'>
       <thead>
@@ -19,11 +19,11 @@
 
       {% for result in results %}
       <tr>
-        <td>{{result["name"]}}</td>
-        <td>{{result["description"]}}</td>
-        <td>{{result["instructor"]}}</td>
-        <td>{{result['date']}}</td>
-        <td>{{result['participants']}}</td>
+        <td>{{ result["name"] }}</td>
+        <td>{{ result["description"] }}</td>
+        <td>{{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}</td>
+        <td>{{ result['date'] }}</td>
+        <td align="center">{{ result['participants'] }}</td>
         <td align="center">
             {% if result.members_only %}
               <i class="icon icon-check text-success"></i>

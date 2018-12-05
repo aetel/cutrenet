@@ -228,43 +228,44 @@ def give_admin():
 @app.route('/workshops')
 def list_workshops():
     results = db_session.query(Workshop).order_by(Workshop.date.desc())
-    return render_template('workshops.html', results=results, title='cutrenet', subtitle='talleres')
+    instructors = db_session.query(User)
+    return render_template('workshops.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
 
 @app.route('/tools')
-@login_required
 def list_tools():
     results = db_session.query(Tool).all()
     db_session.commit()
     return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
 
 @app.route('/tool', methods=['POST', 'GET'])
-@login_required
 def edit_tool():
     if request.method == 'GET':
-        name = request.args.get('name')
-        ename = request.args.get('edit')
-        del_img = request.args.get('delete_img')
-        delete = request.args.get('delete')
-
-        if name is not None:
+        if 'name' in request.args:
+            name = request.args.get('name')
             result = db_session.query(Tool).filter_by(name=name).first()
             return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
         elif not current_user.has_role('admin'):
             flash(u'No tienes permisos para editar esta herramienta', 'error')
             return redirect('/tools', code=302)
-        elif ename is not None:
+        elif 'add' in request.args:
+            form = ToolForm()
+            return render_template('tool.html', form=form, title='cutrenet', subtitle="new tool")
+        elif 'edit' in request.args:
+            ename = request.args.get('edit')
             form = ToolForm()
             result = db_session.query(Tool).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
-        elif del_img is not None:
+        elif 'delete_img' in request.args:
+            del_img = request.args.get('delete_img')
             tool = db_session.query(Tool).filter_by(name=del_img).first()
             print(tool.image)
             os.remove(tool.image) # Delete old image
             tool.image = None
             db_session.commit()
             return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
-        elif delete is not None:
+        elif 'delete' in request.args:
+            delete = request.args.get('delete')
             tool = db_session.query(Tool).filter_by(name=delete).first()
             db_session.delete(tool)
             db_session.commit()
@@ -274,31 +275,61 @@ def edit_tool():
             return redirect('/tools', code=302)
 
     if request.method == 'POST' and current_user.has_role('admin'):
-        ename = request.args.get('edit')
-        tool = db_session.query(Tool).filter_by(name=ename).first()
-        form = ToolForm()
-        if form.validate_on_submit():
-            tool.name = request.form['name']
-            tool.description = request.form['description']
-            tool.location = request.form['location']
-            tool.manual = request.form['manual']
-            tool.documentation = request.form['documentation']
+        if 'edit' in request.args:
+            ename = request.args.get('edit')
+            tool = db_session.query(Tool).filter_by(name=ename).first()
+            form = ToolForm()
+            if form.validate_on_submit():
+                tool.name = request.form['name']
+                tool.description = request.form['description']
+                tool.location = request.form['location']
+                tool.manual = request.form['manual']
+                tool.documentation = request.form['documentation']
 
-            if form.image.data:
-                if tool.image is not None:
-                    os.remove(tool.image) # Delete old image
-                f = form.image.data
-                filename = secure_filename(f.filename)
-                directory = app.config['UPLOAD_FOLDER']+'/tools'
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
-                file_path = os.path.join(directory, filename)
-                f.save(file_path)
-                tool.image = file_path # Save the file path of the Tool image in the database
+                if form.image.data:
+                    if tool.image is not None:
+                        os.remove(tool.image) # Delete old image
+                    f = form.image.data
+                    filename = secure_filename(f.filename)
+                    directory = app.config['UPLOAD_FOLDER']+'/tools'
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    file_path = os.path.join(directory, filename)
+                    f.save(file_path)
+                    tool.image = file_path # Save the file path of the Tool image in the database
 
-            db_session.commit()
-            flash(u'Herramienta editada', 'success')
-        return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+                db_session.commit()
+                flash(u'Herramienta editada', 'success')
+            return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+        elif 'add' in request.args:
+            name = request.args.get('add')
+            tool = Tool()
+            form = ToolForm()
+            if form.validate_on_submit():
+                tool.name = request.form['name']
+                tool.description = request.form['description']
+                tool.location = request.form['location']
+                tool.manual = request.form['manual']
+                tool.documentation = request.form['documentation']
+
+                if form.image.data:
+                    if tool.image is not None:
+                        os.remove(tool.image) # Delete old image
+                    f = form.image.data
+                    filename = secure_filename(f.filename)
+                    directory = app.config['UPLOAD_FOLDER']+'/tools'
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    file_path = os.path.join(directory, filename)
+                    f.save(file_path)
+                    tool.image = file_path # Save the file path of the Tool image in the database
+
+                db_session.add(tool)
+                db_session.commit()
+                flash(u'Herramienta añadida', 'success')
+                return redirect('tools', code=302)
+            return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():

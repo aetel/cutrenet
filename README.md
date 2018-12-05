@@ -36,9 +36,16 @@ Go to /register to register a new member.
 * Create new groups
 * Add people to groups
 
+## Timeline:
+* Finish implementing feature set
+* Run over code and clean up and rewrite necessary parts
+* Check variable names and change them where necessary to keep consistency
+* Localise the whole app user side stuff in Spanish
+
+
 ### Application Notes:
 Implemented with Python, Flask, SQLite and spectre.css
 
-Install Flask-Security with pip install git+https://github.com/mattupstate/flask-security
+It's mandatory to nstall Flask-Security with _pip install git+https://github.com/mattupstate/flask-security_ or else it won't work!
 
 ¡cutrenet vive, la lucha sigue!

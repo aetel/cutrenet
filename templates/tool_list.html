@@ -4,7 +4,7 @@
 <div class="card">
   <h5 class="card-header">Herramientas
     {% if current_user.has_role('admin') %}
-    <a href="{{ url_for('edit_tool') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
+    <a href="{{ url_for('edit_tool', add='') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
     {% endif %}
   </h5>
   <div class="table-scroll">

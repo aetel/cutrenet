@@ -13,14 +13,18 @@ def setup_fake_data():
     tool = Tool(name=u'Martillo', description=u'Pa martillar', location=u'AETEL', manual=u'here', documentation=u'there')
     db_session.add(tool)
 
-    workshop = Workshop(name=u'Croquetas Caseras', description=u'¿Alguna vez has querido hacer tus propias croquetas caseras?', \
-                        instructor='1', members_only=True, participants=99, date=(datetime.now() + timedelta(days=1)))
-    db_session.add(workshop)
+    workshop1 = Workshop(name=u'Croquetas Caseras', description=u'¿Alguna vez has querido hacer tus propias croquetas caseras?', \
+                        members_only=True, participants=99, date=(datetime.now() + timedelta(days=1)))
+    db_session.add(workshop1)
 
-    workshop = Workshop(name=u'Empanadillas Caseras', description=u'¿Alguna vez has querido hacer tus propias empanadillas caseras?', \
-                        instructor='1', members_only=True, participants=99, date=datetime.now())
-    db_session.add(workshop)
+    workshop2 = Workshop(name=u'Empanadillas Caseras', description=u'¿Alguna vez has querido hacer tus propias empanadillas caseras?', \
+                        members_only=True, participants=99, date=datetime.now())
+    db_session.add(workshop2)
 
+    instructor = db_session.query(User).filter_by(dni='00000001A').first()
+
+    instructor.workshops.append(workshop1)
+    instructor.workshops.append(workshop2)
     db_session.commit()
 
     tools_ws = ToolsWorkshops(tool_id = db_session.query(Tool).filter_by(name=u'Martillo').first().id, \

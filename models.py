@@ -46,6 +46,7 @@ class User(Base, UserMixin):
                          backref=backref('users', lazy='dynamic'),
                          cascade="all, delete, delete-orphan",
                          single_parent=True)
+    workshops = relationship('Workshop', backref='instructor', lazy=True)
 
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
@@ -86,7 +87,7 @@ class Workshop(Base):
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), unique=True)
     description = Column(String(255))
-    instructor = Column('instructor', Integer(), ForeignKey('user.id'))
+    instructor_id = Column('instructor', Integer(), ForeignKey('user.id'))
     date = Column(Date())
     members_only = Column(Boolean())
     participants = Column(Integer)

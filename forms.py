@@ -3,7 +3,7 @@
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
 from wtforms import SelectField, TextAreaField, FileField, ValidationError
 from database import db_session
-from models import User
+from models import User, Tool
 import json
 
 from flask_security.utils import get_message
@@ -31,6 +31,12 @@ def unique_user_dni(form, field):
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
 
+def unique_tool_name(form, field):
+    result = db_session.query(Tool).filter_by(name=field.data).first()
+    if result is not None:
+        msg = field.data+' ya existe.'
+        raise ValidationError(msg)
+
 def is_image(message=u'¡Solo imágenes!'):
     extensions = ('jpg', 'jpeg', 'png', 'gif')
     def _is_image(form, field):
@@ -55,10 +61,10 @@ class EmailForm(Form):
     attachment = FileField('Adjunto')
 
 class ToolForm(Form):
-    name = StringField('Nombre', [Required()])
-    description = TextAreaField('Descripcion', [Required()])
+    name = StringField('Nombre',  validators=[unique_tool_name,Required()])
+    description = TextAreaField('Descripcion')
     location = StringField('Lugar', [Required()])
-    manual = StringField('Manual', [Required()])
-    documentation = StringField('Documentacion', [Required()])
+    manual = StringField('Manual')
+    documentation = StringField('Documentacion')
     image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
 
