@@ -11,7 +11,7 @@ from functions.email import email_all
 from werkzeug.utils import secure_filename
 import os
 
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 # Create app
@@ -239,25 +239,41 @@ def list_tools():
 
 @app.route('/tool', methods=['POST', 'GET'])
 @login_required
-def select_edit_tool_profile():
+def edit_tool():
     if request.method == 'GET':
         name = request.args.get('name')
         ename = request.args.get('edit')
-        result = db_session.query(Tool).filter_by(name=name).first()
+        del_img = request.args.get('delete_img')
+        delete = request.args.get('delete')
 
-        if ename is not None and current_user.has_role('admin'):
+        if name is not None:
+            result = db_session.query(Tool).filter_by(name=name).first()
+            return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+        elif not current_user.has_role('admin'):
+            flash(u'No tienes permisos para editar esta herramienta', 'error')
+            return redirect('/tools', code=302)
+        elif ename is not None:
             form = ToolForm()
             result = db_session.query(Tool).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
-        elif ename is not None:
-            flash(u'No tienes permisos para editar esta herramienta', 'error')
-            result = db_session.query(Tool).filter_by(name=ename).first()
-            return render_template('tool.html', result=result, title='cutrenet', subtitle=ename)
+        elif del_img is not None:
+            tool = db_session.query(Tool).filter_by(name=del_img).first()
+            print(tool.image)
+            os.remove(tool.image) # Delete old image
+            tool.image = None
+            db_session.commit()
+            return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
+        elif delete is not None:
+            tool = db_session.query(Tool).filter_by(name=delete).first()
+            db_session.delete(tool)
+            db_session.commit()
+            return redirect('/tools', code=302)
         else:
-            return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+            flash(u'Tienes que seleccionar una herramienta', 'error')
+            return redirect('/tools', code=302)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and current_user.has_role('admin'):
         ename = request.args.get('edit')
         tool = db_session.query(Tool).filter_by(name=ename).first()
         form = ToolForm()
@@ -269,8 +285,9 @@ def select_edit_tool_profile():
             tool.documentation = request.form['documentation']
 
             if form.image.data:
+                os.remove(tool.image) # Delete old image
                 f = form.image.data
-                filename = secure_filename(form.name.data)+'.jpg'
+                filename = secure_filename(f.filename)
                 directory = app.config['UPLOAD_FOLDER']+'/tools'
                 if not os.path.exists(directory):
                     os.makedirs(directory)
@@ -279,14 +296,8 @@ def select_edit_tool_profile():
                 tool.image = file_path # Save the file path of the Tool image in the database
 
             db_session.commit()
-
-            if tool.name != ename: # If the tool name has changed we remove the old file name
-                filename = secure_filename(form.name.data)+'.jpg'
-                old_file_path = os.path.join(directory, filename)
-                os.remove(old_file_path)
-
             flash(u'Herramienta editada', 'success')
-        return render_template('tool.html', form=form, result=tool, title='cutrenet')
+        return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():

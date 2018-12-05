@@ -31,11 +31,12 @@ def unique_user_dni(form, field):
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
 
-def is_image(message=u'Images only!', extensions=None):
-    if not extensions:
-        extensions = ('jpg', 'jpeg', 'png', 'gif')
+def is_image(message=u'¡Solo imágenes!'):
+    extensions = ('jpg', 'jpeg', 'png', 'gif')
     def _is_image(form, field):
-        if not field.data or field.data.content_type.split('/')[0] != 'image':
+        if not field.data:
+            return _is_image
+        if field.data.content_type.split('/')[0] != 'image':
             raise ValidationError(message)
     return _is_image
 
@@ -59,5 +60,5 @@ class ToolForm(Form):
     location = StringField('Lugar', [Required()])
     manual = StringField('Manual', [Required()])
     documentation = StringField('Documentacion', [Required()])
-    image = FileField(u'Fotografía', [is_image(u'Only images are allowed.', extensions=['gif', 'png'])])
+    image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
 

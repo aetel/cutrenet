@@ -7,21 +7,17 @@
 <div class="card">
   <h5 class="card-header">Editando {{result["name"]}}</h5>
   <div class="card-body">
-    <form action="{{ url_for('select_edit_tool_profile', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
+    <form action="{{ url_for('edit_tool', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
       {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
       {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
       {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
       {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
-      {{ render_field_with_errors_spectre(form.image, class_="form-input") }}
-      <br>
-      <div class="container">
-      <div class="columns">
-        <input type=submit class="btn btn-primary btn-large col-6" value=Guardar>
-        <a class="btn btn-error confirm" style="width: 49.2%; margin-left: 10px;"href="{{ url_for('select_edit_tool_profile', delete=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la herramienta {{result['name']}}?">Borrar herramienta</a><br>
-      </div>
-    </div>
+      {{ render_field_label_with_errors_spectre(form.image, class_="form-input") }}
+        <input type=submit class="btn btn-primary btn-large" value=Guardar>
+        <a class="btn btn-secondary confirm" href="{{ url_for('edit_tool', delete_img=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la imagen de {{result['name']}}?">Borrar imagen</a>
+        <a class="btn btn-error confirm" href="{{ url_for('edit_tool', delete=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la herramienta {{result['name']}}?">Borrar herramienta</a>
     </form>
   </div>
 </div>
@@ -29,10 +25,15 @@
 <div class="card">
   <h5 class="card-header">Ficha de {{result["name"]}}
     {% if current_user.has_role('admin') %}
-    <a href="{{ url_for('select_edit_tool_profile', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
+    <a href="{{ url_for('edit_tool', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
     {% endif %}
   </h5>
   <div class="card-body">
+    {% if result['image'] is not none %}
+    <img src="{{ result['image'] }}" class="img-responsive tool-img">
+    {% else %}
+    <img src="static/images/no-image.svg" class="img-responsive tool-img">
+    {% endif %}
     <div class="container">
       <div class="columns">
         <div class="col-3 col-sm-12">

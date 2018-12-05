@@ -39,9 +39,13 @@ class User(Base, UserMixin):
     email_confirmed_at = Column(DateTime())
     member_since = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
-                         backref=backref('users', lazy='dynamic'))
+                         backref=backref('users', lazy='dynamic'),
+                         cascade="all, delete, delete-orphan",
+                         single_parent=True)
     tools = relationship('Workshop', secondary='workshops_users',
-                         backref=backref('users', lazy='dynamic'))
+                         backref=backref('users', lazy='dynamic'),
+                         cascade="all, delete, delete-orphan",
+                         single_parent=True)
 
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
@@ -55,7 +59,9 @@ class Option(Base):
     name = Column(String(80), unique=True)
     description = Column(String(255))
     voting_id = Column(Integer, ForeignKey("voting.id"))
-    votings = relationship("Voting", back_populates="options")
+    votings = relationship("Voting", back_populates="options",
+                            cascade="all, delete, delete-orphan",
+                            single_parent=True)
 
 class Voting(Base):
     __tablename__ = 'voting'
@@ -64,7 +70,8 @@ class Voting(Base):
     description = Column(String(255))
     start_date = Column(Date())
     end_date = Column(Date())
-    options = relationship("Option", back_populates="votings")
+    options = relationship("Option", back_populates="votings",
+                            cascade="all, delete, delete-orphan")
 
 class WorkshopsUsers(Base):
     __tablename__ = 'workshops_users'
@@ -84,7 +91,9 @@ class Workshop(Base):
     members_only = Column(Boolean())
     participants = Column(Integer)
     tools = relationship('Tool', secondary='tools_workshops',
-                     backref=backref('workshops', lazy='dynamic'))
+                     backref=backref('workshops', lazy='dynamic'),
+                     cascade="all, delete, delete-orphan",
+                     single_parent=True)
 
 class ToolsWorkshops(Base):
     __tablename__ = 'tools_workshops'
