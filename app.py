@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, flash, redirect, render_template, request, session, abort, Response, send_from_directory, url_for
 from flask_security import Security, login_required, \
-     SQLAlchemySessionUserDatastore, current_user, roles_required
+     SQLAlchemySessionUserDatastore, current_user, roles_required, \
+     logout_user
 from flask_mail import Mail, Message
 from database import db_session
 from models import User, Role, Tool, Workshop
@@ -376,6 +377,12 @@ def view_tool():
                 flash(u'Herramienta añadida', 'success')
                 return redirect('tools', code=302)
             return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+
+
+@app.route('/change_password', methods=['POST', 'GET'])
+def change_password():
+    logout_user()
+    return redirect('reset', code=302)
 
 
 @app.route('/logout', methods=['POST', 'GET'])

@@ -23,6 +23,9 @@
       {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
       {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
       {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
+      <div class="col-2 col-sm-12">
+        <a class="btn" href="{{ url_for('change_password') }}">Cambiar contraseña</a><br>
+      </div>
       {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block", value="Guardar") }}
     </form>
   </div>
