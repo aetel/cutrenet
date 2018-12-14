@@ -30,8 +30,8 @@ app.config['SECURITY_RECOVERABLE'] = True
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'test@gmail.com'
-app.config['MAIL_PASSWORD'] = 'pass'
+app.config['MAIL_USERNAME'] = 'aetel.backend@gmail.com'
+app.config['MAIL_PASSWORD'] = 'drm3ngu3ch3'
 mail = Mail(app)
 
 # File Upload
@@ -75,11 +75,10 @@ def mass_mail():
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 f.save(file_path)
                 email_all(app, mail, request.form, filename)
+                os.remove(file_path)
             else:
                 email_all(app, mail, request.form,'')
             flash(u'Correo enviado a todos los miembros', 'success')
-            if file_path:
-                os.remove(file_path)
         return render_template('email.html', form=form, title='cutrenet')
 
 
