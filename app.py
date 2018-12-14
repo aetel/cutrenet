@@ -104,7 +104,7 @@ def member_profile():
             flash(u'Perfil borrado', 'success')
             if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no al inicio
                 results = db_session.query(User).all()
-                return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+                return render_template('profile_list.html', results=results, title='cutrenet', subtitle='miembros')
             else:
                 return redirect('/', code=302)
         elif not current_user.has_role('admin'):
@@ -113,7 +113,7 @@ def member_profile():
         else:
             flash(u'Tienes que seleccionar un perfil', 'error')
             results = db_session.query(User).all()
-            return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+            return render_template('profile_list.html', results=results, title='cutrenet', subtitle='miembros')
 
     if request.method == 'POST' and current_user.has_role('admin'):
         if 'edit' in request.args:
@@ -165,65 +165,18 @@ def member_database():
             flash(u'Rol de ADMINISTRADOR asignado satisfactoriamente', 'success')
         db_session.commit()
     results = db_session.query(User).all()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-
-
-# this is when Treasurer clicks confirm link
-@app.route('/members/confirm', methods=['POST', 'GET'])
-@login_required
-@roles_required('admin')
-def confirm_member():
-    if request.method == 'GET':
-        dni = request.args.get('dni')
-        user = db_session.query(User).filter_by(dni=dni).first()
-        member_role = user_datastore.find_or_create_role(name='member', description='Miembro Activo')
-        if user.has_role(member_role):
-            user_datastore.remove_role_from_user(user, member_role)
-            flash(u'Desconfirmado satisfactoriamente', 'alert')
-        else:
-            user_datastore.add_role_to_user(user, member_role)
-            flash(u'Confirmado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-
-
-# this is when Admin clicks give admin link
-@app.route('/members/admin', methods=['POST', 'GET'])
-@login_required
-@roles_required('admin')
-def give_admin():
-    if request.method == 'GET':
-        dni = request.args.get('dni')
-        user = db_session.query(User).filter_by(dni=dni).first()
-        admin_role = user_datastore.find_or_create_role(name='admin', description='Administrator')
-        if user.has_role(admin_role):
-            user_datastore.remove_role_from_user(user, admin_role)
-            flash(u'Rol de ADMINISTRADOR retirado satisfactoriamente', 'alert')
-        else:
-            user_datastore.add_role_to_user(user, admin_role)
-            flash(u'Rol de ADMINISTRADOR asignado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+    return render_template('profile_list.html', results=results, title='cutrenet', subtitle='miembros')
 
 
 @app.route('/workshops')
 def list_workshops():
     results = db_session.query(Workshop).order_by(Workshop.date.asc())
     instructors = db_session.query(User)
-    return render_template('workshops.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
+    return render_template('workshop_list.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
 
 
-@app.route('/tools')
-def list_tools():
-    results = db_session.query(Tool).all()
-    db_session.commit()
-    return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
-
-
-@app.route('/tool', methods=['POST', 'GET'])
-def edit_tool():
+@app.route('/workshop', methods=['POST', 'GET'])
+def view_workshop():
     if request.method == 'GET':
         if 'name' in request.args:
             name = request.args.get('name')
@@ -244,11 +197,118 @@ def edit_tool():
         elif 'delete_img' in request.args:
             del_img = request.args.get('delete_img')
             tool = db_session.query(Tool).filter_by(name=del_img).first()
-            print(tool.image)
-            os.remove(tool.image) # Delete old image
-            tool.image = None
+            if tool.image:
+                os.remove(tool.image) # Delete old image
+                tool.image = None
+                db_session.commit()
+                flash(u'Imagen eliminada', 'success')
+            else:
+                flash(u'No hay imagen que eliminar', 'alert')
+            return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
+        elif 'delete' in request.args:
+            delete = request.args.get('delete')
+            tool = db_session.query(Tool).filter_by(name=delete).first()
+            db_session.delete(tool)
             db_session.commit()
-            flash(u'Imagen eliminada', 'success')
+            flash(u'Herramienta eliminada', 'success')
+            return redirect('/tools', code=302)
+        else:
+            flash(u'Tienes que seleccionar una herramienta', 'error')
+            return redirect('/tools', code=302)
+
+    if request.method == 'POST' and current_user.has_role('admin'):
+        if 'edit' in request.args:
+            ename = request.args.get('edit')
+            tool = db_session.query(Tool).filter_by(name=ename).first()
+            form = ToolForm(self_edit=ename)
+            if form.validate_on_submit():
+                tool.name = request.form['name']
+                tool.description = request.form['description']
+                tool.location = request.form['location']
+                tool.manual = request.form['manual']
+                tool.documentation = request.form['documentation']
+
+                if form.image.data:
+                    if tool.image is not None:
+                        os.remove(tool.image) # Delete old image
+                    f = form.image.data
+                    filename = secure_filename(f.filename)
+                    directory = app.config['UPLOAD_FOLDER']+'/tools'
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    file_path = os.path.join(directory, filename)
+                    f.save(file_path)
+                    tool.image = file_path # Save the file path of the Tool image in the database
+
+                db_session.commit()
+                flash(u'Herramienta editada', 'success')
+            return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+        elif 'add' in request.args:
+            name = request.args.get('add')
+            tool = Tool()
+            form = ToolForm()
+            if form.validate_on_submit():
+                tool.name = request.form['name']
+                tool.description = request.form['description']
+                tool.location = request.form['location']
+                tool.manual = request.form['manual']
+                tool.documentation = request.form['documentation']
+
+                if form.image.data:
+                    if tool.image is not None:
+                        os.remove(tool.image) # Delete old image
+                    f = form.image.data
+                    filename = secure_filename(f.filename)
+                    directory = app.config['UPLOAD_FOLDER']+'/tools'
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    file_path = os.path.join(directory, filename)
+                    f.save(file_path)
+                    tool.image = file_path # Save the file path of the Tool image in the database
+
+                db_session.add(tool)
+                db_session.commit()
+                flash(u'Herramienta añadida', 'success')
+                return redirect('tools', code=302)
+            return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+
+
+@app.route('/tools')
+def list_tools():
+    results = db_session.query(Tool).all()
+    db_session.commit()
+    return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
+
+
+@app.route('/tool', methods=['POST', 'GET'])
+def view_tool():
+    if request.method == 'GET':
+        if 'name' in request.args:
+            name = request.args.get('name')
+            result = db_session.query(Tool).filter_by(name=name).first()
+            return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+        elif not current_user.has_role('admin'):
+            flash(u'No tienes permisos para editar esta herramienta', 'error')
+            return redirect('/tools', code=302)
+        elif 'add' in request.args:
+            form = ToolForm()
+            return render_template('tool.html', form=form, title='cutrenet', subtitle="new tool")
+        elif 'edit' in request.args:
+            ename = request.args.get('edit')
+            form = ToolForm(self_edit=ename)
+            result = db_session.query(Tool).filter_by(name=ename).first()
+            form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
+            return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
+        elif 'delete_img' in request.args:
+            del_img = request.args.get('delete_img')
+            tool = db_session.query(Tool).filter_by(name=del_img).first()
+            if tool.image:
+                os.remove(tool.image) # Delete old image
+                tool.image = None
+                db_session.commit()
+                flash(u'Imagen eliminada', 'success')
+            else:
+                flash(u'No hay imagen que eliminar', 'alert')
             return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
         elif 'delete' in request.args:
             delete = request.args.get('delete')
