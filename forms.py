@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
-from wtforms import SelectField, TextAreaField, FileField, HiddenField, ValidationError
+from wtforms import SelectField, TextAreaField, FileField, HiddenField, SubmitField, ValidationError
 from database import db_session
 from models import User, Tool
 import json
@@ -27,7 +27,14 @@ def json_choices_planes(file):
 
 def unique_user_dni(form, field):
     result = db_session.query(User).filter_by(dni=field.data).first()
-    if result is not None and form.self_edit.data != form.dni.data:
+    if result is not None and form.self_edit_dni.data != form.dni.data:
+        msg = field.data+' ya tiene una cuenta asociada.'
+        raise ValidationError(msg)
+
+def unique_user_email(form, field):
+    result = db_session.query(User).filter_by(email=field.data).first()
+    print('Email ')
+    if result is not None and form.self_edit_email.data != form.email.data:
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
 
@@ -47,14 +54,27 @@ def is_image(message=u'¡Solo imágenes!'):
     return _is_image
 
 class ExtendedRegisterForm(RegisterForm):
-    first_name = StringField('First Name', [Required()])
-    last_name = StringField('Last Name', [Required()])
+    first_name = StringField('Nombre', [Required()])
+    last_name = StringField('Apellidos', [Required()])
     telegram = StringField('Telegram', [validators.Optional(), validators.Regexp('[a-zA-Z0-9_-]{5,}', message="Introduzca un usuario valido de Telegram sin @")])
     year = SelectField('Curso', [Required()], choices=[('1', 'Primero'), ('2', 'Segundo'), ('3', 'Tercero'), ('4', 'Cuarto')])
     school = SelectField('Escuela', choices=json_choices_centros('./static/json/centros.json'), id='select_school', default=59)
     degree = SelectField('Plan de Estudios', choices=json_choices_planes('./static/json/planes.json'), id='select_degree', default='59EC')
     dni = StringField('DNI o NIE', validators=[unique_user_dni,validators.Regexp('[0-9A-Z][0-9]{7}[A-Z]', message="Introduzca un DNI o NIE valido"), Required()])
     self_edit = HiddenField()
+
+class EditMemberForm(Form):
+    first_name = StringField('Nombre', [Required()])
+    last_name = StringField('Apellidos', [Required()])
+    email = StringField('Email', [unique_user_email,Required()])
+    telegram = StringField('Telegram', [validators.Optional(), validators.Regexp('[a-zA-Z0-9_-]{5,}', message="Introduzca un usuario valido de Telegram sin @")])
+    year = SelectField('Curso', [Required()], choices=[('1', 'Primero'), ('2', 'Segundo'), ('3', 'Tercero'), ('4', 'Cuarto')])
+    school = SelectField('Escuela', choices=json_choices_centros('./static/json/centros.json'), id='select_school', default=59)
+    degree = SelectField('Plan de Estudios', choices=json_choices_planes('./static/json/planes.json'), id='select_degree', default='59EC')
+    dni = StringField('DNI o NIE', validators=[unique_user_dni,validators.Regexp('[0-9A-Z][0-9]{7}[A-Z]', message="Introduzca un DNI o NIE valido"), Required()])
+    self_edit_dni = HiddenField()
+    self_edit_email = HiddenField()
+    submit = SubmitField('Guardar')
 
 class EmailForm(Form):
     subject = StringField('Asunto', [Required()])

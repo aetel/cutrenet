@@ -7,9 +7,8 @@
 <div class="card">
   <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
   <div class="card-body">
-    <form action="{{ url_for('edit_member') }}" method="POST" name="form" class="form-horizontal">
+    <form action="{{ url_for('member_profile', edit=result['dni']) }}" method="POST" name="form" class="form-horizontal">
       {{ form.hidden_tag() }}
-      <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
       {{ render_field_label_with_errors_spectre(form.first_name, class_="form-input", value=result["first_name"]) }}
       {{ render_field_label_with_errors_spectre(form.last_name, class_="form-input", value=result["last_name"]) }}
       {{ render_field_label_social_with_errors_spectre(form.telegram, class_="form-input", value=result["telegram"]) }}
@@ -24,14 +23,17 @@
       {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
       {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
       {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
-      {{ hidden_field(form.self_edit, value=result["dni"]) }}
       {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block", value="Guardar") }}
     </form>
   </div>
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
+  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} 
+    {% if current_user.has_role('admin') or current_user.dni==result['dni'] %}
+      <a href="{{ url_for('member_profile', edit=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a>
+    {% endif %}
+  </h5>
   <div class="card-body">
     <div class="container">
       <div class="columns">
@@ -119,7 +121,7 @@
         </div>
         <div class="col-9 col-sm-12">
           <br>
-          <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
+          <a class="btn btn-error delete" href="{{ url_for('member_profile', delete=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
         </div>
       </div>
     </div>

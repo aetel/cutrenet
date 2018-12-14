@@ -6,7 +6,7 @@ from flask_security import Security, login_required, \
 from flask_mail import Mail, Message
 from database import db_session
 from models import User, Role, Tool, Workshop
-from forms import ExtendedRegisterForm, EmailForm, ToolForm
+from forms import ExtendedRegisterForm, EmailForm, ToolForm, EditMemberForm
 from functions.email import email_all
 from werkzeug.utils import secure_filename
 import os
@@ -43,23 +43,20 @@ user_datastore = SQLAlchemySessionUserDatastore(db_session,
                                                 User, Role)
 security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
 
+
 # Create a user to test with
-
-
 @app.before_first_request
 def create_user():
     pass
 
+
 # Views
-
-
 @app.route('/')
 def home():
     return render_template('index.html', title='cutrenet')
 
+
 # send email to all members
-
-
 @app.route('/mail', methods=['POST', 'GET'])
 @login_required
 @roles_required('admin')
@@ -83,99 +80,64 @@ def mass_mail():
 
 
 # user profile page
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def member_profile():
-    result = db_session.query(User).filter_by(id=session["user_id"]).first()
-    db_session.commit()
-    return render_template('profile.html', result=result, title='cutrenet', subtitle=current_user.first_name + ' ' + current_user.last_name)
-
-# this is when user clicks edit link
-
-
-@app.route('/profile/edit', methods=['GET'])
-@login_required
-def select_edit_member_profile():
-    eresult = None
-    edni = request.args.get('edni')
-    if current_user.has_role('admin') or current_user.dni == edni:
-        if request.method == 'GET':
-            eresult = db_session.query(User).filter_by(dni=edni).first()
-        results = db_session.query(User).all()
-        db_session.commit()
-        form = ExtendedRegisterForm()
-        del form.password                   # Quitamos el campo de la contraseña del formulario
-        del form.password_confirm
-        return render_template('profile.html', form=form, result=eresult, results=results, title='cutrenet', subtitle='miembros')
-    else:
-        flash(u'No tienes permisos para editar ese miembro', 'error')
-        return render_template('403.html', title='cutrenet', subtitle='403'), 403
-
-# imitate this ↓ for edit profile page & email
-
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    form = ContactForm()
-    if request.method == 'POST':
-        if form.validate() == False:
-            flash('All fields are required.')
-            return render_template('contact.html', form=form)
-        else:
-            return render_template('success.html')
-    elif request.method == 'GET':
-        return render_template('contact.html', form = form)
-
-# or this
-@app.route('/registeroo', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm(request.form)
-    if request.method == 'POST' and form.validate():
-        user = User(form.username.data, form.email.data,
-                    form.password.data)
-        db_session.add(user)
-        flash('Thanks for registering')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
-
-# this is when user sends edit form
-@app.route('/profile/edit', methods=['POST'])
-@login_required
-def edit_member():
-    if request.method == 'POST':
-        old_dni = request.form['old_dni']
-
-        user = db_session.query(User).filter_by(dni=old_dni).first()
-        user.last_name = request.form['last_name']
-        user.first_name = request.form['first_name']
-        user.email = request.form['email']
-        user.dni = request.form['dni']
-        user.school = request.form['school']
-        user.degree = request.form['degree']
-        user.year = request.form['year']
-        user.telegram = request.form['telegram']
-        flash(u'Editado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no a su perfil
-        return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-    else:
-        return redirect('/profile', code=302)
-
-# this is when user clicks delete link
-@app.route('/profile/delete', methods=['POST', 'GET'])
-@login_required
-def delete_profile():
     if request.method == 'GET':
-        dni = request.args.get('dni')
-        db_session.query(User).filter_by(dni=dni).delete()
-        flash(u'Borrado satisfactoriamente', 'success')
-    results = db_session.query(User).all()
-    db_session.commit()
-    if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no a su perfil
-        return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
-    else:
-        return redirect('/', code=302)
+        if 'dni' in request.args:
+            dni = request.args.get('dni')
+            user = db_session.query(User).filter_by(dni=dni).first()
+            return render_template('profile.html', result=user, title='cutrenet', subtitle=user.first_name + ' ' + user.last_name)
+        elif 'edit' in request.args:
+            dni = request.args.get('edit')
+            user = db_session.query(User).filter_by(dni=dni).first()
+            if int(session["user_id"]) == int(user.id) or current_user.has_role('admin'):
+                form = EditMemberForm(self_edit_dni=dni,self_edit_email=user.email)
+                return render_template('profile.html', form=form, result=user, title='cutrenet', subtitle=user.first_name + ' ' + user.last_name)
+            else:
+                flash(u'No tienes permisos para editar este perfil', 'error')
+                return redirect('/', code=302)
+        elif 'delete' in request.args and current_user.has_role('admin'):
+            dni = request.args.get('delete')
+            db_session.query(User).filter_by(dni=dni).delete()
+            db_session.commit()
+            flash(u'Perfil borrado', 'success')
+            if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no al inicio
+                results = db_session.query(User).all()
+                return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+            else:
+                return redirect('/', code=302)
+        elif not current_user.has_role('admin'):
+            flash(u'No tienes permisos para editar este perfil', 'error')
+            return redirect('/', code=302)
+        else:
+            flash(u'Tienes que seleccionar un perfil', 'error')
+            results = db_session.query(User).all()
+            return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+
+    if request.method == 'POST' and current_user.has_role('admin'):
+        if 'edit' in request.args:
+            dni = request.args.get('edit')
+            user = db_session.query(User).filter_by(dni=dni).first()
+            form = EditMemberForm(self_edit_dni=dni,self_edit_email=user.email)
+            print('Nombre: '+request.form['first_name'])
+            if form.validate() == True:
+                print('Nombre: '+request.form['first_name'])
+                user.last_name = request.form['last_name']
+                user.first_name = request.form['first_name']
+                user.email = request.form['email']
+                user.dni = request.form['dni']
+                user.school = request.form['school']
+                user.degree = request.form['degree']
+                user.year = request.form['year']
+                user.telegram = request.form['telegram']
+                db_session.commit()
+                flash(u'Perfil editado', 'success')
+            if form.validate() == False:
+                print('Nombre: '+request.form['first_name']+'NO')
+                flash(u'Error al editar', 'error')
+            return render_template('profile.html', form=form, result=user, title='cutrenet', subtitle=user.first_name + ' ' + user.last_name)
+
 
 # members list
 @app.route('/members')
@@ -185,6 +147,7 @@ def member_database():
     results = db_session.query(User).all()
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
+
 
 # this is when Treasurer clicks confirm link
 @app.route('/members/confirm', methods=['POST', 'GET'])
@@ -205,6 +168,7 @@ def confirm_member():
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
+
 # this is when Admin clicks give admin link
 @app.route('/members/admin', methods=['POST', 'GET'])
 @login_required
@@ -224,17 +188,20 @@ def give_admin():
     db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
+
 @app.route('/workshops')
 def list_workshops():
     results = db_session.query(Workshop).order_by(Workshop.date.asc())
     instructors = db_session.query(User)
     return render_template('workshops.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
 
+
 @app.route('/tools')
 def list_tools():
     results = db_session.query(Tool).all()
     db_session.commit()
     return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
+
 
 @app.route('/tool', methods=['POST', 'GET'])
 def edit_tool():
@@ -251,7 +218,7 @@ def edit_tool():
             return render_template('tool.html', form=form, title='cutrenet', subtitle="new tool")
         elif 'edit' in request.args:
             ename = request.args.get('edit')
-            form = ToolForm()
+            form = ToolForm(self_edit=ename)
             result = db_session.query(Tool).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
@@ -262,12 +229,14 @@ def edit_tool():
             os.remove(tool.image) # Delete old image
             tool.image = None
             db_session.commit()
+            flash(u'Imagen eliminada', 'success')
             return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
         elif 'delete' in request.args:
             delete = request.args.get('delete')
             tool = db_session.query(Tool).filter_by(name=delete).first()
             db_session.delete(tool)
             db_session.commit()
+            flash(u'Herramienta eliminada', 'success')
             return redirect('/tools', code=302)
         else:
             flash(u'Tienes que seleccionar una herramienta', 'error')
@@ -277,7 +246,7 @@ def edit_tool():
         if 'edit' in request.args:
             ename = request.args.get('edit')
             tool = db_session.query(Tool).filter_by(name=ename).first()
-            form = ToolForm()
+            form = ToolForm(self_edit=ename)
             if form.validate_on_submit():
                 tool.name = request.form['name']
                 tool.description = request.form['description']
@@ -329,16 +298,19 @@ def edit_tool():
                 return redirect('tools', code=302)
             return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
 
+
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     logout_user()
     flash(u'Deslogueado satisfactoriamente', 'normal')
     return redirect('login', code=302, title='cutrenet')
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template('404.html', title='cutrenet', subtitle='404'), 404
+
 
 if __name__ == '__main__':
     app.run()

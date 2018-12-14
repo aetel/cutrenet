@@ -8,14 +8,13 @@
   <h5 class="card-header">Editando {{result["name"]}}</h5>
   <div class="card-body">
     <form action="{{ url_for('edit_tool', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
-      {{ form.csrf_token }}
+      {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
       {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
       {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
       {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
       {{ render_field_label_with_errors_spectre(form.image, class_="form-input") }}
-      {{ hidden_field(form.self_edit, value=result["name"]) }}
         <input type=submit class="btn btn-primary btn-large" value=Guardar>
         <a class="btn btn-secondary confirm" href="{{ url_for('edit_tool', delete_img=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la imagen de {{result['name']}}?">Borrar imagen</a>
         <a class="btn btn-error confirm" href="{{ url_for('edit_tool', delete=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la herramienta {{result['name']}}?">Borrar herramienta</a>
