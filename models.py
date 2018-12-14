@@ -102,6 +102,7 @@ class Workshop(Base):
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), unique=True)
     description = Column(String(255))
+    location = Column(String(80))
     instructor_id = Column('instructor', Integer(), ForeignKey('user.id'))
     date = Column(Date())
     members_only = Column(Boolean())

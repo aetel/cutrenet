@@ -180,8 +180,8 @@ def view_workshop():
     if request.method == 'GET':
         if 'name' in request.args:
             name = request.args.get('name')
-            result = db_session.query(Tool).filter_by(name=name).first()
-            return render_template('tool.html', result=result, title='cutrenet', subtitle=name)
+            result = db_session.query(Workshop).filter_by(name=name).first()
+            return render_template('workshop.html', result=result, title='cutrenet', subtitle=name)
         elif not current_user.has_role('admin'):
             flash(u'No tienes permisos para editar esta herramienta', 'error')
             return redirect('/tools', code=302)
@@ -191,12 +191,12 @@ def view_workshop():
         elif 'edit' in request.args:
             ename = request.args.get('edit')
             form = ToolForm(self_edit=ename)
-            result = db_session.query(Tool).filter_by(name=ename).first()
+            result = db_session.query(Workshop).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
         elif 'delete_img' in request.args:
             del_img = request.args.get('delete_img')
-            tool = db_session.query(Tool).filter_by(name=del_img).first()
+            tool = db_session.query(Workshop).filter_by(name=del_img).first()
             if tool.image:
                 os.remove(tool.image) # Delete old image
                 tool.image = None
@@ -207,7 +207,7 @@ def view_workshop():
             return render_template('tool.html', result=tool, title='cutrenet', subtitle=tool.name)
         elif 'delete' in request.args:
             delete = request.args.get('delete')
-            tool = db_session.query(Tool).filter_by(name=delete).first()
+            tool = db_session.query(Workshop).filter_by(name=delete).first()
             db_session.delete(tool)
             db_session.commit()
             flash(u'Herramienta eliminada', 'success')
@@ -219,7 +219,7 @@ def view_workshop():
     if request.method == 'POST' and current_user.has_role('admin'):
         if 'edit' in request.args:
             ename = request.args.get('edit')
-            tool = db_session.query(Tool).filter_by(name=ename).first()
+            tool = db_session.query(Workshop).filter_by(name=ename).first()
             form = ToolForm(self_edit=ename)
             if form.validate_on_submit():
                 tool.name = request.form['name']
