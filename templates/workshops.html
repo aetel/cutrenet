@@ -38,7 +38,7 @@
               <i class="icon icon-cross text-error"></i>
             {% endif %}
         </td>
-        <td align="center"><a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
+        <td align="center"><a href="{{ url_for('member_profile', dni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
       </tr>
       {% endfor %}
     </table>

@@ -26,14 +26,14 @@
         <td>{{result["dni"]}}</td>
         <td>{{result['email']}}</td>
         <td>{{result['telegram']}}</td>
-        <td align="center"><a href="{{ url_for('confirm_member', dni=result['dni']) }}">
+        <td align="center"><a href="{{ url_for('member_database', confirm=result['dni']) }}">
             {% if result.has_role('member') %}
               <i class="icon icon-check text-success"></i>
             {% else %}
               <i class="icon icon-cross text-error"></i>
             {% endif %}
         </a></td>
-        <td align="center"><a href="{{ url_for('give_admin', dni=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer cambiar el rol de ADMINISTRADOR de {{result['first_name']}} {{result['last_name']}}?">
+        <td align="center"><a href="{{ url_for('member_database', admin=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer cambiar el rol de ADMINISTRADOR de {{result['first_name']}} {{result['last_name']}}?">
             {% if result.has_role('admin') %}
               <i class="icon icon-check text-success"></i>
             {% else %}

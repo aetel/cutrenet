@@ -140,12 +140,31 @@ def member_profile():
 
 
 # members list
-@app.route('/members')
+@app.route('/members', methods=['GET'])
 @login_required
 @roles_required('admin')
 def member_database():
+    if 'confirm' in request.args:
+        dni = request.args.get('confirm')
+        user = db_session.query(User).filter_by(dni=dni).first()
+        if user.has_role('member'):
+            user_datastore.remove_role_from_user(user, 'member')
+            flash(u'Desconfirmado satisfactoriamente', 'alert')
+        else:
+            user_datastore.add_role_to_user(user, 'member')
+            flash(u'Confirmado satisfactoriamente', 'success')
+        db_session.commit()
+    if 'admin' in request.args:
+        dni = request.args.get('admin')
+        user = db_session.query(User).filter_by(dni=dni).first()
+        if user.has_role('admin'):
+            user_datastore.remove_role_from_user(user, 'admin')
+            flash(u'Rol de ADMINISTRADOR retirado satisfactoriamente', 'alert')
+        else:
+            user_datastore.add_role_to_user(user, 'admin')
+            flash(u'Rol de ADMINISTRADOR asignado satisfactoriamente', 'success')
+        db_session.commit()
     results = db_session.query(User).all()
-    db_session.commit()
     return render_template('database.html', results=results, title='cutrenet', subtitle='miembros')
 
 
