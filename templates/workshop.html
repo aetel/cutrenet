@@ -39,7 +39,7 @@
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Ficha de {{result["name"]}}
+  <h5 class="card-header">Taller de {{result["name"]}}
     {% if current_user.has_role('admin') %}
     <a href="{{ url_for('edit_tool', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
     {% endif %}
@@ -70,17 +70,53 @@
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>Manual:</strong>
+          <strong>Instructor:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["manual"]}}
+          {{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}
         </div>
 
         <div class="col-3 col-sm-12">
-          <strong>Documentación:</strong>
+          <strong>Fecha:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["documentation"]}}
+          {{ result['date'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Participantes:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result['participants'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Fecha:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result['date'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Habilita:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+            {% if result['tool'] is not none %}
+              <a href="{{ url_for('view_tool', name=result['tool']['name']) }}">{{ result['tool']['name'] }}</a>
+            {% else %}
+              No
+            {% endif %}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Solo miembros:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+            {% if result.members_only %}
+              <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
+            {% endif %}
         </div>
       </div>
     </div>

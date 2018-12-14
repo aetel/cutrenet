@@ -20,7 +20,7 @@
 
       {% for result in results %}
       <tr>
-        <td>{{ result["name"] }}</td>
+        <td><a href="{{ url_for('view_workshop', name=result['name']) }}">{{ result["name"] }}</a></td>
         <td>{{ result["description"] }}</td>
         <td>{{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}</td>
         <td>{{ result['date'] }}</td>
@@ -38,7 +38,7 @@
               <i class="icon icon-cross text-error"></i>
             {% endif %}
         </td>
-        <td align="center"><a href="{{ url_for('member_profile', dni=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
+        <td align="center"><a href="{{ url_for('view_workshop', edit=result['name']) }}"><i class="icon icon-edit"></i></a></td>
       </tr>
       {% endfor %}
     </table>
