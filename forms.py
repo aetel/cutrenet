@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
-from wtforms import SelectField, TextAreaField, FileField, ValidationError
+from wtforms import SelectField, TextAreaField, FileField, HiddenField, ValidationError
 from database import db_session
 from models import User, Tool
 import json
@@ -27,13 +27,13 @@ def json_choices_planes(file):
 
 def unique_user_dni(form, field):
     result = db_session.query(User).filter_by(dni=field.data).first()
-    if result is not None:
+    if result is not None and form.self_edit.data != form.dni.data:
         msg = field.data+' ya tiene una cuenta asociada.'
         raise ValidationError(msg)
 
 def unique_tool_name(form, field):
     result = db_session.query(Tool).filter_by(name=field.data).first()
-    if result is not None:
+    if result is not None and form.self_edit.data != form.name.data:
         msg = field.data+' ya existe.'
         raise ValidationError(msg)
 
@@ -54,6 +54,7 @@ class ExtendedRegisterForm(RegisterForm):
     school = SelectField('Escuela', choices=json_choices_centros('./static/json/centros.json'), id='select_school', default=59)
     degree = SelectField('Plan de Estudios', choices=json_choices_planes('./static/json/planes.json'), id='select_degree', default='59EC')
     dni = StringField('DNI o NIE', validators=[unique_user_dni,validators.Regexp('[0-9A-Z][0-9]{7}[A-Z]', message="Introduzca un DNI o NIE valido"), Required()])
+    self_edit = HiddenField()
 
 class EmailForm(Form):
     subject = StringField('Asunto', [Required()])
@@ -61,10 +62,10 @@ class EmailForm(Form):
     attachment = FileField('Adjunto')
 
 class ToolForm(Form):
+    self_edit = HiddenField()
     name = StringField('Nombre',  validators=[unique_tool_name,Required()])
     description = TextAreaField('Descripcion')
     location = StringField('Lugar', [Required()])
     manual = StringField('Manual')
-    documentation = StringField('Documentacion')
+    documentation = StringField(u'Documentación')
     image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
-

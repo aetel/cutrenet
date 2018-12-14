@@ -330,7 +330,6 @@ def edit_tool():
                 return redirect('tools', code=302)
             return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
 
-
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     logout_user()

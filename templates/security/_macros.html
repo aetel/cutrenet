@@ -15,6 +15,10 @@
   <p>{{ field(**kwargs)|safe }}</p>
 {% endmacro %}
 
+{% macro hidden_field(field) %}
+  {{ field(**kwargs)|safe }}
+{% endmacro %}
+
 {% macro render_field_with_errors_spectre(field) %}
     {% if field.errors %}
       <div class="form-group has-error">

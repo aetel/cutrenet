@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre, hidden_field %}
 
 {% block content %}
 {% include "messages.html" %}
@@ -24,6 +24,7 @@
       {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
       {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
       {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
+      {{ hidden_field(form.self_edit, value=result["dni"]) }}
       {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block", value="Guardar") }}
     </form>
   </div>
