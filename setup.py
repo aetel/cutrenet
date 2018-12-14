@@ -1,9 +1,48 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from models import User, Role
+from models import User, Role, Tool, Workshop, Voting, Option
 from database import db_session, init_db
 from flask_security import SQLAlchemySessionUserDatastore
 import os
+from datetime import datetime, timedelta
+
+
+def setup_fake_data():
+    print('Adding fake data to database...')
+
+    tool = Tool(name=u'Martillo', description=u'Pa martillar', location=u'AETEL', manual=u'here', documentation=u'there')
+    db_session.add(tool)
+
+    workshop1 = Workshop(name=u'Croquetas Caseras', description=u'¿Alguna vez has querido hacer tus propias croquetas caseras?', \
+                        members_only=False, participants=99, date=(datetime.now() + timedelta(days=1)))
+    db_session.add(workshop1)
+
+    workshop2 = Workshop(name=u'Empanadillas Caseras', description=u'¿Alguna vez has querido hacer tus propias empanadillas caseras?', \
+                        members_only=True, participants=99, date=datetime.now())
+    db_session.add(workshop2)
+
+    instructor = db_session.query(User).filter_by(dni='00000001A').first()
+
+    instructor.workshops.append(workshop1)
+    instructor.workshops.append(workshop2)
+
+    tool.workshops.append(workshop1)
+
+    db_session.commit()
+
+    nombre = u'¡Elegimos fiesta nacional!'
+    voting = Voting(name=nombre, description='Fiesta fiesta fiesta', \
+                    start_date=datetime.now(), end_date=(datetime.now() + timedelta(days=1)) )
+    db_session.add(voting)
+    db_session.commit()
+
+    option1 = Option(name=u'Día Nacional de la croqueta', voting_id = db_session.query(Voting).filter_by(name=nombre).first().id )
+    db_session.add(option1)
+    option2 = Option(name=u'Día Nacional de la empanadilla', voting_id = db_session.query(Voting).filter_by(name=nombre).first().id )
+    db_session.add(option2)
+
+    db_session.commit()
+
 
 def setup_db():
     if not os.path.exists('./aetel.db'):
@@ -24,6 +63,8 @@ def setup_db():
                              last_name='Thomas Malloc',
                              telegram="aetelbot", roles=[admin_role,member_role])
         db_session.commit()
+
+        setup_fake_data()
 
         print('Database created.')
     else:

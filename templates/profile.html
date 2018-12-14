@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre, hidden_field %}
 
 {% block content %}
 {% include "messages.html" %}
@@ -7,9 +7,8 @@
 <div class="card">
   <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
   <div class="card-body">
-    <form action="{{ url_for('edit_member') }}" method="POST" name="form" class="form-horizontal">
+    <form action="{{ url_for('member_profile', edit=result['dni']) }}" method="POST" name="form" class="form-horizontal">
       {{ form.hidden_tag() }}
-      <input type="hidden" name="old_dni" value='{{result["dni"]}}' />
       {{ render_field_label_with_errors_spectre(form.first_name, class_="form-input", value=result["first_name"]) }}
       {{ render_field_label_with_errors_spectre(form.last_name, class_="form-input", value=result["last_name"]) }}
       {{ render_field_label_social_with_errors_spectre(form.telegram, class_="form-input", value=result["telegram"]) }}
@@ -30,7 +29,11 @@
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} <a href="{{ url_for('select_edit_member_profile', edni=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a></h5>
+  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} 
+    {% if current_user.has_role('admin') or current_user.dni==result['dni'] %}
+      <a href="{{ url_for('member_profile', edit=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a>
+    {% endif %}
+  </h5>
   <div class="card-body">
     <div class="container">
       <div class="columns">
@@ -102,12 +105,23 @@
         </div>
 
         <div class="col-3 col-sm-12">
+          <strong>Administrador de cutrenet:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {% if result.has_role('admin') %}
+          <i class="icon icon-check text-success"></i>
+          {% else %}
+          <i class="icon icon-cross text-error"></i>
+          {% endif %}
+        </div>
+
+        <div class="col-3 col-sm-12">
           <br>
           ¿No estás contento?
         </div>
         <div class="col-9 col-sm-12">
           <br>
-          <a class="btn btn-error delete" href="{{ url_for('delete_profile', dni=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
+          <a class="btn btn-error delete" href="{{ url_for('member_profile', delete=result['dni']) }}" data-confirm="¿Estás seguro de querer borrar tu perfil?">Borrar perfil</a><br>
         </div>
       </div>
     </div>

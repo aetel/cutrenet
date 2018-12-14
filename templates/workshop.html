@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors_spectre, render_field, render_field_label_with_errors_spectre, render_field_label_social_with_errors_spectre, hidden_field %}
+
+{% block content %}
+{% include "messages.html" %}
+{% if 'edit' in request.url and current_user.has_role('admin')%}
+<div class="card">
+  <h5 class="card-header">Editando {{result["name"]}}</h5>
+  <div class="card-body">
+    <form action="{{ url_for('edit_tool', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
+      {{ form.hidden_tag() }}
+      {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
+      {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
+      {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
+      {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
+      {{ render_field_label_with_errors_spectre(form.image, class_="form-input") }}
+        <input type=submit class="btn btn-primary btn-large" value=Guardar>
+        <a class="btn btn-secondary confirm" href="{{ url_for('edit_tool', delete_img=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la imagen de {{result['name']}}?">Borrar imagen</a>
+        <a class="btn btn-error confirm" href="{{ url_for('edit_tool', delete=result['name']) }}" data-confirm="¿Estás seguro de querer borrar la herramienta {{result['name']}}?">Borrar herramienta</a>
+    </form>
+  </div>
+</div>
+{% elif 'add' in request.url and current_user.has_role('admin')%}
+<div class="card">
+  <h5 class="card-header">Añadir herramienta</h5>
+  <div class="card-body">
+    <form action="{{ url_for('edit_tool', add=form.name) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
+      {{ form.hidden_tag() }}
+      {{ render_field_label_with_errors_spectre(form.name, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.location, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.manual, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.image, class_="form-input") }}
+      <input type=submit class="btn btn-primary btn-large" value=Añadir>
+    </form>
+  </div>
+</div>
+{% else %}
+<div class="card">
+  <h5 class="card-header">Taller de {{result["name"]}}
+    {% if current_user.has_role('admin') %}
+    <a href="{{ url_for('edit_tool', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
+    {% endif %}
+  </h5>
+  <div class="card-body">
+    <img src="{{ result['image'] or 'static/images/no-image.svg'}}" class="img-responsive tool-img">
+    <div class="container">
+      <div class="columns">
+        <div class="col-3 col-sm-12">
+          <strong>Nombre:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{result["name"]}}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Descripción:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{result["description"]}}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Lugar:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{result["location"]}}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Instructor:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Fecha:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result['date'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Participantes:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result['participants'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Fecha:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result['date'] }}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Habilita:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+            {% if result['tool'] is not none %}
+              <a href="{{ url_for('view_tool', name=result['tool']['name']) }}">{{ result['tool']['name'] }}</a>
+            {% else %}
+              No
+            {% endif %}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Solo miembros:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+            {% if result.members_only %}
+              <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script type="text/javascript">
+  var confirmLinks = document.querySelectorAll('.confirm');
+
+  for (var i = 0; i < confirmLinks.length; i++) {
+    confirmLinks[i].addEventListener('click', function(event) {
+      event.preventDefault();
+
+      var choice = confirm(this.getAttribute('data-confirm'));
+
+      if (choice) {
+        window.location.href = this.getAttribute('href');
+      }
+    });
+  }
+</script>
+{% include "footer.html" %}
+{% endblock %}

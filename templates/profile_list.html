@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "messages.html" %}
+<div class="card">
+  <h5 class="card-header">Miembros</h5>
+  <div class="table-scroll">
+    <table class='table table-hover table-scroll'>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>DNI o NIE</th>
+          <th>Email</th>
+          <th>Telegram</th>
+          <th>Confirmado</th>
+          <th>ADMIN</th>
+          <th>EDITAR</th>
+          <th>BORRAR</th>
+        </tr>
+      </thead>
+
+      {% for result in results %}
+      <tr>
+        <td>{{result["first_name"]}}</td>
+        <td>{{result["last_name"]}}</td>
+        <td>{{result["dni"]}}</td>
+        <td>{{result['email']}}</td>
+        <td>{{result['telegram']}}</td>
+        <td align="center"><a href="{{ url_for('member_database', confirm=result['dni']) }}">
+            {% if result.has_role('member') %}
+              <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
+            {% endif %}
+        </a></td>
+        <td align="center"><a href="{{ url_for('member_database', admin=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer cambiar el rol de ADMINISTRADOR de {{result['first_name']}} {{result['last_name']}}?">
+            {% if result.has_role('admin') %}
+              <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
+            {% endif %}
+        </a></td>
+        <td align="center"><a href="{{ url_for('member_profile', edit=result['dni']) }}"><i class="icon icon-edit"></i></a></td>
+        <td align="center"><a href="{{ url_for('member_profile', delete=result['dni']) }}" class="confirm" data-confirm="¿Estás seguro de querer borrar a {{result['first_name']}} {{result['last_name']}}?"><i class="icon icon-delete"></i></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script type="text/javascript">
+  var confirmLinks = document.querySelectorAll('.confirm');
+
+  for (var i = 0; i < confirmLinks.length; i++) {
+    confirmLinks[i].addEventListener('click', function(event) {
+      event.preventDefault();
+
+      var choice = confirm(this.getAttribute('data-confirm'));
+
+      if (choice) {
+        window.location.href = this.getAttribute('href');
+      }
+    });
+  }
+</script>
+{% include "footer.html" %}
+{% endblock %}

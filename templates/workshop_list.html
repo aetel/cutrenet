@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "messages.html" %}
+<div class="card">
+  <h5 class="card-header">Talleres</h5>
+  <div class="table-scroll">
+    <table class='table table-hover table-scroll'>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Instructor</th>
+          <th>Fecha</th>
+          <th>Nº participantes</th>
+          <th>¿Habilita?</th>
+          <th>Solo miembros</th>
+          <th>EDITAR</th>
+        </tr>
+      </thead>
+
+      {% for result in results %}
+      <tr>
+        <td><a href="{{ url_for('view_workshop', name=result['name']) }}">{{ result["name"] }}</a></td>
+        <td>{{ result["description"] }}</td>
+        <td>{{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}</td>
+        <td>{{ result['date'] }}</td>
+        <td align="center">{{ result['participants'] }}</td>
+        <td>{% if result['tool'] is not none %}
+              <a href="{{ url_for('view_tool', name=result['tool']['name']) }}">{{ result['tool']['name'] }}</a>
+            {% else %}
+              No
+            {% endif %}
+        </td>
+        <td align="center">
+            {% if result.members_only %}
+              <i class="icon icon-check text-success"></i>
+            {% else %}
+              <i class="icon icon-cross text-error"></i>
+            {% endif %}
+        </td>
+        <td align="center"><a href="{{ url_for('view_workshop', edit=result['name']) }}"><i class="icon icon-edit"></i></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% include "footer.html" %}
+{% endblock %}
