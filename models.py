@@ -39,9 +39,7 @@ class User(Base, UserMixin):
     email_confirmed_at = Column(DateTime())
     member_since = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
-                         backref=backref('users', lazy='dynamic'),
-                         cascade="all, delete, delete-orphan",
-                         single_parent=True)
+                         backref=backref('users', lazy='dynamic'))
     tools = relationship('Workshop', secondary='workshops_users',
                          backref=backref('users', lazy='dynamic'),
                          cascade="all, delete, delete-orphan",
