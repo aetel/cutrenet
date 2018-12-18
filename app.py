@@ -32,7 +32,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'aetel.backend@gmail.com'
-app.config['MAIL_PASSWORD'] = 'drm3ngu3ch3'
+app.config['MAIL_PASSWORD'] = 'backtheend'
 mail = Mail(app)
 
 # File Upload
