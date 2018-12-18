@@ -56,6 +56,7 @@ def create_user():
 # Views
 @app.route('/')
 def home():
+    session['url'] = request.url[len(request.url_root):]
     return render_template('index.html', title='cutrenet')
 
 
@@ -173,6 +174,7 @@ def member_database():
 
 @app.route('/workshops')
 def list_workshops():
+    session['url'] = request.url[len(request.url_root):]
     results = db_session.query(Workshop).order_by(Workshop.date.asc())
     instructors = db_session.query(User)
     return render_template('workshop_list.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
@@ -180,6 +182,7 @@ def list_workshops():
 
 @app.route('/workshop', methods=['POST', 'GET'])
 def view_workshop():
+    session['url'] = request.url[len(request.url_root):]
     if request.method == 'GET':
         if 'id' in request.args:
             id = request.args.get('id')
@@ -296,6 +299,7 @@ def view_workshop():
 
 @app.route('/tools')
 def list_tools():
+    session['url'] = request.url[len(request.url_root):]
     results = db_session.query(Tool).all()
     db_session.commit()
     return render_template('tool_list.html', results=results, title='cutrenet', subtitle='herramientas')
@@ -303,6 +307,7 @@ def list_tools():
 
 @app.route('/tool', methods=['POST', 'GET'])
 def view_tool():
+    session['url'] = request.url[len(request.url_root):]
     if request.method == 'GET':
         if 'name' in request.args:
             name = request.args.get('name')
@@ -414,6 +419,7 @@ def logout():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    session['url'] = request.url[len(request.url_root):]
     # note that we set the 404 status explicitly
     return render_template('404.html', title='cutrenet', subtitle='404'), 404
 

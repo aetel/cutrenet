@@ -35,15 +35,11 @@
     {% if current_user.is_authenticated %}
     <section class="navbar-section">
       <a href="{{ url_for('member_profile', dni=current_user.dni) }}" class="navbar-profile">{{current_user.first_name}}</a>
-      <form class="logout" action="{{ url_for('logout') }}">
-        <input class="btn btn-error logout" type="submit" value="Salir" />
-      </form>
+      <a href="{{ url_for('logout') }}" class="login-btn out">salir</a>
     </section>
     {% elif request.path != '/login' %}
     <section class="navbar-section">
-      <form class="login-btn" action="../login">
-        <input class="btn btn-primary login-btn" type="submit" value="Entrar" />
-      </form>
+      <a href="{{ '/login?next=%2F'+session['url'] }}" class="login-btn in">Entrar</a>
     </section>
     {% endif %}
   </header>

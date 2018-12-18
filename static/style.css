@@ -73,10 +73,33 @@
 }
 
 .login-btn {
-  float: right;
-  padding: 0px 32px;
+  font-family: Montserrat;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-right: .8rem;
+  padding: .3rem;
+  width: 5rem;
+  border-radius: .1rem;
+}
+
+.login-btn.in {
+  color: #00A79D;
+  background-color: #FFF;
+}
+
+.login-btn.out {
   color: #fff;
-  margin-bottom: 0px;
+  background-color: #e85600;
+  margin-left: 32px;
+}
+
+.login-btn.in:hover {
+  background-color: #eee;
+}
+
+.login-btn.out:hover {
+  background-color: #de5200;
 }
 
 a {
@@ -111,13 +134,13 @@ body {
   width: 300px;
   background-color: #FFF;
   padding: 20px;
-  border-radius: 5px
+  border-radius: .1rem
 }
 
 .login-field {
   background-color: #ECF0F1;
   border: 2px solid #ECF0F1;
-  border-radius: 3px;
+  border-radius: .1rem;
   font-size: 16px;
   font-weight: 200;
   padding: 10px 10px 10px 10px;
@@ -148,7 +171,7 @@ body {
 /*input {
   background-color: #ECF0F1;
   border: 2px solid transparent;
-  border-radius: 3px;
+  border-radius: .1rem;
   font-size: 16px;
   font-weight: 200;
   padding: 10px 0;
@@ -225,7 +248,7 @@ border-color: #00A79D;
 }
 
 .card {
-  border-radius: 5px;
+  border-radius: .1rem;
 }
 
 .card-header {
