@@ -2,7 +2,7 @@
 {% block content %}
 {% include "messages.html" %}
 <div class="card">
-    <h5 class="card-header">
+  <h5 class="card-header">
     <ul class="breadcrumb">
       <li class="breadcrumb-item">
         Talleres
@@ -23,7 +23,6 @@
           <th>Nº participantes</th>
           <th>¿Habilita?</th>
           <th>Solo miembros</th>
-          <th>EDITAR</th>
         </tr>
       </thead>
 
@@ -47,7 +46,6 @@
               <i class="icon icon-cross text-error"></i>
             {% endif %}
         </td>
-        <td align="center"><a href="{{ url_for('view_workshop', edit=result['name']) }}"><i class="icon icon-edit"></i></a></td>
       </tr>
       {% endfor %}
     </table>

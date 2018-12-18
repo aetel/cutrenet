@@ -254,6 +254,12 @@ border-color: #00A79D;
 .card-header {
   background-color: #dadee4;
   padding-bottom: .8rem !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+.breadcrumb {
+  display: inline;
 }
 
 .table-scroll {
@@ -267,6 +273,9 @@ border-color: #00A79D;
 
 .profile-edit{
   float: right;
+  display: inline;
+  margin: .4rem 0;
+  padding: .2rem 0;
 }
 
 .profile-edit:hover{
