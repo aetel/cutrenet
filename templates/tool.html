@@ -5,7 +5,19 @@
 {% include "messages.html" %}
 {% if 'edit' in request.url and current_user.has_role('admin')%}
 <div class="card">
-  <h5 class="card-header">Editando {{result["name"]}}</h5>
+  <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('list_tools') }}">Herramientas</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('view_tool', name=result['name']) }}">{{result["name"]}}</a>
+      </li>
+      <li class="breadcrumb-item">
+        Editar
+      </li>
+    </ul>
+  </h5>
   <div class="card-body">
     <form action="{{ url_for('view_tool', edit=result['name']) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
       {{ form.hidden_tag() }}
@@ -23,8 +35,16 @@
 </div>
 {% elif 'add' in request.url and current_user.has_role('admin')%}
 <div class="card">
-  <h5 class="card-header">Añadir herramienta</h5>
-  <div class="card-body">
+  <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('list_tools') }}">Herramientas</a>
+      </li>
+      <li class="breadcrumb-item">
+        Añadir
+      </li>
+    </ul>
+  </h5>  <div class="card-body">
     <form action="{{ url_for('view_tool', add=form.name) }}" method="POST" name="form" class="form-horizontal" enctype=multipart/form-data>
       {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input") }}
@@ -39,7 +59,15 @@
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Ficha de {{result["name"]}}
+  <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('list_tools', edit=result['name']) }}">Herramientas</a>
+      </li>
+      <li class="breadcrumb-item">
+        {{result["name"]}}
+      </li>
+    </ul>
     {% if current_user.has_role('admin') %}
     <a href="{{ url_for('view_tool', edit=result['name']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
     {% endif %}

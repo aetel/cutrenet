@@ -2,7 +2,12 @@
 {% block content %}
 {% include "messages.html" %}
 <div class="card">
-  <h5 class="card-header">Herramientas
+  <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('list_tools') }}">Herramientas</a>
+      </li>
+    </ul>
     {% if current_user.has_role('admin') %}
     <a href="{{ url_for('view_tool', add='') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
     {% endif %}

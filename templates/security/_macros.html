@@ -15,10 +15,6 @@
   <p>{{ field(**kwargs)|safe }}</p>
 {% endmacro %}
 
-{% macro hidden_field(field) %}
-  {{ field(**kwargs)|safe }}
-{% endmacro %}
-
 {% macro render_field_with_errors_spectre(field) %}
     {% if field.errors %}
       <div class="form-group has-error">
@@ -75,6 +71,41 @@
   </div>
 {% endmacro %}
 
-{% macro render_field_checkbox(field) %}
+{% macro render_field(field) %}
   {{ field(**kwargs)|safe }}
+{% endmacro %}
+
+{% macro render_field_checkbox(field) %}
+    <div class="form-group">
+      <div class="col-3 col-sm-12">
+        <strong><label class="form-label">{{ field.label.text }}</label></strong>
+      </div>
+      <label class="form-switch">
+        {{ field(**kwargs)|safe }}
+         <i class="form-icon"></i>
+      </label>
+    </div>
+{% endmacro %}
+
+
+
+{% macro render_field_checkbox_with_errors_spectre(field) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+    <div class="form-group">
+  {% endif %}
+    <div class="col-3 col-sm-12">
+      <strong><label class="form-label">{{ field.label.text }}</label></strong>
+    </div>
+    <div class="col-9 col-sm-12">
+      <label class="form-switch">
+        {{ field(**kwargs)|safe }}
+         <i class="form-icon"></i>
+      </label>
+      {% for error in field.errors %}
+          <p class="form-input-hint">{{ error }}</p>
+      {% endfor %}
+    </div>
+  </div>
 {% endmacro %}

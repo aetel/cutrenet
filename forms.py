@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
-from wtforms import SelectField, TextAreaField, FileField, HiddenField, SubmitField, ValidationError
+from wtforms import SelectField, TextAreaField, FileField, HiddenField, SubmitField,\
+                    IntegerField, BooleanField, ValidationError
+from wtforms.fields.html5 import DateField
 from database import db_session
 from models import User, Tool
 import json
@@ -24,6 +26,19 @@ def json_choices_planes(file):
             for plan in data["datos"][centro]:
                 choices.append((plan['codigo'], plan['nombre']))
         return choices
+
+def choices_users():
+    choices = []
+    for user in db_session.query(User):
+        choices.append((user.dni, user.first_name))
+    return choices
+
+def choices_tools():
+    choices = []
+    choices.append((0, 'No'))
+    for tool in db_session.query(Tool):
+        choices.append((tool.id, tool.name))
+    return choices
 
 def unique_user_dni(form, field):
     result = db_session.query(User).filter_by(dni=field.data).first()
@@ -88,4 +103,15 @@ class ToolForm(Form):
     location = StringField('Lugar', [Required()])
     manual = StringField('Manual')
     documentation = StringField(u'Documentación')
+    image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
+
+class WorkshopForm(Form):
+    name = StringField('Nombre',  validators=[Required()])
+    description = TextAreaField(u'Descripción')
+    location = StringField('Lugar', [Required()])
+    instructor = SelectField('Instructor', choices=choices_users(), id='select_instructor', validators=[Required()])
+    date = DateField('Fecha', validators=[Required()])
+    participants = IntegerField('Participantes')
+    tooling = SelectField('Habilita',coerce=int, choices=choices_tools(), id='select_tool', default=0)
+    members_only = BooleanField('Solo miembros')
     image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])

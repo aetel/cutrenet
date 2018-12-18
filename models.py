@@ -98,11 +98,12 @@ class Tool(Base):
 class Workshop(Base):
     __tablename__ = 'workshop'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
+    name = Column(String(80))
     description = Column(String(255))
     location = Column(String(80))
     instructor_id = Column('instructor', Integer(), ForeignKey('user.id'))
     date = Column(Date())
     members_only = Column(Boolean())
     participants = Column(Integer)
+    image = Column(String(80))
     tool_id = Column('tooling', Integer(), ForeignKey('tool.id'))

@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field_checkbox %}
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_with_errors_spectre, render_field %}
 
 {% block content %}
 {% include "messages.html" %}
@@ -17,7 +17,7 @@
 		<a href="/reset">¿Has olvidado tu contraseña?</a>
 		<div class="form-group">
 		  <label class="form-switch">
-		  	{{ render_field_checkbox(login_user_form.remember) }}
+		  	{{ render_field(login_user_form.remember) }}
 		     <i class="form-icon"></i> Recuerdame
 		  </label>
 		</div>
