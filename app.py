@@ -193,22 +193,22 @@ def view_workshop():
                 enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=result.id).filter_by(user_id=current_user.id).count()
             else:
                 enlisted['user'] = 2
-            print(enlisted['user'])
             return render_template('workshop.html', result=result, enlisted=enlisted, title='cutrenet', subtitle=result.name)
         elif current_user.is_authenticated and 'enlist' in request.args:
             workshop_id = request.args.get('enlist')
             workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
             user = db_session.query(User).filter_by(id=current_user.id).first()
-
-            workshop.users.append(user)
-            db_session.commit()
+            if workshop.members_only and user.has_role('member'):
+                workshop.users.append(user)
+                db_session.commit()
+                flash(u'Inscrito en el taller', 'success')
+            else:
+                flash(u'Este taller es solo para miembros', 'error')
             enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
             if current_user.is_authenticated:
                 enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
             else:
                 enlisted['user'] = 2
-            print(enlisted['user'])
-            flash(u'Inscrito en el taller', 'success')
             return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif current_user.is_authenticated and 'unenlist' in request.args:
             workshop_id = request.args.get('unenlist')
