@@ -40,10 +40,10 @@ class User(Base, UserMixin):
     member_since = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
-    tools = relationship('Workshop', secondary='workshops_users',
-                         backref=backref('users', lazy='dynamic'),
-                         cascade="all, delete, delete-orphan",
-                         single_parent=True)
+    # tools = relationship('Workshop', secondary='workshops_users',
+    #                      backref=backref('users', lazy='dynamic'),
+    #                      cascade="all, delete, delete-orphan",
+    #                      single_parent=True)
     workshops = relationship('Workshop', backref='instructor', lazy=True,
                             cascade="all, delete, delete-orphan",
                             single_parent=True)
@@ -107,3 +107,5 @@ class Workshop(Base):
     participants = Column(Integer)
     image = Column(String(80))
     tool_id = Column('tooling', Integer(), ForeignKey('tool.id'))
+    users = relationship('User',
+                    secondary='workshops_users')

@@ -6,7 +6,7 @@ from flask_security import Security, login_required, \
      logout_user
 from flask_mail import Mail, Message
 from database import db_session
-from models import User, Role, Tool, Workshop
+from models import User, Role, Tool, Workshop, WorkshopsUsers
 from forms import ExtendedRegisterForm, EmailForm, ToolForm, EditMemberForm, WorkshopForm
 from functions.email import email_all
 from werkzeug.utils import secure_filename
@@ -184,10 +184,47 @@ def list_workshops():
 def view_workshop():
     session['url'] = request.url[len(request.url_root):]
     if request.method == 'GET':
+        enlisted = {}
         if 'id' in request.args:
-            id = request.args.get('id')
-            result = db_session.query(Workshop).filter_by(id=id).first()
-            return render_template('workshop.html', result=result, title='cutrenet', subtitle=result.name)
+            uid = request.args.get('id')
+            result = db_session.query(Workshop).filter_by(id=uid).first()
+            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=result.id).count()
+            if current_user.is_authenticated:
+                enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=result.id).filter_by(user_id=current_user.id).count()
+            else:
+                enlisted['user'] = 2
+            print(enlisted['user'])
+            return render_template('workshop.html', result=result, enlisted=enlisted, title='cutrenet', subtitle=result.name)
+        elif current_user.is_authenticated and 'enlist' in request.args:
+            workshop_id = request.args.get('enlist')
+            workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
+            user = db_session.query(User).filter_by(id=current_user.id).first()
+
+            workshop.users.append(user)
+            db_session.commit()
+            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            if current_user.is_authenticated:
+                enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
+            else:
+                enlisted['user'] = 2
+            print(enlisted['user'])
+            flash(u'Inscrito en el taller', 'success')
+            return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
+        elif current_user.is_authenticated and 'unenlist' in request.args:
+            workshop_id = request.args.get('unenlist')
+            workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
+            user = db_session.query(User).filter_by(id=current_user.id).first()
+
+            workshop.users.remove(user)
+            db_session.commit()
+            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            if current_user.is_authenticated:
+                enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
+            else:
+                enlisted['user'] = 2
+            print(enlisted['user'])
+            flash(u'Desinscrito en el taller', 'alert')
+            return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif not current_user.has_role('admin'):
             flash(u'No tienes permisos para editar este taller', 'error')
             return redirect('/workshops', code=302)

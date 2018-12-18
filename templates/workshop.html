@@ -138,7 +138,7 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
           <strong>Participantes:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{ result['participants'] }}
+          {{ enlisted['all'] }}/{{ result['participants'] }}
         </div>
 
         <div class="col-3 col-sm-12">
@@ -164,6 +164,18 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
         </div>
       </div>
     </div>
+    <br>
+    {% if enlisted['user'] == 0 %}
+      {% if enlisted['all'] < result['participants'] %}
+        <a class="btn btn-primary" href="{{ url_for('view_workshop', enlist=result['id']) }}">Inscribirse</a>
+      {% else %}
+        <strong>El taller está completo :(</strong>
+      {% endif %}
+    {% elif enlisted['user'] == 1 %}
+      <a class="btn btn-primary" href="{{ url_for('view_workshop', unenlist=result['id']) }}">Desinscribirse</a>
+    {% elif enlisted['user'] == 2 %}
+      <a class="btn btn-primary" href="{{ url_for('security.register') }}">Registrate para apuntarte al taller</a>
+    {% endif %}
   </div>
 </div>
 {% endif %}
