@@ -23,8 +23,8 @@ def setup_fake_data():
 
     instructor = db_session.query(User).filter_by(dni='00000001A').first()
 
-    instructor.workshops.append(workshop1)
-    instructor.workshops.append(workshop2)
+    instructor.workshop_instructor.append(workshop1)
+    instructor.workshop_instructor.append(workshop2)
 
     tool.workshops.append(workshop1)
 

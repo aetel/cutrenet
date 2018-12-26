@@ -131,14 +131,14 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
           <strong>Fecha:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{ result['date'] }}
+          {{ result['date'].strftime('%d-%m-%Y') }}
         </div>
 
         <div class="col-3 col-sm-12">
           <strong>Participantes:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{ enlisted['all'] }}/{{ result['participants'] }}
+          {{ enlisted['number'] }}/{{ result['participants'] }}
         </div>
 
         <div class="col-3 col-sm-12">
@@ -166,7 +166,7 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
     </div>
     <br>
     {% if enlisted['user'] == 0 %}
-      {% if enlisted['all'] < result['participants'] %}
+      {% if enlisted['number'] < result['participants'] %}
         <a class="btn btn-primary" href="{{ url_for('view_workshop', enlist=result['id']) }}">Inscribirse</a>
       {% else %}
         <strong>El taller está completo :(</strong>
@@ -178,6 +178,18 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
     {% endif %}
   </div>
 </div>
+
+  {% if current_user.has_role('admin')%}
+  <br>
+  <div class="card">
+    <h5 class="card-header">Apuntados</h5>
+    <div class="card-body">
+      {% for user in enlisted['list'] %}
+        <div>{{ loop.index }}. {{ user.first_name }} {{ user.last_name }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 {% endif %}
 <script type="text/javascript">
   var confirmLinks = document.querySelectorAll('.confirm');

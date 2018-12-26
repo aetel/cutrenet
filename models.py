@@ -44,9 +44,10 @@ class User(Base, UserMixin):
     #                      backref=backref('users', lazy='dynamic'),
     #                      cascade="all, delete, delete-orphan",
     #                      single_parent=True)
-    workshops = relationship('Workshop', backref='instructor', lazy=True,
+    workshop_instructor = relationship('Workshop', backref='instructor', lazy=True,
                             cascade="all, delete, delete-orphan",
                             single_parent=True)
+    _workshops = relationship('Workshop', secondary='workshops_users', backref=backref('workshops_users_backref', lazy='dynamic'))
 
 class VotesUsers(Base):
     __tablename__ = 'votes_users'
@@ -107,5 +108,5 @@ class Workshop(Base):
     participants = Column(Integer)
     image = Column(String(80))
     tool_id = Column('tooling', Integer(), ForeignKey('tool.id'))
-    users = relationship('User',
+    users = relationship('User', backref='workshops',
                     secondary='workshops_users')

@@ -187,13 +187,16 @@ def view_workshop():
         enlisted = {}
         if 'id' in request.args:
             uid = request.args.get('id')
-            result = db_session.query(Workshop).filter_by(id=uid).first()
-            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=result.id).count()
+            workshop = db_session.query(Workshop).filter_by(id=uid).first()
+            enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop.id)).all()
+
+            # Check if user is already enlisted. 1 for enlisted, 0 for not enlisted, 2 for not logged in
             if current_user.is_authenticated:
-                enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=result.id).filter_by(user_id=current_user.id).count()
+                enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
             else:
                 enlisted['user'] = 2
-            return render_template('workshop.html', result=result, enlisted=enlisted, title='cutrenet', subtitle=result.name)
+            return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif current_user.is_authenticated and 'enlist' in request.args:
             workshop_id = request.args.get('enlist')
             workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
@@ -202,9 +205,14 @@ def view_workshop():
                 workshop.users.append(user)
                 db_session.commit()
                 flash(u'Inscrito en el taller', 'success')
-            else:
+            elif workshop.members_only:
                 flash(u'Este taller es solo para miembros', 'error')
-            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            else:
+                workshop.users.append(user)
+                db_session.commit()
+                flash(u'Inscrito en el taller', 'success')
+            enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop.id)).all()
             if current_user.is_authenticated:
                 enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
             else:
@@ -217,7 +225,8 @@ def view_workshop():
 
             workshop.users.remove(user)
             db_session.commit()
-            enlisted['all'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
+            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop.id)).all()
             if current_user.is_authenticated:
                 enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=current_user.id).count()
             else:
@@ -276,7 +285,7 @@ def view_workshop():
 
                 instructor = db_session.query(User).filter_by(dni=request.form['instructor']).first()
                 if instructor is not None:
-                    instructor.workshops.append(workshop)
+                    instructor.workshop_instructor.append(workshop)
                 tool = db_session.query(Tool).filter_by(id=request.form['tooling']).first()
                 if tool is not None:
                     tool.workshops.append(workshop)
@@ -310,7 +319,7 @@ def view_workshop():
 
                 instructor = db_session.query(User).filter_by(dni=request.form['instructor']).first()
                 if instructor is not None:
-                    instructor.workshops.append(workshop)
+                    instructor.workshop_instructor.append(workshop)
                 tool = db_session.query(Tool).filter_by(id=request.form['tooling']).first()
                 if tool is not None:
                     tool.workshops.append(workshop)
