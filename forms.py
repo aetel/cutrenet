@@ -7,6 +7,7 @@ from wtforms.fields.html5 import DateField
 from database import db_session
 from models import User, Tool
 import json
+from datetime import date
 
 from flask_security.utils import get_message
 
@@ -110,7 +111,7 @@ class WorkshopForm(Form):
     description = TextAreaField(u'Descripción')
     location = StringField('Lugar', [Required()])
     instructor = SelectField('Instructor', choices=choices_users(), id='select_instructor', validators=[Required()])
-    date = DateField('Fecha', validators=[Required()])
+    date = DateField('Fecha', validators=[Required()], default=date.today(), format='%Y-%m-%d')
     participants = IntegerField('Participantes')
     tooling = SelectField('Habilita',coerce=int, choices=choices_tools(), id='select_tool', default=0)
     members_only = BooleanField('Solo miembros')

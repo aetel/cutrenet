@@ -16,7 +16,7 @@
 <script>
 if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
     jQuery(function($){ //on document.ready
-        $('#date').datepicker();
+        $('#date').datepicker({ dateFormat: 'yy-mm-dd' }).val();
     })
 }
 </script>
@@ -165,16 +165,16 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
       </div>
     </div>
     <br>
-    {% if enlisted['user'] == 0 %}
-      {% if enlisted['number'] < result['participants'] %}
+    {% if enlisted['number'] <= result['participants'] %}
+      {% if enlisted['user'] == 0 %}
         <a class="btn btn-primary" href="{{ url_for('view_workshop', enlist=result['id']) }}">Inscribirse</a>
-      {% else %}
-        <strong>El taller está completo :(</strong>
+      {% elif enlisted['user'] == 1 %}
+        <a class="btn btn-primary" href="{{ url_for('view_workshop', unenlist=result['id']) }}">Desinscribirse</a>
+      {% elif enlisted['user'] == 2 %}
+        <a class="btn btn-primary" href="{{ url_for('security.register') }}">Registrate para apuntarte al taller</a>
       {% endif %}
-    {% elif enlisted['user'] == 1 %}
-      <a class="btn btn-primary" href="{{ url_for('view_workshop', unenlist=result['id']) }}">Desinscribirse</a>
-    {% elif enlisted['user'] == 2 %}
-      <a class="btn btn-primary" href="{{ url_for('security.register') }}">Registrate para apuntarte al taller</a>
+    {% else %}
+      <strong>El taller está completo :(</strong>
     {% endif %}
   </div>
 </div>
