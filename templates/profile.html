@@ -160,6 +160,44 @@
     </div>
   </div>
 </div>
+
+<div class="card">
+  <h5 class="card-header">Workshops</h5>
+  <div class="card-body">
+    <table class='table table-hover table-scroll'>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Fecha</th>
+          <th>Instructor</th>
+          <th align="center">Pagado</th>
+          <th align="center">Completado</th>
+        </tr>
+      </thead>
+
+      {% for workshop in result['workshops'] %}
+      <tr>
+        <td><a href="{{ url_for('view_workshop', id=workshop.id) }}">{{ workshop.name }}</a></td>
+        <td>{{ workshop.date.strftime('%d-%m-%Y') }}</td>
+        <td>{{ workshop.instructor.first_name }} {{ workshop.instructor.last_name }}</td>
+        {% for wksps in workshops if wksps['workshop_id'] == workshop.id %}
+        <td align="center">{% if wksps.paid %}
+            <i class="icon icon-check text-success"></i>
+            {% else %}
+            <i class="icon icon-cross text-error"></i>
+            {% endif %}</td>
+        <td align="center">{% if wksps.complete %}
+            <i class="icon icon-check text-success"></i>
+            {% else %}
+            <i class="icon icon-cross text-error"></i>
+            {% endif %}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
 <script type="text/javascript">
   var deleteLinks = document.querySelectorAll('.delete');
 

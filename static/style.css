@@ -249,6 +249,7 @@ border-color: #00A79D;
 
 .card {
   border-radius: .1rem;
+  margin-bottom: 1rem;
 }
 
 .card-header {

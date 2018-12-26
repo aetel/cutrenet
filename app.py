@@ -92,9 +92,10 @@ def member_profile():
             dni = request.args.get('dni')
             if current_user.dni == dni or current_user.has_role('admin'):
                 user = db_session.query(User).filter_by(dni=dni).first()
+                workshops = db_session.query(WorkshopsUsers).join(Workshop).filter(User.dni == dni)
             else:
                 flash(u'No tienes permisos para ver este perfil', 'error')
-            return render_template('profile.html', result=user, title='cutrenet', subtitle=user.first_name + ' ' + user.last_name)
+            return render_template('profile.html', result=user, title='cutrenet', workshops=workshops, subtitle=user.first_name + ' ' + user.last_name)
         elif 'edit' in request.args:
             dni = request.args.get('edit')
             user = db_session.query(User).filter_by(dni=dni).first()
