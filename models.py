@@ -47,6 +47,9 @@ class User(Base, UserMixin):
     workshop_instructor = relationship('Workshop', backref='instructor', lazy=True,
                             cascade="all, delete, delete-orphan",
                             single_parent=True)
+    tool_maintainer = relationship('Tool', backref='maintainer', lazy=True,
+                            cascade="all, delete, delete-orphan",
+                            single_parent=True)
     _workshops = relationship('Workshop', secondary='workshops_users', backref=backref('workshops_users_backref', lazy='dynamic'))
 
 class VotesUsers(Base):
@@ -92,6 +95,7 @@ class Tool(Base):
     manual = Column(String(100))
     documentation = Column(String(100))
     image = Column(String(80))
+    maintainer_id = Column('maintainer', Integer(), ForeignKey('user.id'))
     workshops = relationship('Workshop', backref='tool', lazy=True,
                             cascade="all, delete, delete-orphan",
                             single_parent=True)

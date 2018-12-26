@@ -23,6 +23,7 @@
       {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input", value=result["name"]) }}
       {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.maintainer, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.location, class_="form-input", value=result["location"]) }}
       {{ render_field_label_with_errors_spectre(form.manual, class_="form-input", value=result["manual"]) }}
       {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input", value=result["documentation"]) }}
@@ -49,6 +50,7 @@
       {{ form.hidden_tag() }}
       {{ render_field_label_with_errors_spectre(form.name, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.description, class_="form-input") }}
+      {{ render_field_label_with_errors_spectre(form.maintainer, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.location, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.manual, class_="form-input") }}
       {{ render_field_label_with_errors_spectre(form.documentation, class_="form-input") }}
@@ -88,6 +90,13 @@
         </div>
         <div class="col-9 col-sm-12">
           {{result["description"]}}
+        </div>
+
+        <div class="col-3 col-sm-12">
+          <strong>Maintainer:</strong>
+        </div>
+        <div class="col-9 col-sm-12">
+          {{ result["maintainer"]['first_name'] }} {{ result["maintainer"]['last_name'] }}
         </div>
 
         <div class="col-3 col-sm-12">

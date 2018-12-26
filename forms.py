@@ -105,6 +105,7 @@ class ToolForm(Form):
     manual = StringField('Manual')
     documentation = StringField(u'Documentación')
     image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
+    maintainer = SelectField('Maintainer', choices=choices_users(), id='select_maintainer', validators=[Required()])
 
 class WorkshopForm(Form):
     name = StringField('Nombre',  validators=[Required()])

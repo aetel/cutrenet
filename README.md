@@ -14,7 +14,7 @@ cd cutrenet
 ```
 3. Install dependencies:
 ```bash
-pip install -r requirements.text
+pip install -r requirements.txt
 ```
 4. Launch setup.py, if a database exists it will use that, if not it will create one. When database is fresh it creates a user admin@example.com/admin:
 ```bash

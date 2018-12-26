@@ -176,8 +176,7 @@ def member_database():
 def list_workshops():
     session['url'] = request.url[len(request.url_root):]
     results = db_session.query(Workshop).order_by(Workshop.date.asc())
-    instructors = db_session.query(User)
-    return render_template('workshop_list.html', results=results, instructors=instructors, title='cutrenet', subtitle='talleres')
+    return render_template('workshop_list.html', results=results, title='cutrenet', subtitle='talleres')
 
 
 @app.route('/workshop', methods=['POST', 'GET'])
@@ -378,6 +377,7 @@ def view_tool():
             form = ToolForm(self_edit=ename)
             result = db_session.query(Tool).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
+            form.maintainer.data = result.maintainer.dni
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
         elif 'delete_img' in request.args:
             del_img = request.args.get('delete_img')
@@ -413,6 +413,10 @@ def view_tool():
                 tool.manual = request.form['manual']
                 tool.documentation = request.form['documentation']
 
+                maintainer = db_session.query(User).filter_by(dni=request.form['maintainer']).first()
+                if maintainer is not None:
+                    maintainer.tool_maintainer.append(tool)
+
                 if form.image.data:
                     if tool.image is not None:
                         os.remove(tool.image) # Delete old image
@@ -438,6 +442,10 @@ def view_tool():
                 tool.location = request.form['location']
                 tool.manual = request.form['manual']
                 tool.documentation = request.form['documentation']
+
+                maintainer = db_session.query(User).filter_by(dni=request.form['maintainer']).first()
+                if maintainer is not None:
+                    maintainer.tool_maintainer.append(tool)
 
                 if form.image.data:
                     if tool.image is not None:
