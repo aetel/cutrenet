@@ -5,7 +5,23 @@
 {% include "messages.html" %}
 {% if 'edit' in request.url %}
 <div class="card">
-  <h5 class="card-header">Editando a {{result["first_name"]}} {{result["last_name"]}} </h5>
+    <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        {% if current_user.has_role('admin') %}
+          <a href="{{ url_for('member_database') }}">Usuarios</a>
+        {% else %}
+          Usuarios
+        {% endif %}
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('member_profile', dni=result['dni']) }}">{{ result["first_name"] }} {{ result["last_name"] }}</a>
+      </li>
+      <li class="breadcrumb-item">
+        Editar 
+      </li>
+    </ul>
+  </h5>
   <div class="card-body">
     <form action="{{ url_for('member_profile', edit=result['dni']) }}" method="POST" name="form" class="form-horizontal">
       {{ form.hidden_tag() }}
@@ -23,19 +39,33 @@
       {{ render_field_label_with_errors_spectre(form.degree, class_="form-select", value=result["degree"]) }}
       {{ render_field_label_with_errors_spectre(form.dni, class_="form-input", value=result["dni"]) }}
       {{ render_field_label_with_errors_spectre(form.email, class_="form-input", value=result["email"]) }}
-      <div class="col-2 col-sm-12">
-        <a class="btn" href="{{ url_for('change_password') }}">Cambiar contraseña</a><br>
-      </div>
+
+      {% if not current_user.has_role('admin') or (current_user.has_role('admin') and current_user.dni == result['dni'] )%}
+        <div class="col-2 col-sm-12">
+          <a class="btn" href="{{ url_for('change_password') }}">Cambiar contraseña</a><br>
+        </div>
+      {% endif %}
+
       {{ render_field(form.submit, class_="btn btn-primary btn-large btn-block", value="Guardar") }}
     </form>
   </div>
 </div>
 {% else %}
 <div class="card">
-  <h5 class="card-header">Perfil de {{result["first_name"]}} {{result["last_name"]}} 
-    {% if current_user.has_role('admin') or current_user.dni==result['dni'] %}
-      <a href="{{ url_for('member_profile', edit=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Edit</a>
-    {% endif %}
+  <h5 class="card-header">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        {% if current_user.has_role('admin') %}
+          <a href="{{ url_for('member_database') }}">Usuarios</a>
+        {% else %}
+          Usuarios
+        {% endif %}
+      </li>
+      <li class="breadcrumb-item">
+        {{ result["first_name"] }} {{ result["last_name"] }} 
+      </li>
+    </ul>
+    <a href="{{ url_for('member_profile', edit=result['dni']) }}" class="profile-edit"><i class="icon icon-edit"></i> Editar</a>
   </h5>
   <div class="card-body">
     <div class="container">

@@ -90,7 +90,10 @@ def member_profile():
     if request.method == 'GET':
         if 'dni' in request.args:
             dni = request.args.get('dni')
-            user = db_session.query(User).filter_by(dni=dni).first()
+            if current_user.dni == dni or current_user.has_role('admin'):
+                user = db_session.query(User).filter_by(dni=dni).first()
+            else:
+                flash(u'No tienes permisos para ver este perfil', 'error')
             return render_template('profile.html', result=user, title='cutrenet', subtitle=user.first_name + ' ' + user.last_name)
         elif 'edit' in request.args:
             dni = request.args.get('edit')
@@ -103,17 +106,17 @@ def member_profile():
                 return redirect('/', code=302)
         elif 'delete' in request.args and current_user.has_role('admin'):
             dni = request.args.get('delete')
-            db_session.query(User).filter_by(dni=dni).delete()
-            db_session.commit()
-            flash(u'Perfil borrado', 'success')
+            if current_user.dni == dni or current_user.has_role('admin'):
+                db_session.query(User).filter_by(dni=dni).delete()
+                db_session.commit()
+                flash(u'Perfil borrado', 'success')
+            else:
+                flash(u'No tienes permisos para borrar este perfil', 'error')
             if current_user.has_role('admin'): # Si el usuario es administrador le mandamos a la lista de miembros, si no al inicio
                 results = db_session.query(User).all()
                 return render_template('profile_list.html', results=results, title='cutrenet', subtitle='miembros')
             else:
                 return redirect('/', code=302)
-        elif not current_user.has_role('admin'):
-            flash(u'No tienes permisos para editar este perfil', 'error')
-            return redirect('/', code=302)
         else:
             flash(u'Tienes que seleccionar un perfil', 'error')
             results = db_session.query(User).all()
