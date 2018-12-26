@@ -5,25 +5,25 @@ This is a simple Python CRUD application to manage AETEL members, tools, worksho
 
 ## To test it:
 1. Clone this repo:
-
-    $ git clone https://github.com/aetel/cutrenet
-
+```bash
+git clone https://github.com/aetel/cutrenet
+```
 2. Change directory:
-
-    $ cd cutrenet
-
+```bash
+cd cutrenet
+```
 3. Install dependencies:
-
-    $ pip install -r requirements.text
-
+```bash
+pip install -r requirements.text
+```
 4. Launch setup.py, if a database exists it will use that, if not it will create one. When database is fresh it creates a user admin@example.com/admin:
-
-    $ python setup.py
-
+```bash
+python setup.py
+```
 5. Start the app:
-
-    $ python app.py
-
+```bash
+python app.py
+```
 6. Go to your browser and navigate to 127.0.0.1:5000.
 
 ## To-Do:
@@ -56,6 +56,6 @@ This is a simple Python CRUD application to manage AETEL members, tools, worksho
 ### Application Notes:
 Implemented with Python, Flask, SQLite and spectre.css
 
-It's mandatory to nstall Flask-Security with _pip install git+https://github.com/mattupstate/flask-security_ or else it won't work!
+It's mandatory to install Flask-Security with _pip install git+https://github.com/mattupstate/flask-security_ or else it won't work!
 
 ¡cutrenet vive, la lucha sigue!
