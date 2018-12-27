@@ -31,7 +31,12 @@
         <td>{{result["last_name"]}}</td>
         <td>{{result["dni"]}}</td>
         <td>{{result['email']}}</td>
-        <td>{{result['telegram']}}</td>
+        <td>{% if result['telegram'] %}
+        <a href="https://t.me/{{result['telegram']}}">@{{result['telegram']}}</a>
+        {% else %}
+        :(
+        {% endif %}
+        </td>
         <td align="center"><a href="{{ url_for('member_database', confirm=result['dni']) }}">
             {% if result.has_role('member') %}
               <i class="icon icon-check text-success"></i>

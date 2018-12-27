@@ -123,7 +123,10 @@
           <strong>Telegram:</strong>
         </div>
         <div class="col-9 col-sm-12">
-          {{result["telegram"]}}
+          {% if result['telegram'] %}
+          <a href="https://t.me/{{result['telegram']}}">@{{result['telegram']}}</a>
+          {% else %}
+          {% endif %}
         </div>
 
         <div class="col-3 col-sm-12">
