@@ -27,17 +27,17 @@ python app.py
 6. Go to your browser and navigate to 127.0.0.1:5000.
 
 ## To-Do:
-* **Add support for past members & granular admin rights** Give past members a special role and stuff
-* **Settings file** Load settings from a specific file. Email server, webpage name, localised strings, aetelbot settings, sarao mode, etc
-* **Logging** Log relevant events
+* **Add support for past members & granular admin rights:** Give past members a special role and stuff
+* **Settings file:** Load settings from a specific file. Email server, webpage name, localised strings, aetelbot settings, sarao mode, etc
+* **Logging:** Log relevant events
 * **Add main page with relevant information:** If plain user show info about workshops and calendar; if member show workshops, meeting minutes, tools, votes; if admin show everything.
-* ~~**Email group function:** Admin can send an email to all the members. Admin can send email with attachments to all members.~
+* **Email group function:** ~~Admin can send an email to all the members. Admin can send email with attachments to all members.~~
 * **AETEL meeting minutes generation & management:** Interface to input order of the day, date, hour, place of the meeting, presiding board and each of the points in markdown format; generates a JSON file with all data. View links to all generated minutes and links to a viewing page. Download in pdf.
 * **Space & tool reservation:** Tools have a page with relevant information such as: mantainer, documentation, manuals, picture, etc. Admin can edit said pages. Members can select a piece of equipment from a list and reserve it for a set time. Show tool mantainer.
 * **Voting:** ~~Admin can create new vote with title, time and options. Vote is open for set time. Members can select one of the options.~~
 * **Workshops & formation management:** ~~Admin can create a new workshop. Admin can choose if it's open for everyone or members only, number of people admitted and if it validates any tool usage. Users can join that workshop as long as there are free places.~~ Admin can mark signed up users as paid and/or completed in the workshop page. Users who completed a workshop will show in their profiles. Admin can send an email to the users who signed up for a workshop or users that haven't paid. ~~Show in profile managing workshops and participating workshops.~~
 * **aetelbot integration & management page:** Generate confirmed members list. Edit aetelbot running directory. Edit aetelbot settings file.
-* **Admin notifications** via email, telegram?
+* **Admin notifications:** via email, telegram?
 
 ## Maybe?:
 * **Log in with UPM account**
