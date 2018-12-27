@@ -118,9 +118,13 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
   <div class="card">
     <h5 class="card-header">Recuento de votos</h5>
     <div class="card-body">
+      {% set total = [0] %}
       {% for name, votes in votes['number'].iteritems() %}
         <div><strong>{{ name }}: </strong>{{ votes }}</div>
+        {% if total.append(total.pop() + votes) %}{% endif %} {# add number of votes in this option to total #}
       {% endfor %}
+      <br>
+      <strong>Votos totales: </strong>{{ total }}
     </div>
   </div>
   {% endif %}

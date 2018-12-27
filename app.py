@@ -475,7 +475,8 @@ def list_votings():
     session['url'] = request.url[len(request.url_root):]
     results = db_session.query(Voting).all()
     db_session.commit()
-    return render_template('voting_list.html', results=results, title='cutrenet', subtitle='votaciones')
+    today = date.today() - timedelta(1)
+    return render_template('voting_list.html', results=results, today=today, title='cutrenet', subtitle='votaciones')
 
 @app.route('/votacion', methods=['POST', 'GET'])
 @login_required

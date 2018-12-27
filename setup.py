@@ -32,7 +32,7 @@ def setup_fake_data():
 
     nombre = u'¡Elegimos fiesta nacional!'
     voting = Voting(name=nombre, description='Fiesta fiesta fiesta', \
-                    start_date=datetime.now(), end_date=(datetime.now() + timedelta(days=1)) )
+                    start_date=datetime.now(), end_date=(datetime.now() + timedelta(days=3)) )
     db_session.add(voting)
     db_session.commit()
 
