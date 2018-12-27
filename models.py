@@ -61,12 +61,15 @@ class VotesUsers(Base):
 class Option(Base):
     __tablename__ = 'option'
     id = Column(Integer, primary_key=True)
-    name = Column(String(80), unique=True)
+    name = Column(String(280))
     description = Column(String(255))
     voting_id = Column(Integer, ForeignKey("voting.id"))
     votings = relationship("Voting", back_populates="options",
                             cascade="all, delete, delete-orphan",
                             single_parent=True)
+    votes = relationship("User", backref=backref('votes', lazy='dynamic'),
+                    cascade="all, delete",
+                    secondary='votes_users')
 
 class Voting(Base):
     __tablename__ = 'voting'

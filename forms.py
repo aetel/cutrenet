@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 from flask_security.forms import Form, RegisterForm, StringField, Required, validators
 from wtforms import SelectField, TextAreaField, FileField, HiddenField, SubmitField,\
-                    IntegerField, BooleanField, ValidationError
+                    IntegerField, BooleanField, RadioField, ValidationError
 from wtforms.fields.html5 import DateField
 from database import db_session
-from models import User, Tool
+from models import User, Tool, Voting
 import json
-from datetime import date
+from datetime import date, timedelta
 
 from flask_security.utils import get_message
 
@@ -69,6 +69,11 @@ def is_image(message=u'¡Solo imágenes!'):
             raise ValidationError(message)
     return _is_image
 
+def date_is_older(form, field):
+    if form.start_date.data > form.end_date.data: #bigger means older
+        msg = u'La fecha de finalización debe ser posterior a la de inicio.'
+        raise ValidationError(msg)
+
 class ExtendedRegisterForm(RegisterForm):
     first_name = StringField('Nombre', [Required()])
     last_name = StringField('Apellidos', [Required()])
@@ -117,3 +122,14 @@ class WorkshopForm(Form):
     tooling = SelectField('Habilita',coerce=int, choices=choices_tools(), id='select_tool', default=0)
     members_only = BooleanField('Solo miembros')
     image = FileField(u'Fotografía', [is_image(u'Solo se permiten subir imágenes')])
+
+class VotingForm(Form):
+    name = StringField(u'Nombre',  validators=[Required()])
+    description = TextAreaField(u'Descripción')
+    start_date = DateField(u'Fecha de inicio', validators=[Required()], default=date.today(), format='%Y-%m-%d')
+    end_date = DateField(u'Fecha de finalización', validators=[date_is_older,Required()], default=date.today() + timedelta(days=1), format='%Y-%m-%d')
+    options = TextAreaField(u'Opciones',  validators=[Required()])
+
+class VoteForm(Form):
+    option = RadioField(u'Opción', id='select_instructor')
+

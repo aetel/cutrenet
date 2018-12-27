@@ -6,12 +6,12 @@ from flask_security import Security, login_required, \
      logout_user
 from flask_mail import Mail, Message
 from database import db_session
-from models import User, Role, Tool, Workshop, WorkshopsUsers
-from forms import ExtendedRegisterForm, EmailForm, ToolForm, EditMemberForm, WorkshopForm
+from models import User, Role, Tool, Workshop, WorkshopsUsers, Voting, Option, VotesUsers
+from forms import ExtendedRegisterForm, EmailForm, ToolForm, EditMemberForm, WorkshopForm, VotingForm, VoteForm
 from functions.email import email_all
 from werkzeug.utils import secure_filename
+from datetime import date, timedelta
 import os
-from datetime import datetime
 
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -226,14 +226,14 @@ def view_workshop():
             return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif current_user.is_authenticated and 'unenlist' in request.args:
             workshop_id = request.args.get('unenlist')
-
+            workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
+            
             if current_user.is_authenticated:
                 enlisted['user'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop_id).filter_by(user_id=current_user.id).count()
             else:
                 enlisted['user'] = 2
 
             if enlisted['user'] == 1:
-                workshop = db_session.query(Workshop).filter_by(id=workshop_id).first()
                 user = db_session.query(User).filter_by(id=current_user.id).first()
                 workshop.users.remove(user)
                 db_session.commit()
@@ -437,7 +437,6 @@ def view_tool():
                 flash(u'Herramienta editada', 'success')
             return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
         elif 'add' in request.args:
-            name = request.args.get('add')
             tool = Tool()
             form = ToolForm()
             if form.validate_on_submit():
@@ -467,7 +466,116 @@ def view_tool():
                 db_session.commit()
                 flash(u'Herramienta añadida', 'success')
                 return redirect('tools', code=302)
-            return render_template('tool.html', form=form, result=tool, title='cutrenet', subtitle=tool.name)
+            return render_template('tool.html', form=form, title='cutrenet', subtitle="new tool")
+
+@app.route('/votaciones')
+@login_required
+@roles_required('member')
+def list_votings():
+    session['url'] = request.url[len(request.url_root):]
+    results = db_session.query(Voting).all()
+    db_session.commit()
+    return render_template('voting_list.html', results=results, title='cutrenet', subtitle='votaciones')
+
+@app.route('/votacion', methods=['POST', 'GET'])
+@login_required
+@roles_required('member')
+def view_voting():
+    session['url'] = request.url[len(request.url_root):]
+    votes = {}
+    if request.method == 'GET':
+        if 'id' in request.args:
+            uid = request.args.get('id')
+            result = db_session.query(Voting).filter_by(id=uid).first()
+
+            form = VoteForm()
+            options = db_session.query(Option).filter_by(voting_id=uid).all()
+            choices = []
+            votes['number'] = {}
+            votes['user'] = 0
+            for option in options:
+                choices.append((option.id, option.name))
+                votes['number'][option.name] = db_session.query(VotesUsers).filter_by(option_id=option.id).count()
+                votes['user'] += db_session.query(VotesUsers).filter_by(option_id=option.id).filter_by(user_id=current_user.id).count()
+            form.option.choices = choices
+
+            if result.end_date + timedelta(1) > date.today(): #bigger means older
+                votes['end'] = 0
+            else:
+                votes['end'] = 1
+
+            return render_template('voting.html', result=result, form=form, votes=votes, title='cutrenet', subtitle=result.name)
+        elif not current_user.has_role('admin'):
+            flash(u'No tienes permisos para añadir o borrar votaciones', 'error')
+            return redirect('/votaciones', code=302)
+        elif 'add' in request.args:
+            form = VotingForm()
+            return render_template('voting.html', form=form, title='cutrenet', subtitle="new tool")
+        elif 'delete' in request.args:
+            delete = request.args.get('delete')
+            voting = db_session.query(Voting).filter_by(id=delete).first()
+            db_session.delete(voting)
+            db_session.commit()
+            flash(u'Votación eliminada', 'success')
+            return redirect('/votaciones', code=302)
+        else:
+            flash(u'Tienes que seleccionar una votación', 'error')
+            return redirect('/votaciones', code=302)
+
+    if request.method == 'POST':
+        if 'add' in request.args and current_user.has_role('admin'):
+            voting = Voting()
+            form = VotingForm()
+            if form.validate_on_submit():
+                voting.name = request.form['name']
+                voting.description = request.form['description']
+                voting.start_date = form.start_date.data
+                voting.end_date = form.end_date.data
+                names = request.form['options'].split('|')
+
+                for name in names:
+                    option = Option()
+                    option.name = name
+                    voting.options.append(option)
+
+                db_session.add(voting)
+                db_session.commit()
+                flash(u'Votación añadida', 'success')
+                return redirect('votaciones', code=302)
+            return render_template('voting.html', form=form, votes=votes, title='cutrenet', subtitle="new voting")
+        elif 'vote' in request.args:
+            uid = request.args.get('vote')
+            form = VoteForm()
+            options = db_session.query(Option).filter_by(voting_id=uid).all()
+            choices = []
+            votes['number'] = {}
+            votes['user'] = 0
+            for option in options:
+                choices.append((option.id, option.name))
+                votes['number'][option.name] = db_session.query(VotesUsers).filter_by(option_id=option.id).count()
+                votes['user'] += db_session.query(VotesUsers).filter_by(option_id=option.id).filter_by(user_id=current_user.id).count()
+            form.option.choices = choices
+
+            result = db_session.query(Voting).filter_by(id=uid).first()
+            if result.end_date + timedelta(1) > date.today(): #bigger means older
+                votes['end'] = 0
+            else:
+                votes['end'] = 1
+#            if form.validate_on_submit():
+            if votes['user'] == 0:
+                option = db_session.query(Option).filter_by(id=request.form['option']).first()
+                user = db_session.query(User).filter_by(id=current_user.id).first()
+                option.votes.append(user)
+                db_session.add(option)
+                db_session.commit()
+                votes['user'] = 0
+                for option in options:
+                    votes['number'][option.name] = db_session.query(VotesUsers).filter_by(option_id=option.id).count()
+                votes['user'] = 1
+                flash(u'Voto registrado', 'success')
+            else:
+                flash(u'Ya has votado, mamón', 'alert')
+            return render_template('voting.html', form=form, result=result, votes=votes, title='cutrenet', subtitle=u"voted ✔️")
 
 
 @app.route('/change_password', methods=['POST', 'GET'])

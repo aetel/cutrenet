@@ -31,7 +31,7 @@
         <td><a href="{{ url_for('view_workshop', id=result['id']) }}">{{ result["name"] }}</a></td>
         <td>{{ result["description"] }}</td>
         <td>{{ result["instructor"]['first_name'] }} {{ result["instructor"]['last_name'] }}</td>
-        <td>{{ result['date'].strftime('%d-%m-%Y') }}</td>
+        <td>{{ result['date'].strftime('%d-%m-%y') }}</td>
         <td align="center">{{ result['participants'] }}</td>
         <td>{% if result['tool'] is not none %}
               <a href="{{ url_for('view_tool', name=result['tool']['name']) }}">{{ result['tool']['name'] }}</a>

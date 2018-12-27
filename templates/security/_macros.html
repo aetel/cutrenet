@@ -87,8 +87,6 @@
     </div>
 {% endmacro %}
 
-
-
 {% macro render_field_checkbox_with_errors_spectre(field) %}
   {% if field.errors %}
     <div class="form-group has-error">
@@ -108,4 +106,20 @@
       {% endfor %}
     </div>
   </div>
+{% endmacro %}
+
+{% macro render_field_radio_with_errors_spectre(field) %}
+{% if field.errors %}
+<div class="form-group has-error">
+{% else %}
+<div class="form-group">
+{% endif %}
+  <strong><label class="form-label">{{ field.label }}</label></strong>
+  {% for subfield in field %}
+  <label class="form-radio col-ml-auto col-9">
+    {{ subfield }}
+    <i class="form-icon"></i>{{ subfield.label }}
+  </label>
+  {% endfor %}
+</div>
 {% endmacro %}
