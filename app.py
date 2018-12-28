@@ -475,7 +475,6 @@ def view_tool():
 @login_required
 @roles_required('member')
 def list_votings():
-    session['url'] = request.url[len(request.url_root):]
     results = db_session.query(Voting).all()
     db_session.commit()
     today = date.today() - timedelta(1)
@@ -485,7 +484,6 @@ def list_votings():
 @login_required
 @roles_required('member')
 def view_voting():
-    session['url'] = request.url[len(request.url_root):]
     votes = {}
     if request.method == 'GET':
         if 'id' in request.args:
