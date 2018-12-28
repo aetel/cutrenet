@@ -1,3 +1,0 @@
-sqlalchemy
-flask_security
-bcrypt

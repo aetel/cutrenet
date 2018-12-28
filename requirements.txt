@@ -1,0 +1,3 @@
+sqlalchemy
+-e git+https://github.com/mattupstate/flask-security#egg=flask-security
+bcrypt
