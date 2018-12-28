@@ -21,13 +21,14 @@ def setup_fake_data():
                         members_only=True, participants=99, date=datetime.now())
     db_session.add(workshop2)
 
-    instructor = db_session.query(User).filter_by(dni='00000001A').first()
+    test_user = db_session.query(User).filter_by(dni='00000001A').first()
 
-    instructor.workshop_instructor.append(workshop1)
-    instructor.workshop_instructor.append(workshop2)
+    test_user.workshop_instructor.append(workshop1)
+    test_user.workshop_instructor.append(workshop2)
 
     tool.workshops.append(workshop1)
-
+    test_user.tool_maintainer.append(tool)
+    
     db_session.commit()
 
     nombre = u'¡Elegimos fiesta nacional!'

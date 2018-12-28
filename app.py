@@ -383,7 +383,8 @@ def view_tool():
             form = ToolForm(self_edit=ename)
             result = db_session.query(Tool).filter_by(name=ename).first()
             form.description.data = result.description # Prepopulate textarea with past information, can´t do it at render time
-            form.maintainer.data = result.maintainer.dni
+            if result.maintainer.dni is not None:
+                form.maintainer.data = result.maintainer.dni
             return render_template('tool.html', form=form, result=result, title='cutrenet', subtitle=ename)
         elif 'delete_img' in request.args:
             del_img = request.args.get('delete_img')
