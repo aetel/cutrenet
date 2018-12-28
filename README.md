@@ -56,6 +56,6 @@ python app.py
 ### Application Notes:
 Implemented with Python, Flask, SQLite and spectre.css
 
-It's mandatory to install Flask-Security with _pip install git+https://github.com/mattupstate/flask-security_ or else it won't work!
+It's mandatory to install Flask-Security with _pip install git+https://github.com/mattupstate/flask-security_ or else [email won't work](https://github.com/mattupstate/flask-security/issues/685#ref-commit-241acf2)!
 
 ¡cutrenet vive, la lucha sigue!
