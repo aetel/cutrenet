@@ -3,26 +3,6 @@
 
 {% block content %}
 {% include "messages.html" %}
-<script type="text/javascript">
-    var datefield=document.createElement("input")
-    datefield.setAttribute("type", "date")
-    if (datefield.type!="date"){ //if browser doesn't support input type="date", load files for jQuery UI Date Picker
-        document.write('<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />\n')
-        document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"><\/script>\n')
-        document.write('<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"><\/script>\n') 
-    }
-</script>
- 
-<script>
-if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
-    jQuery(function($){ //on document.ready
-        $('#start_date').datepicker({ dateFormat: 'yy-mm-dd' }).val();
-    })
-    jQuery(function($){ //on document.ready
-        $('#end_date').datepicker({ dateFormat: 'yy-mm-dd' }).val();
-    })
-}
-</script>
 {% if 'add' in request.url and current_user.has_role('admin')%}
 <div class="card">
   <h5 class="card-header">
@@ -129,6 +109,29 @@ if (datefield.type!="date"){ //if browser doesn't support input type="date", ini
   </div>
   {% endif %}
 
+{% endif %}
+
+{% if 'add' in request.url %}
+<script type="text/javascript">
+    var datefield=document.createElement("input")
+    datefield.setAttribute("type", "date")
+    if (datefield.type!="date"){ //if browser doesn't support input type="date", load files for jQuery UI Date Picker
+        document.write('<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />\n')
+        document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"><\/script>\n')
+        document.write('<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"><\/script>\n') 
+    }
+</script>
+ 
+<script>
+if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
+    jQuery(function($){ //on document.ready
+        $('#start_date').datepicker({ dateFormat: 'yy-mm-dd' }).val();
+    })
+    jQuery(function($){ //on document.ready
+        $('#end_date').datepicker({ dateFormat: 'yy-mm-dd' }).val();
+    })
+}
+</script>
 {% endif %}
 <script type="text/javascript">
   var confirmLinks = document.querySelectorAll('.confirm');
