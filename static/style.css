@@ -7,13 +7,19 @@
 }
 
 @font-face {
-  font-family: Lato;
-  src: url(/static/fonts/Lato/Lato-Regular.ttf);
+    font-family: 'Montserrat';
+    src: url('/static/fonts/montserrat.woff2') format('woff2'),
+         url('/static/fonts/montserrat.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: Montserrat;
-  src: url(/static/fonts/Montserrat/Montserrat-Bold.otf);
+    font-family: 'Lato';
+    src: url('/static/fonts/lato.woff2') format('woff2'),
+         url('/static/fonts/lato.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .navbar {

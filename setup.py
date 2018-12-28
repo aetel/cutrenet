@@ -43,7 +43,6 @@ def setup_fake_data():
 
     db_session.commit()
 
-
 def setup_db():
     if not os.path.exists('./aetel.db'):
         print('Creating database...')
@@ -64,6 +63,14 @@ def setup_db():
                              telegram="aetelbot", roles=[admin_role,member_role])
         db_session.commit()
 
+        user_datastore.create_user(email='kek@kek.kek',
+                         password='kekkek', dni='00000002A',
+                         year=99, degree='AA', school='00',
+                         first_name='kek',
+                         last_name='kek',
+                         telegram="kekkek", roles=['member'])
+        db_session.commit()
+        
         setup_fake_data()
 
         print('Database created.')

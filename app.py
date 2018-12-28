@@ -26,6 +26,8 @@ app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = False
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = True
+app.config['SECURITY_DEFAULT_REMEMBER_ME'] = True
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(30)
 # makes password recoverable via /reset
 app.config['SECURITY_RECOVERABLE'] = True
 
