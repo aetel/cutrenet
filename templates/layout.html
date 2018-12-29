@@ -39,7 +39,11 @@
     </section>
     {% elif request.path != '/login' %}
     <section class="navbar-section">
+      {% if session['url'] %}
       <a href="{{ '/login?next=%2F'+session['url'] }}" class="login-btn in">Entrar</a>
+      {% else %}
+      <a href="{{ '/login' }}" class="login-btn in">Entrar</a>
+      {% endif %}
     </section>
     {% endif %}
   </header>
