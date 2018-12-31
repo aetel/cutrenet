@@ -1,41 +1,41 @@
 {% extends "layout.html" %}
 {% block content %}
 {% include "messages.html" %}
-<div class="card">
-  <h5 class="card-header">
-    <ul class="breadcrumb">
-      <li class="breadcrumb-item">
-        Herramientas
-      </li>
-    </ul>
-    {% if current_user.has_role('admin') %}
-    <a href="{{ url_for('view_tool', add='') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
-    {% endif %}
-  </h5>
-  <div class="table-scroll">
-    <table class='table table-hover table-scroll'>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Lugar</th>
-          <th>Manual</th>
-          <th>Documentación</th>
-          <th align="center">Página</th>
-        </tr>
-      </thead>
+<h5>
+  <ul class="breadcrumb">
+    <li class="breadcrumb-item">
+      Herramientas
+    </li>
+  </ul>
+  {% if current_user.has_role('admin') %}
+  <a href="{{ url_for('view_tool', add='') }}" class="profile-edit"><i class="icon icon-plus" >kek</i> Añadir herramienta</a>
+  {% endif %}
+</h5>
+<div class="docs-demo columns">
 
-      {% for result in results %}
-      <tr>
-        <td>{{result["name"]}}</td>
-        <td>{{result["location"]}}</td>
-        <td>{{result["manual"]}}</td>
-        <td>{{result["documentation"]}}</td>
-        <td align="center"><a href="{{ url_for('view_tool', name=result['name']) }}"><i class="icon icon-more-vert"></i></a></td>
-      </tr>
-      {% endfor %}
-    </table>
+{% for result in results %}
+<div class="column col-4 col-xs-12">
+
+<div class="card">
+  <div class="card-image">
+    <img src="{{ result['image'] or 'static/images/no-image.svg'}}" class="img-responsive tool-img">
+  </div>
+  <div class="card-header">
+    <div class="card-title h5">{{ result["name"] }}</div>
+    <div class="card-subtitle text-gray">Lugar: {{ result["location"] }}</div>
+  </div>
+  <div class="card-body">
+    <div>Maintainer: {{ result["maintainer"]['first_name'] }} {{ result["maintainer"]['last_name'] }}</div>
+    <div>Manual: {{ result["manual"] }}</div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" onclick="window.location.href='{{ url_for('view_tool', name=result['name']) }}'">Información y reservas</button>
   </div>
 </div>
+</div>
+{% endfor %}
+</div>
+
 <script type="text/javascript">
   var confirmLinks = document.querySelectorAll('.confirm');
 
