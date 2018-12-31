@@ -124,6 +124,11 @@ a:visited {
 .icon {
   color: #00A79D;
 }
+
+.icon-white {
+  color: #FFF;
+}
+
 body {
   font-family: Lato;
   background-color: #FFF;

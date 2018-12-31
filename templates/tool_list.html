@@ -21,15 +21,9 @@
     <img src="{{ result['image'] or 'static/images/no-image.svg'}}" class="img-responsive tool-img">
   </div>
   <div class="card-header">
+    <button class="btn btn-primary float-right" onclick="window.location.href='{{ url_for('view_tool', name=result['name']) }}'"><i class="icon icon-plus icon-white"></i></button>
     <div class="card-title h5">{{ result["name"] }}</div>
-    <div class="card-subtitle text-gray">Lugar: {{ result["location"] }}</div>
-  </div>
-  <div class="card-body">
-    <div>Maintainer: {{ result["maintainer"]['first_name'] }} {{ result["maintainer"]['last_name'] }}</div>
-    <div>Manual: {{ result["manual"] }}</div>
-  </div>
-  <div class="card-footer">
-    <button class="btn btn-primary" onclick="window.location.href='{{ url_for('view_tool', name=result['name']) }}'">Información y reservas</button>
+    <div class="card-subtitle text-gray">{{ result["location"] }}</div>
   </div>
 </div>
 </div>
