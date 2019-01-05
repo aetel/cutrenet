@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 def setup_fake_data():
     print('Adding fake data to database...')
 
-    tool = Tool(name=u'Martillo', description=u'Pa martillar', location=u'AETEL', manual=u'here', documentation=u'there')
+    tool = Tool(name=u'Martillo', description=u'Pa martillar', location=u'AETEL – Panel de herramientas', manual=u'here', documentation=u'there')
     db_session.add(tool)
 
     workshop1 = Workshop(name=u'Croquetas Caseras', description=u'¿Alguna vez has querido hacer tus propias croquetas caseras?', \
