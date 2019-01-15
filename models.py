@@ -68,7 +68,6 @@ class Option(Base):
                             cascade="all, delete, delete-orphan",
                             single_parent=True)
     votes = relationship("User", backref=backref('votes', lazy='dynamic'),
-                    cascade="all, delete",
                     secondary='votes_users')
 
 class Voting(Base):
