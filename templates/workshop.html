@@ -166,13 +166,46 @@
   </div>
 </div>
 
-  {% if current_user.has_role('admin')%}
+  {% if current_user.has_role('admin') %}
   <div class="card">
     <h5 class="card-header">Apuntados</h5>
     <div class="card-body">
-      {% for user in enlisted['list'] %}
-        <div>{{ loop.index }}. {{ user.first_name }} {{ user.last_name }}</div>
-      {% endfor %}
+      <div class="table-scroll">
+        <table class='table table-hover table-scroll'>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th align="center">Pagado</th>
+              <th align="center">Completado</th>
+            </tr>
+          </thead>
+
+          {% for user in enlisted['list'] %}
+          <tr>
+            <td>{{ loop.index }}. <a href="{{ url_for('member_profile', id=result['id'], dni=user.user.dni) }}">{{ user.user.first_name }} {{ user.user.last_name }}</a></td>
+            <td align="center"> 
+                {% if user.paid %}
+                  <i class="icon icon-check text-success"></i>
+                  <a class="btn btn-primary" href="{{ url_for('view_workshop', id=result['id'], paid=user.user.dni) }}">Marcar como NO pagado</a>
+                {% else %}
+                  <i class="icon icon-cross text-error"></i>
+                  <a class="btn btn-error" href="{{ url_for('view_workshop', id=result['id'], paid=user.user.dni) }}">Marcar como pagado</a>
+                {% endif %}
+            </td>
+            <td align="center">
+                {% if user.complete %}
+                  <i class="icon icon-check text-success"></i>
+                  <a class="btn btn-primary" href="{{ url_for('view_workshop', id=result['id'], complete=user.user.dni) }}">Marcar como NO completado</a>
+                {% else %}
+                  <i class="icon icon-cross text-error"></i>
+                  <a class="btn btn-error" href="{{ url_for('view_workshop', id=result['id'], complete=user.user.dni) }}">Marcar como completado</a>
+                {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
     </div>
   </div>
   {% endif %}

@@ -119,7 +119,7 @@ def member_profile():
                 results = db_session.query(User).all()
                 return render_template('profile_list.html', results=results, title='cutrenet', subtitle='miembros')
             else:
-                return redirect('/', code=302)
+                return redirect('/', code=302)       
         else:
             flash(u'Tienes que seleccionar un perfil', 'error')
             results = db_session.query(User).all()
@@ -193,8 +193,38 @@ def view_workshop():
         if 'id' in request.args:
             uid = request.args.get('id')
             workshop = db_session.query(Workshop).filter_by(id=uid).first()
+
+            if 'paid' in request.args:
+                # Mark user as paid or not
+                dni = request.args.get('paid')
+                user = db_session.query(User).filter_by(dni=dni).first()
+                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
+                print(inscription.paid)
+                print(not inscription.paid)
+                inscription.paid = not inscription.paid
+                print(inscription.paid)
+                db_session.commit()
+
+            if 'complete' in request.args:
+                # Mark user as paid or not
+                dni = request.args.get('complete')
+                user = db_session.query(User).filter_by(dni=dni).first()
+                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
+                print(inscription.complete)
+                print(not inscription.complete)
+                inscription.complete = not inscription.complete
+                print(inscription.complete)
+                db_session.commit()
+
             enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
-            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop.id)).all()
+            enlisted['list'] = []
+            users = User.query.filter(User.workshops.any(id=workshop.id)).all()
+            for user in users:
+                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
+                enlisted['list'].append({   "user": user,
+                                            "paid": inscription.paid,
+                                            "complete": inscription.complete})
+
 
             # Check if user is already enlisted. 1 for enlisted, 0 for not enlisted, 2 for not logged in
             if current_user.is_authenticated:
@@ -214,6 +244,10 @@ def view_workshop():
                     flash(u'Este taller es solo para miembros', 'error')
                 else:
                     workshop.users.append(user)
+                    db_session.commit()
+                    inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
+                    inscription.paid = False
+                    inscription.complete = False
                     db_session.commit()
                     flash(u'Inscrito en el taller', 'success')
             else:
@@ -512,7 +546,7 @@ def view_voting():
             return redirect('/votaciones', code=302)
         elif 'add' in request.args:
             form = VotingForm()
-            return render_template('voting.html', form=form, title='cutrenet', subtitle="new tool")
+            return render_template('voting.html', form=form, title='cutrenet', subtitle="new voting")
         elif 'delete' in request.args:
             delete = request.args.get('delete')
             voting = db_session.query(Voting).filter_by(id=delete).first()

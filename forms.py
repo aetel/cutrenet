@@ -133,3 +133,6 @@ class VotingForm(Form):
 class VoteForm(Form):
     option = RadioField(u'Opción', id='select_instructor', coerce=int, validators=[Required(message=u'Tienes que seleccionar una opción')])
 
+# class WorkshopUsersForm(Form):
+#     users = SelectMultipleField(u'')
+
