@@ -563,20 +563,20 @@ def view_voting():
                 votes['end'] = 0
             else:
                 votes['end'] = 1
-#            if form.validate_on_submit():
-            if votes['user'] == 0:
-                option = db_session.query(Option).filter_by(id=request.form['option']).first()
-                user = db_session.query(User).filter_by(id=current_user.id).first()
-                option.votes.append(user)
-                db_session.add(option)
-                db_session.commit()
-                votes['user'] = 0
-                for option in options:
-                    votes['number'][option.name] = db_session.query(VotesUsers).filter_by(option_id=option.id).count()
-                votes['user'] = 1
-                flash(u'Voto registrado', 'success')
-            else:
-                flash(u'Ya has votado, mamón', 'alert')
+            if form.validate_on_submit():
+                if votes['user'] == 0:
+                    option = db_session.query(Option).filter_by(id=request.form['option']).first()
+                    user = db_session.query(User).filter_by(id=current_user.id).first()
+                    option.votes.append(user)
+                    db_session.add(option)
+                    db_session.commit()
+                    votes['user'] = 0
+                    for option in options:
+                        votes['number'][option.name] = db_session.query(VotesUsers).filter_by(option_id=option.id).count()
+                    votes['user'] = 1
+                    flash(u'Voto registrado', 'success')
+                else:
+                    flash(u'Ya has votado, mamón', 'alert')
             return render_template('voting.html', form=form, result=result, votes=votes, title='cutrenet', subtitle=u"voted ✔️")
 
 

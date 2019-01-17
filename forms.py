@@ -131,5 +131,5 @@ class VotingForm(Form):
     options = TextAreaField(u'Opciones',  validators=[Required()])
 
 class VoteForm(Form):
-    option = RadioField(u'Opción', id='select_instructor')
+    option = RadioField(u'Opción', id='select_instructor', coerce=int, validators=[Required(message=u'Tienes que seleccionar una opción')])
 

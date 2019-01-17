@@ -121,5 +121,8 @@
     <i class="form-icon"></i>{{ subfield.label }}
   </label>
   {% endfor %}
+  {% for error in field.errors %}
+    <p class="form-input-hint col-ml-auto col-9">{{ error }}</p>
+  {% endfor %}
 </div>
 {% endmacro %}
