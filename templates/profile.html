@@ -178,23 +178,25 @@
         </tr>
       </thead>
 
-      {% for workshop in result['workshops'] %}
+      {% for enlisted_workshop in enlisted_workshops %}
       <tr>
-        <td><a href="{{ url_for('view_workshop', id=workshop.id) }}">{{ workshop.name }}</a></td>
-        <td>{{ workshop.date.strftime('%d-%m-%Y') }}</td>
-        <td>{{ workshop.instructor.first_name }} {{ workshop.instructor.last_name }}</td>
-        {% for wksps in workshops if wksps['workshop_id'] == workshop.id %}
-        <td align="center">{% if wksps.paid %}
+        <td><a href="{{ url_for('view_workshop', id=enlisted_workshop.workshop.id) }}">{{ enlisted_workshop.workshop.name }}</a></td>
+        <td>{{ enlisted_workshop.workshop.date.strftime('%d-%m-%Y') }}</td>
+        <td>{{ enlisted_workshop.workshop.instructor.first_name }} {{ enlisted_workshop.workshop.instructor.last_name }}</td>
+        <td align="center">
+          {% if enlisted_workshop.paid %}
             <i class="icon icon-check text-success"></i>
-            {% else %}
+          {% else %}
             <i class="icon icon-cross text-error"></i>
-            {% endif %}</td>
-        <td align="center">{% if wksps.complete %}
+          {% endif %}
+        </td>
+        <td align="center">
+          {% if enlisted_workshop.complete %}
             <i class="icon icon-check text-success"></i>
-            {% else %}
+          {% else %}
             <i class="icon icon-cross text-error"></i>
-            {% endif %}</td>
-        {% endfor %}
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </table>

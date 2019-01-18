@@ -182,7 +182,7 @@
 
           {% for user in enlisted['list'] %}
           <tr>
-            <td>{{ loop.index }}. <a href="{{ url_for('member_profile', id=result['id'], dni=user.user.dni) }}">{{ user.user.first_name }} {{ user.user.last_name }}</a></td>
+            <td>{{ loop.index }}. <a href="{{ url_for('member_profile', dni=user.user.dni) }}">{{ user.user.first_name }} {{ user.user.last_name }}</a></td>
             <td align="center"> 
                 {% if user.paid %}
                   <i class="icon icon-check text-success"></i>

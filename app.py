@@ -94,10 +94,17 @@ def member_profile():
             dni = request.args.get('dni')
             if current_user.dni == dni or current_user.has_role('admin'):
                 user = db_session.query(User).filter_by(dni=dni).first()
-                workshops = db_session.query(WorkshopsUsers).join(Workshop).filter(User.dni == dni)
+
+                enlisted_workshops = []
+                for workshop in user.workshops:
+                    inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
+                    enlisted_workshops.append({ "workshop": workshop,
+                                                "paid": inscription.paid,
+                                                "complete": inscription.complete})
+
             else:
                 flash(u'No tienes permisos para ver este perfil', 'error')
-            return render_template('profile.html', result=user, title='cutrenet', workshops=workshops, subtitle=user.first_name + ' ' + user.last_name)
+            return render_template('profile.html', result=user, title='cutrenet', enlisted_workshops=enlisted_workshops, subtitle=user.first_name + ' ' + user.last_name)
         elif 'edit' in request.args:
             dni = request.args.get('edit')
             user = db_session.query(User).filter_by(dni=dni).first()
@@ -197,30 +204,24 @@ def view_workshop():
             if 'paid' in request.args:
                 # Mark user as paid or not
                 dni = request.args.get('paid')
-                user = db_session.query(User).filter_by(dni=dni).first()
-                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
-                print(inscription.paid)
-                print(not inscription.paid)
+                user = db_session.query(User).filter_by(dni=dni).first()                
+                inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
                 inscription.paid = not inscription.paid
-                print(inscription.paid)
                 db_session.commit()
 
             if 'complete' in request.args:
                 # Mark user as paid or not
                 dni = request.args.get('complete')
                 user = db_session.query(User).filter_by(dni=dni).first()
-                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
-                print(inscription.complete)
-                print(not inscription.complete)
+                inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
                 inscription.complete = not inscription.complete
-                print(inscription.complete)
                 db_session.commit()
 
             enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
             enlisted['list'] = []
             users = User.query.filter(User.workshops.any(id=workshop.id)).all()
             for user in users:
-                inscription = db_session.query(WorkshopsUsers).filter_by(user_id=user.id).first()
+                inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
                 enlisted['list'].append({   "user": user,
                                             "paid": inscription.paid,
                                             "complete": inscription.complete})
@@ -258,7 +259,13 @@ def view_workshop():
             else:
                 enlisted['user'] = 2
             enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).count()
-            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop.id)).all()
+            enlisted['list'] = []
+            users = User.query.filter(User.workshops.any(id=workshop.id)).all()
+            for user in users:
+                inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
+                enlisted['list'].append({   "user": user,
+                                            "paid": inscription.paid,
+                                            "complete": inscription.complete})
             return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif current_user.is_authenticated and 'unenlist' in request.args:
             workshop_id = request.args.get('unenlist')
@@ -279,7 +286,13 @@ def view_workshop():
                 flash(u'El usuario no está inscrito en el taller', 'error')
 
             enlisted['number'] = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop_id).count()
-            enlisted['list'] = User.query.filter(User.workshops.any(id=workshop_id)).all()
+            enlisted['list'] = []
+            users = User.query.filter(User.workshops.any(id=workshop.id)).all()
+            for user in users:
+                inscription = db_session.query(WorkshopsUsers).filter_by(workshop_id=workshop.id).filter_by(user_id=user.id).first()
+                enlisted['list'].append({   "user": user,
+                                            "paid": inscription.paid,
+                                            "complete": inscription.complete})
             return render_template('workshop.html', result=workshop, enlisted=enlisted, title='cutrenet', subtitle=workshop.name)
         elif not current_user.has_role('admin'):
             flash(u'No tienes permisos para editar este taller', 'error')
