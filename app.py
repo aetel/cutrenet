@@ -101,10 +101,10 @@ def member_profile():
                     enlisted_workshops.append({ "workshop": workshop,
                                                 "paid": inscription.paid,
                                                 "complete": inscription.complete})
-
+                return render_template('profile.html', result=user, title='cutrenet', enlisted_workshops=enlisted_workshops, subtitle=user.first_name + ' ' + user.last_name)
             else:
                 flash(u'No tienes permisos para ver este perfil', 'error')
-            return render_template('profile.html', result=user, title='cutrenet', enlisted_workshops=enlisted_workshops, subtitle=user.first_name + ' ' + user.last_name)
+                return redirect('/', code=302)
         elif 'edit' in request.args:
             dni = request.args.get('edit')
             user = db_session.query(User).filter_by(dni=dni).first()
