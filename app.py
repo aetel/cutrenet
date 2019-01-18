@@ -8,7 +8,7 @@ from flask_mail import Mail, Message
 from database import db_session
 from models import User, Role, Tool, Workshop, WorkshopsUsers, Voting, Option, VotesUsers
 from forms import ExtendedRegisterForm, EmailForm, ToolForm, EditMemberForm, WorkshopForm, VotingForm, VoteForm
-from functions.email import email_all
+from functions.email import email
 from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import os
@@ -69,7 +69,13 @@ def home():
 def mass_mail():
     form = EmailForm()
     if request.method == 'GET':
-        return render_template('email.html', form=form, title='cutrenet')
+        if 'workshop' in request.args:
+            uid = request.args.get('workshop')
+            workshop = db_session.query(Workshop).filter_by(id=uid).first()
+
+            return render_template('email.html', form=form, workshop=workshop, title='cutrenet')
+        else:
+            return render_template('email.html', form=form, title='cutrenet')
     if request.method == 'POST':
         if form.validate_on_submit():
             if form.attachment.data:
@@ -77,12 +83,31 @@ def mass_mail():
                 filename = secure_filename(f.filename)
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 f.save(file_path)
-                email_all(app, mail, request.form, filename)
+                if 'workshop' in request.args:
+                    uid = request.args.get('workshop')
+                    users = User.query.filter(User.workshops.any(id=uid)).all()
+                    flash(u'Correo enviado a todos los participantes del taller', 'success')
+                else:
+                    users = User.query.filter(User.roles.any(Role.id.in_([2]))).all() # We pick the users that have role member (ID 2 in table roles)
+                    flash(u'Correo enviado a todos los miembros', 'success')
+                email(app, mail, request.form, filename, users)
                 os.remove(file_path)
             else:
-                email_all(app, mail, request.form,'')
-            flash(u'Correo enviado a todos los miembros', 'success')
-        return render_template('email.html', form=form, title='cutrenet')
+                if 'workshop' in request.args:
+                    uid = request.args.get('workshop')
+                    users = User.query.filter(User.workshops.any(id=uid)).all()
+                    flash(u'Correo enviado a todos los participantes del taller', 'success')
+                else:
+                    users = User.query.filter(User.roles.any(Role.id.in_([2]))).all() # We pick the users that have role member (ID 2 in table roles)
+                    flash(u'Correo enviado a todos los miembros', 'success')
+                email(app, mail, request.form, '', users)
+
+        if 'workshop' in request.args:
+            uid = request.args.get('workshop')
+            workshop = db_session.query(Workshop).filter_by(id=uid).first()
+            return render_template('email.html', form=form, workshop=workshop, title='cutrenet')
+        else:
+            return render_template('email.html', form=form, title='cutrenet')
 
 
 # user profile page

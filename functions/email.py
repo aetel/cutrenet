@@ -15,3 +15,15 @@ def email_all(app,mail,data,attachment):
 	        	with app.open_resource(os.path.join(app.config['UPLOAD_FOLDER'],attachment)) as fp:
   					msg.attach(attachment, "image/png", fp.read())
 	        conn.send(msg)
+
+def email(app,mail,data,attachment, users):
+	with mail.connect() as conn:
+	    for user in users:
+	        msg = Message(sender=("AETEL cutrenet", app.config['MAIL_USERNAME']),
+	        			  recipients=[user.email],
+	                      body=data['message'],
+	                      subject=data['subject'])
+	        if attachment:
+	        	with app.open_resource(os.path.join(app.config['UPLOAD_FOLDER'],attachment)) as fp:
+  					msg.attach(attachment, "image/png", fp.read())
+	        conn.send(msg)

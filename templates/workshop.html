@@ -3,7 +3,7 @@
 
 {% block content %}
 {% include "messages.html" %}
-{% if 'edit' in request.url and current_user.has_role('admin')%}
+{% if 'edit' in request.url and current_user.has_role('admin') %}
 <div class="card">
   <h5 class="card-header">
     <ul class="breadcrumb">
@@ -168,7 +168,16 @@
 
   {% if current_user.has_role('admin') %}
   <div class="card">
-    <h5 class="card-header">Apuntados</h5>
+    <h5 class="card-header">
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item">
+          Apuntados
+        </li>
+      </ul>
+      {% if current_user.has_role('admin') %}
+      <a class="btn btn-primary profile-edit" href="{{ url_for('mass_mail', workshop=result['id']) }}">Email</a>
+      {% endif %}
+    </h5>
     <div class="card-body">
       <div class="table-scroll">
         <table class='table table-hover table-scroll'>

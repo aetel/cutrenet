@@ -287,11 +287,11 @@ border-color: #00A79D;
   float: right;
   display: inline;
   margin: .4rem 0;
-  padding: .2rem 0;
+  padding: .25rem .4rem;
 }
 
 .profile-edit:hover{
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .tool-img{
