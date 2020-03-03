@@ -27,7 +27,7 @@ python app.py
 6. Go to your browser and navigate to 127.0.0.1:5000.
 
 ## To-Do:
-* **Settings file:** Load settings from a specific file. Email server, webpage name, localised strings, aetelbot settings, sarao mode, etc
+* **Settings file:** Load settings from a specific file. Email server, webpage name, localised strings, aetelbot settings, sarao mode, etc... This will need to change in the future when the app runs in Docker.
 * **Logging:** Log relevant events
 * **Admin notifications:** via email, telegram?
 * **Add support for past members & granular admin rights:** Give past members a special role and stuff
@@ -37,7 +37,9 @@ python app.py
 * **AETEL meeting minutes generation & management:** Interface to input order of the day, date, hour, place of the meeting, presiding board and each of the points in markdown format; generates a JSON file with all data. View links to all generated minutes and links to a viewing page. Download in pdf.
 * **Workshops & formation management:** ~~Admin can create a new workshop. Admin can choose if it's open for everyone or members only, number of people admitted and if it validates any tool usage. Users can join that workshop as long as there are free places. Admin can mark signed up users as paid and/or completed in the workshop page. Users who completed a workshop will show in their profiles. Admin can send an email to the users who signed up for a workshop or users that haven't paid. Show in profile managing workshops and participating workshops.~~
 * **Voting:** ~~Admin can create new vote with title, time and options. Vote is open for set time. Members can select one of the options.~~
-* **Email group function:** ~~Admin can send an email to all the members. Admin can send email with attachments to all members.~~
+* **Email group function:** ~~Admin can send an email to all the members. Admin can send email with attachments to all members.~~ Workshop admin should be able to email subgroups.
+* **Permission System:** New permissions can be created and asigned to users. Can be polled via API. Used for current members, access roles, machinery usage, etc. Permissions can be grouped (e.g. a member can have permission to vote, to enter the premises and to attend workshops).
+* **API:** Devices can access the API to check if users are members and have said permissions. Devices should be able to be registered from a user interface, a token is created and the device uses it to access the API.
 
 ## Maybe?:
 * **Log in with UPM account**
